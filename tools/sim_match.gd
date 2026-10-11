@@ -1,8 +1,11 @@
 extends SceneTree
 ## Headless full-match runner for balancing and performance checks.
 ##   godot --headless -s tools/sim_match.gd -- [--map=mvp_map] [--minutes=20] [--immortal] [--seed=1]
-## Prints one line per simulated minute: enemies alive, survivor HP, tick cost.
+##       [--bot [--plot=<id>]]
+## Prints one line per simulated minute: enemies alive and killed, buildings standing and
+## lost, units, resource, survivor HP, tick cost.
 ## --immortal keeps the Survivor alive so the whole schedule runs (measures load, not balance).
+## --bot plays a scripted defence (DefenceBot) in a plot, for balance runs.
 ##
 ## Game classes reference the DebugLog autoload, which doesn't exist yet when a -s script is
 ## compiled, so the runner is loaded on the first frame instead of referenced here.

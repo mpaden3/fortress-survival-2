@@ -59,8 +59,9 @@ godot --path . -- --map=mvp_map                  # full-size map
 godot --path . -- --demo --screenshot=/tmp/s.png # place sample buildings, save a frame, quit
 ```
 - `godot --headless -s tools/sim_match.gd -- [--map=mvp_map] [--minutes=20] [--immortal]`
-  runs a whole match headless and prints per-minute load (enemies alive, tick ms). Use it for
-  balance and performance checks.
+  runs a whole match headless and prints per-minute load (enemies alive, tick ms). Add
+  `--bot` to have `DefenceBot` (`src/sim/ai/`) fortify a plot through commands. It's a smoke
+  and performance tool, not a balance target: the game design will still change.
 - Use `--screenshot` to check visual changes yourself: it opens a window briefly, then read
   the PNG. Gameplay must still be verified by headless tests, not screenshots.
 - `src/view/game.gd` (`Game`) wires the World to the views, camera, build input and HUD. Input
