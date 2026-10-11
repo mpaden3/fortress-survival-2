@@ -1,0 +1,1477 @@
+{
+ "note": "Approximate. Entrances = openings where walkable ground crosses the district boundary; distances = walking route in 128-unit cells from the edge of each main spawn rect. Destructible pathing (blockers, trees) rasterized from war3map.doo; script-removed blockers (e.g. \"Chamber\" doors) counted as closed.",
+ "destructible_blockers_rasterized": 3849,
+ "plots": [
+  {
+   "name": "A-20 Bravo",
+   "rect_cells": 99,
+   "buildable_cells": 80,
+   "blocked_fraction": 0.18,
+   "water_cells": 0.0,
+   "tree_cells": 0.0,
+   "entrances": 1,
+   "entrance_widths_cells": [
+    2.0
+   ],
+   "total_entrance_width_cells": 2.0,
+   "entrance_details": [
+    {
+     "width_cells": 2.0,
+     "centre": [
+      -1280,
+      5072
+     ]
+    }
+   ],
+   "path_distance_to_spawns_cells": {
+    "centre": 46.0,
+    "north": 35.8,
+    "east": 113.5,
+    "south": 114.8,
+    "west": 92.0
+   },
+   "nearest_spawn": "north",
+   "reachable": true,
+   "garrison": {}
+  },
+  {
+   "name": "Acropolis",
+   "rect_cells": 110,
+   "buildable_cells": 90,
+   "blocked_fraction": 0.17,
+   "water_cells": 0.0,
+   "tree_cells": 0.0,
+   "entrances": 1,
+   "entrance_widths_cells": [
+    3.0
+   ],
+   "total_entrance_width_cells": 3.0,
+   "entrance_details": [
+    {
+     "width_cells": 3.0,
+     "centre": [
+      -3392,
+      -1104
+     ]
+    }
+   ],
+   "path_distance_to_spawns_cells": {
+    "centre": 24.8,
+    "north": 92.5,
+    "east": 92.5,
+    "south": 90.0,
+    "west": 40.0
+   },
+   "nearest_spawn": "centre",
+   "reachable": true,
+   "garrison": {}
+  },
+  {
+   "name": "Bear Cave",
+   "rect_cells": 264,
+   "buildable_cells": 120,
+   "blocked_fraction": 0.53,
+   "water_cells": 0.0,
+   "tree_cells": 50.8,
+   "entrances": 1,
+   "entrance_widths_cells": [
+    9.0
+   ],
+   "total_entrance_width_cells": 9.0,
+   "entrance_details": [
+    {
+     "width_cells": 9.0,
+     "centre": [
+      3776,
+      7408
+     ]
+    }
+   ],
+   "path_distance_to_spawns_cells": {
+    "centre": 80.2,
+    "north": 23.5,
+    "east": 86.2,
+    "south": 149.0,
+    "west": 145.8
+   },
+   "nearest_spawn": "north",
+   "reachable": true,
+   "garrison": {
+    "Beorn": 1
+   }
+  },
+  {
+   "name": "Broadfall Enclave",
+   "rect_cells": 230,
+   "buildable_cells": 194,
+   "blocked_fraction": 0.15,
+   "water_cells": 0.0,
+   "tree_cells": 0.0,
+   "entrances": 1,
+   "entrance_widths_cells": [
+    4.0
+   ],
+   "total_entrance_width_cells": 4.0,
+   "entrance_details": [
+    {
+     "width_cells": 4.0,
+     "centre": [
+      720,
+      -5888
+     ]
+    }
+   ],
+   "path_distance_to_spawns_cells": {
+    "centre": 41.2,
+    "north": 108.5,
+    "east": 104.8,
+    "south": 23.8,
+    "west": 107.2
+   },
+   "nearest_spawn": "south",
+   "reachable": true,
+   "garrison": {
+    "Sniper": 2,
+    "Medic": 1,
+    "Rocketeer": 1
+   }
+  },
+  {
+   "name": "Death Point",
+   "rect_cells": 72,
+   "buildable_cells": 51,
+   "blocked_fraction": 0.39,
+   "water_cells": 0.0,
+   "tree_cells": 0.0,
+   "entrances": 1,
+   "entrance_widths_cells": [
+    2.0
+   ],
+   "total_entrance_width_cells": 2.0,
+   "entrance_details": [
+    {
+     "width_cells": 2.0,
+     "centre": [
+      -5840,
+      -4480
+     ]
+    }
+   ],
+   "path_distance_to_spawns_cells": {
+    "centre": 71.8,
+    "north": 137.5,
+    "east": 139.5,
+    "south": 73.2,
+    "west": 64.2
+   },
+   "nearest_spawn": "west",
+   "reachable": true,
+   "garrison": {
+    "Rocketeer": 1,
+    "Medic": 1
+   }
+  },
+  {
+   "name": "Deep Abyss",
+   "rect_cells": 135,
+   "buildable_cells": 84,
+   "blocked_fraction": 0.41,
+   "water_cells": 78.0,
+   "tree_cells": 2.4,
+   "entrances": 1,
+   "entrance_widths_cells": [
+    3.0
+   ],
+   "total_entrance_width_cells": 3.0,
+   "entrance_details": [
+    {
+     "width_cells": 3.0,
+     "centre": [
+      -8176,
+      -3328
+     ]
+    }
+   ],
+   "path_distance_to_spawns_cells": {
+    "centre": 79.5,
+    "north": 145.2,
+    "east": 147.2,
+    "south": 100.0,
+    "west": 21.8
+   },
+   "nearest_spawn": "west",
+   "reachable": true,
+   "garrison": {}
+  },
+  {
+   "name": "Deserted Pit",
+   "rect_cells": 88,
+   "buildable_cells": 67,
+   "blocked_fraction": 0.25,
+   "water_cells": 0.0,
+   "tree_cells": 0.0,
+   "entrances": 1,
+   "entrance_widths_cells": [
+    2.0
+   ],
+   "total_entrance_width_cells": 2.0,
+   "entrance_details": [
+    {
+     "width_cells": 2.0,
+     "centre": [
+      5056,
+      -8624
+     ]
+    }
+   ],
+   "path_distance_to_spawns_cells": {
+    "centre": 97.0,
+    "north": 164.8,
+    "east": 83.2,
+    "south": 40.2,
+    "west": 163.0
+   },
+   "nearest_spawn": "south",
+   "reachable": true,
+   "garrison": {}
+  },
+  {
+   "name": "Desolated Refuge",
+   "rect_cells": 70,
+   "buildable_cells": 63,
+   "blocked_fraction": 0.16,
+   "water_cells": 0.0,
+   "tree_cells": 0.0,
+   "entrances": 1,
+   "entrance_widths_cells": [
+    3.0
+   ],
+   "total_entrance_width_cells": 3.0,
+   "entrance_details": [
+    {
+     "width_cells": 3.0,
+     "centre": [
+      -2368,
+      -8752
+     ]
+    }
+   ],
+   "path_distance_to_spawns_cells": {
+    "centre": 77.0,
+    "north": 144.2,
+    "east": 141.8,
+    "south": 20.2,
+    "west": 105.5
+   },
+   "nearest_spawn": "south",
+   "reachable": true,
+   "garrison": {}
+  },
+  {
+   "name": "Dominion Bank",
+   "rect_cells": 416,
+   "buildable_cells": 203,
+   "blocked_fraction": 0.44,
+   "water_cells": 0.0,
+   "tree_cells": 0.0,
+   "entrances": 1,
+   "entrance_widths_cells": [
+    5.0
+   ],
+   "total_entrance_width_cells": 5.0,
+   "entrance_details": [
+    {
+     "width_cells": 5.0,
+     "centre": [
+      5952,
+      -1104
+     ]
+    }
+   ],
+   "path_distance_to_spawns_cells": {
+    "centre": 43.8,
+    "north": 111.5,
+    "east": 18.5,
+    "south": 109.0,
+    "west": 112.0
+   },
+   "nearest_spawn": "east",
+   "reachable": true,
+   "garrison": {
+    "Repair Mechanic": 9,
+    "Weak Barricade": 5,
+    "Security Enforcer": 4,
+    "Bank Merchant": 4,
+    "Sniper": 2,
+    "z001": 2,
+    "Sgt Palmer": 1,
+    "Bank Manager": 1
+   }
+  },
+  {
+   "name": "Elysium Square",
+   "rect_cells": 221,
+   "buildable_cells": 192,
+   "blocked_fraction": 0.12,
+   "water_cells": 0.0,
+   "tree_cells": 0.0,
+   "entrances": 2,
+   "entrance_widths_cells": [
+    4.0,
+    2.0
+   ],
+   "total_entrance_width_cells": 6.0,
+   "entrance_details": [
+    {
+     "width_cells": 4.0,
+     "centre": [
+      -720,
+      -2944
+     ]
+    },
+    {
+     "width_cells": 2.0,
+     "centre": [
+      -2352,
+      -3584
+     ]
+    }
+   ],
+   "path_distance_to_spawns_cells": {
+    "centre": 18.2,
+    "north": 85.5,
+    "east": 85.5,
+    "south": 46.8,
+    "west": 82.2
+   },
+   "nearest_spawn": "centre",
+   "reachable": true,
+   "garrison": {}
+  },
+  {
+   "name": "Harborage",
+   "rect_cells": 98,
+   "buildable_cells": 78,
+   "blocked_fraction": 0.21,
+   "water_cells": 0.0,
+   "tree_cells": 0.0,
+   "entrances": 1,
+   "entrance_widths_cells": [
+    3.0
+   ],
+   "total_entrance_width_cells": 3.0,
+   "entrance_details": [
+    {
+     "width_cells": 3.0,
+     "centre": [
+      -1600,
+      3792
+     ]
+    }
+   ],
+   "path_distance_to_spawns_cells": {
+    "centre": 45.5,
+    "north": 40.8,
+    "east": 113.0,
+    "south": 114.2,
+    "west": 88.5
+   },
+   "nearest_spawn": "north",
+   "reachable": true,
+   "garrison": {}
+  },
+  {
+   "name": "Haven",
+   "rect_cells": 90,
+   "buildable_cells": 70,
+   "blocked_fraction": 0.21,
+   "water_cells": 0.0,
+   "tree_cells": 0.0,
+   "entrances": 2,
+   "entrance_widths_cells": [
+    3.0,
+    3.0
+   ],
+   "total_entrance_width_cells": 6.0,
+   "entrance_details": [
+    {
+     "width_cells": 3.0,
+     "centre": [
+      2944,
+      -6064
+     ]
+    },
+    {
+     "width_cells": 3.0,
+     "centre": [
+      3536,
+      -6720
+     ]
+    }
+   ],
+   "path_distance_to_spawns_cells": {
+    "centre": 78.2,
+    "north": 146.0,
+    "east": 79.2,
+    "south": 80.0,
+    "west": 146.5
+   },
+   "nearest_spawn": "centre",
+   "reachable": true,
+   "garrison": {}
+  },
+  {
+   "name": "Isolated Quarters",
+   "rect_cells": 90,
+   "buildable_cells": 72,
+   "blocked_fraction": 0.19,
+   "water_cells": 0.0,
+   "tree_cells": 0.0,
+   "entrances": 1,
+   "entrance_widths_cells": [
+    2.0
+   ],
+   "total_entrance_width_cells": 2.0,
+   "entrance_details": [
+    {
+     "width_cells": 2.0,
+     "centre": [
+      -2896,
+      -3584
+     ]
+    }
+   ],
+   "path_distance_to_spawns_cells": {
+    "centre": 41.2,
+    "north": 108.5,
+    "east": 108.5,
+    "south": 66.0,
+    "west": 105.2
+   },
+   "nearest_spawn": "centre",
+   "reachable": true,
+   "garrison": {}
+  },
+  {
+   "name": "Main Library",
+   "rect_cells": 480,
+   "buildable_cells": 321,
+   "blocked_fraction": 0.27,
+   "water_cells": 63.5,
+   "tree_cells": 0.0,
+   "entrances": 2,
+   "entrance_widths_cells": [
+    3.0,
+    3.0
+   ],
+   "total_entrance_width_cells": 6.0,
+   "entrance_details": [
+    {
+     "width_cells": 3.0,
+     "centre": [
+      3696,
+      -2944
+     ]
+    },
+    {
+     "width_cells": 3.0,
+     "centre": [
+      624,
+      -2944
+     ]
+    }
+   ],
+   "path_distance_to_spawns_cells": {
+    "centre": 18.0,
+    "north": 85.2,
+    "east": 51.5,
+    "south": 46.5,
+    "west": 85.8
+   },
+   "nearest_spawn": "centre",
+   "reachable": true,
+   "garrison": {
+    "Sniper": 2,
+    "Rocketeer": 2,
+    "Civilan Recruit": 2,
+    "Alchemist": 1,
+    "Wizard": 1,
+    "z001": 1
+   }
+  },
+  {
+   "name": "Malicious Den",
+   "rect_cells": 217,
+   "buildable_cells": 156,
+   "blocked_fraction": 0.23,
+   "water_cells": 0.0,
+   "tree_cells": 0.0,
+   "entrances": 1,
+   "entrance_widths_cells": [
+    3.0
+   ],
+   "total_entrance_width_cells": 3.0,
+   "entrance_details": [
+    {
+     "width_cells": 3.0,
+     "centre": [
+      -2752,
+      336
+     ]
+    }
+   ],
+   "path_distance_to_spawns_cells": {
+    "centre": 19.8,
+    "north": 83.8,
+    "east": 87.5,
+    "south": 88.8,
+    "west": 45.0
+   },
+   "nearest_spawn": "centre",
+   "reachable": true,
+   "garrison": {
+    "Rocketeer": 1,
+    "Medic": 1
+   }
+  },
+  {
+   "name": "Military Garrison",
+   "rect_cells": 440,
+   "buildable_cells": 259,
+   "blocked_fraction": 0.37,
+   "water_cells": 0.0,
+   "tree_cells": 0.0,
+   "entrances": 1,
+   "entrance_widths_cells": [
+    6.0
+   ],
+   "total_entrance_width_cells": 6.0,
+   "entrance_details": [
+    {
+     "width_cells": 6.0,
+     "centre": [
+      -6544,
+      -8000
+     ]
+    }
+   ],
+   "path_distance_to_spawns_cells": {
+    "centre": 101.8,
+    "north": 167.5,
+    "east": 169.0,
+    "south": 50.2,
+    "west": 71.0
+   },
+   "nearest_spawn": "south",
+   "reachable": true,
+   "garrison": {
+    "Manned Turret - [1]": 4,
+    "z001": 4,
+    "Paratrooper": 2,
+    "Medic": 2,
+    "Rocketeer": 2,
+    "Command Center": 1,
+    "Item Vendor": 1,
+    "Lt Rikimaru": 1,
+    "Sniper": 1,
+    "Warrant Officer": 1,
+    "Civilan Recruit": 1,
+    "Abrams Tank": 1,
+    "Mechanic": 1
+   }
+  },
+  {
+   "name": "Post Encampment",
+   "rect_cells": 104,
+   "buildable_cells": 87,
+   "blocked_fraction": 0.22,
+   "water_cells": 0.0,
+   "tree_cells": 0.0,
+   "entrances": 1,
+   "entrance_widths_cells": [
+    3.0
+   ],
+   "total_entrance_width_cells": 3.0,
+   "entrance_details": [
+    {
+     "width_cells": 3.0,
+     "centre": [
+      -3920,
+      2624
+     ]
+    }
+   ],
+   "path_distance_to_spawns_cells": {
+    "centre": 55.8,
+    "north": 76.5,
+    "east": 123.5,
+    "south": 124.8,
+    "west": 53.8
+   },
+   "nearest_spawn": "west",
+   "reachable": true,
+   "garrison": {
+    "z001": 5,
+    "Sniper": 1,
+    "Medic": 1,
+    "Firebat": 1
+   }
+  },
+  {
+   "name": "Sanctuary",
+   "rect_cells": 120,
+   "buildable_cells": 90,
+   "blocked_fraction": 0.2,
+   "water_cells": 0.0,
+   "tree_cells": 0.0,
+   "entrances": 1,
+   "entrance_widths_cells": [
+    2.0
+   ],
+   "total_entrance_width_cells": 2.0,
+   "entrance_details": [
+    {
+     "width_cells": 2.0,
+     "centre": [
+      -3008,
+      5200
+     ]
+    }
+   ],
+   "path_distance_to_spawns_cells": {
+    "centre": 60.5,
+    "north": 50.2,
+    "east": 128.0,
+    "south": 129.2,
+    "west": 79.5
+   },
+   "nearest_spawn": "north",
+   "reachable": true,
+   "garrison": {
+    "Civilan Recruit": 3,
+    "Rocketeer": 1,
+    "Medic": 1,
+    "Firebat": 1
+   }
+  },
+  {
+   "name": "Shinkel Brewery",
+   "rect_cells": 126,
+   "buildable_cells": 93,
+   "blocked_fraction": 0.23,
+   "water_cells": 0.0,
+   "tree_cells": 0.0,
+   "entrances": 1,
+   "entrance_widths_cells": [
+    2.0
+   ],
+   "total_entrance_width_cells": 2.0,
+   "entrance_details": [
+    {
+     "width_cells": 2.0,
+     "centre": [
+      1792,
+      6448
+     ]
+    }
+   ],
+   "path_distance_to_spawns_cells": {
+    "centre": 68.2,
+    "north": 19.0,
+    "east": 105.2,
+    "south": 137.0,
+    "west": 133.8
+   },
+   "nearest_spawn": "north",
+   "reachable": true,
+   "garrison": {
+    "Rocketeer": 3,
+    "Mr. Shinkel": 1,
+    "Medic": 1,
+    "Boberto": 1,
+    "Firebat": 1
+   }
+  },
+  {
+   "name": "Summer Cottage Garden",
+   "rect_cells": 593,
+   "buildable_cells": 347,
+   "blocked_fraction": 0.41,
+   "water_cells": 27.2,
+   "tree_cells": 3.8,
+   "entrances": 3,
+   "entrance_widths_cells": [
+    3.0,
+    3.0,
+    0.5
+   ],
+   "total_entrance_width_cells": 6.5,
+   "entrance_details": [
+    {
+     "width_cells": 3.0,
+     "centre": [
+      5904,
+      6528
+     ]
+    },
+    {
+     "width_cells": 3.0,
+     "centre": [
+      8192,
+      5264
+     ]
+    },
+    {
+     "width_cells": 0.5,
+     "centre": [
+      8976,
+      5792
+     ]
+    }
+   ],
+   "path_distance_to_spawns_cells": {
+    "centre": 92.8,
+    "north": 50.0,
+    "east": 43.2,
+    "south": 161.8,
+    "west": 161.0
+   },
+   "nearest_spawn": "east",
+   "reachable": true,
+   "garrison": {
+    "Water Protector - [1]": 2,
+    "Rocketeer": 2,
+    "Item Vendor": 1,
+    "Galadriel": 1
+   }
+  },
+  {
+   "name": "Temple Of Boom",
+   "rect_cells": 117,
+   "buildable_cells": 84,
+   "blocked_fraction": 0.26,
+   "water_cells": 0.0,
+   "tree_cells": 2.0,
+   "entrances": 1,
+   "entrance_widths_cells": [
+    2.0
+   ],
+   "total_entrance_width_cells": 2.0,
+   "entrance_details": [
+    {
+     "width_cells": 2.0,
+     "centre": [
+      4224,
+      5328
+     ]
+    }
+   ],
+   "path_distance_to_spawns_cells": {
+    "centre": 70.8,
+    "north": 68.5,
+    "east": 70.0,
+    "south": 139.8,
+    "west": 139.0
+   },
+   "nearest_spawn": "north",
+   "reachable": true,
+   "garrison": {
+    "Repair Factory": 6,
+    "Alchemist": 1
+   }
+  },
+  {
+   "name": "Terminal",
+   "rect_cells": 100,
+   "buildable_cells": 81,
+   "blocked_fraction": 0.15,
+   "water_cells": 0.0,
+   "tree_cells": 0.0,
+   "entrances": 2,
+   "entrance_widths_cells": [
+    4.0,
+    3.0
+   ],
+   "total_entrance_width_cells": 7.0,
+   "entrance_details": [
+    {
+     "width_cells": 4.0,
+     "centre": [
+      3632,
+      -5120
+     ]
+    },
+    {
+     "width_cells": 3.0,
+     "centre": [
+      2944,
+      -5808
+     ]
+    }
+   ],
+   "path_distance_to_spawns_cells": {
+    "centre": 65.0,
+    "north": 132.8,
+    "east": 68.5,
+    "south": 70.5,
+    "west": 133.2
+   },
+   "nearest_spawn": "centre",
+   "reachable": true,
+   "garrison": {
+    "z001": 1,
+    "Firebat": 1,
+    "Medic": 1
+   }
+  },
+  {
+   "name": "The Abandoned Village",
+   "rect_cells": 401,
+   "buildable_cells": 193,
+   "blocked_fraction": 0.47,
+   "water_cells": 0.0,
+   "tree_cells": 0.0,
+   "entrances": 2,
+   "entrance_widths_cells": [
+    6.0,
+    4.0
+   ],
+   "total_entrance_width_cells": 10.0,
+   "entrance_details": [
+    {
+     "width_cells": 6.0,
+     "centre": [
+      -6272,
+      6480
+     ]
+    },
+    {
+     "width_cells": 4.0,
+     "centre": [
+      -7376,
+      7808
+     ]
+    }
+   ],
+   "path_distance_to_spawns_cells": {
+    "centre": 93.8,
+    "north": 54.2,
+    "east": 161.5,
+    "south": 162.8,
+    "west": 61.5
+   },
+   "nearest_spawn": "north",
+   "reachable": true,
+   "garrison": {
+    "Medic": 2,
+    "Rocketeer": 2,
+    "Firebat": 2,
+    "Command Center": 1,
+    "Wizard": 1
+   }
+  },
+  {
+   "name": "The Cemetery",
+   "rect_cells": 98,
+   "buildable_cells": 61,
+   "blocked_fraction": 0.36,
+   "water_cells": 0.0,
+   "tree_cells": 1.8,
+   "entrances": 1,
+   "entrance_widths_cells": [
+    1.0
+   ],
+   "total_entrance_width_cells": 1.0,
+   "entrance_details": [
+    {
+     "width_cells": 1.0,
+     "centre": [
+      -8144,
+      -5824
+     ]
+    }
+   ],
+   "path_distance_to_spawns_cells": {
+    "centre": 99.8,
+    "north": 165.5,
+    "east": 167.5,
+    "south": 81.2,
+    "west": 42.0
+   },
+   "nearest_spawn": "west",
+   "reachable": true,
+   "garrison": {
+    "Dead Warrior": 1
+   }
+  },
+  {
+   "name": "The Courtyard",
+   "rect_cells": 462,
+   "buildable_cells": 334,
+   "blocked_fraction": 0.29,
+   "water_cells": 0.0,
+   "tree_cells": 0.2,
+   "entrances": 1,
+   "entrance_widths_cells": [
+    4.0
+   ],
+   "total_entrance_width_cells": 4.0,
+   "entrance_details": [
+    {
+     "width_cells": 4.0,
+     "centre": [
+      3632,
+      3584
+     ]
+    }
+   ],
+   "path_distance_to_spawns_cells": {
+    "centre": 59.0,
+    "north": 76.2,
+    "east": 62.5,
+    "south": 128.0,
+    "west": 127.2
+   },
+   "nearest_spawn": "centre",
+   "reachable": true,
+   "garrison": {
+    "Rocketeer": 2,
+    "Sniper": 2,
+    "Lt Barathrum": 1,
+    "Medic": 1
+   }
+  },
+  {
+   "name": "The Fort Harbor",
+   "rect_cells": 345,
+   "buildable_cells": 204,
+   "blocked_fraction": 0.35,
+   "water_cells": 16.1,
+   "tree_cells": 2.0,
+   "entrances": 3,
+   "entrance_widths_cells": [
+    15.0,
+    4.0,
+    2.0
+   ],
+   "total_entrance_width_cells": 21.0,
+   "entrance_details": [
+    {
+     "width_cells": 15.0,
+     "centre": [
+      7104,
+      -7728
+     ]
+    },
+    {
+     "width_cells": 4.0,
+     "centre": [
+      6720,
+      -6736
+     ]
+    },
+    {
+     "width_cells": 2.0,
+     "centre": [
+      6528,
+      -8368
+     ]
+    }
+   ],
+   "path_distance_to_spawns_cells": {
+    "centre": 94.2,
+    "north": 162.0,
+    "east": 54.5,
+    "south": 63.0,
+    "west": 162.5
+   },
+   "nearest_spawn": "east",
+   "reachable": true,
+   "garrison": {
+    "Little Pirate": 6,
+    "Mercenary Tavern": 1,
+    "Brute Pirate": 1,
+    "Rocketeer": 1,
+    "z001": 1,
+    "Scurvy Pirate": 1
+   }
+  },
+  {
+   "name": "The Hideout",
+   "rect_cells": 110,
+   "buildable_cells": 67,
+   "blocked_fraction": 0.4,
+   "water_cells": 0.0,
+   "tree_cells": 0.0,
+   "entrances": 1,
+   "entrance_widths_cells": [
+    2.0
+   ],
+   "total_entrance_width_cells": 2.0,
+   "entrance_details": [
+    {
+     "width_cells": 2.0,
+     "centre": [
+      2304,
+      7568
+     ]
+    }
+   ],
+   "path_distance_to_spawns_cells": {
+    "centre": 73.5,
+    "north": 16.8,
+    "east": 102.5,
+    "south": 142.2,
+    "west": 139.0
+   },
+   "nearest_spawn": "north",
+   "reachable": true,
+   "garrison": {
+    "Sniper": 2,
+    "Sgt Zim": 1
+   }
+  },
+  {
+   "name": "The Hold",
+   "rect_cells": 112,
+   "buildable_cells": 91,
+   "blocked_fraction": 0.16,
+   "water_cells": 0.0,
+   "tree_cells": 0.0,
+   "entrances": 1,
+   "entrance_widths_cells": [
+    3.0
+   ],
+   "total_entrance_width_cells": 3.0,
+   "entrance_details": [
+    {
+     "width_cells": 3.0,
+     "centre": [
+      -6080,
+      1328
+     ]
+    }
+   ],
+   "path_distance_to_spawns_cells": {
+    "centre": 61.0,
+    "north": 92.5,
+    "east": 128.8,
+    "south": 130.0,
+    "west": 53.5
+   },
+   "nearest_spawn": "west",
+   "reachable": true,
+   "garrison": {
+    "Sniper": 2,
+    "Flamer Fox": 1
+   }
+  },
+  {
+   "name": "The Loft",
+   "rect_cells": 70,
+   "buildable_cells": 52,
+   "blocked_fraction": 0.24,
+   "water_cells": 0.0,
+   "tree_cells": 0.0,
+   "entrances": 1,
+   "entrance_widths_cells": [
+    3.0
+   ],
+   "total_entrance_width_cells": 3.0,
+   "entrance_details": [
+    {
+     "width_cells": 3.0,
+     "centre": [
+      3536,
+      -6720
+     ]
+    }
+   ],
+   "path_distance_to_spawns_cells": {
+    "centre": 85.2,
+    "north": 153.0,
+    "east": 86.2,
+    "south": 87.0,
+    "west": 153.5
+   },
+   "nearest_spawn": "centre",
+   "reachable": true,
+   "garrison": {}
+  },
+  {
+   "name": "The Mail Room",
+   "rect_cells": 247,
+   "buildable_cells": 148,
+   "blocked_fraction": 0.36,
+   "water_cells": 0.0,
+   "tree_cells": 0.5,
+   "entrances": 1,
+   "entrance_widths_cells": [
+    4.0
+   ],
+   "total_entrance_width_cells": 4.0,
+   "entrance_details": [
+    {
+     "width_cells": 4.0,
+     "centre": [
+      -5296,
+      -2304
+     ]
+    }
+   ],
+   "path_distance_to_spawns_cells": {
+    "centre": 48.5,
+    "north": 114.2,
+    "east": 116.2,
+    "south": 87.5,
+    "west": 41.0
+   },
+   "nearest_spawn": "west",
+   "reachable": true,
+   "garrison": {
+    "z001": 3,
+    "Sniper": 2,
+    "Item Vendor": 1,
+    "Wizard": 1,
+    "Rocketeer": 1,
+    "Firebat": 1
+   }
+  },
+  {
+   "name": "The Nest",
+   "rect_cells": 120,
+   "buildable_cells": 88,
+   "blocked_fraction": 0.32,
+   "water_cells": 1.0,
+   "tree_cells": 0.0,
+   "entrances": 1,
+   "entrance_widths_cells": [
+    2.0
+   ],
+   "total_entrance_width_cells": 2.0,
+   "entrance_details": [
+    {
+     "width_cells": 2.0,
+     "centre": [
+      -2304,
+      7760
+     ]
+    }
+   ],
+   "path_distance_to_spawns_cells": {
+    "centre": 75.0,
+    "north": 21.2,
+    "east": 140.0,
+    "south": 143.8,
+    "west": 104.5
+   },
+   "nearest_spawn": "north",
+   "reachable": true,
+   "garrison": {}
+  },
+  {
+   "name": "The Retreat",
+   "rect_cells": 96,
+   "buildable_cells": 71,
+   "blocked_fraction": 0.26,
+   "water_cells": 0.0,
+   "tree_cells": 0.5,
+   "entrances": 1,
+   "entrance_widths_cells": [
+    3.0
+   ],
+   "total_entrance_width_cells": 3.0,
+   "entrance_details": [
+    {
+     "width_cells": 3.0,
+     "centre": [
+      3008,
+      -8496
+     ]
+    }
+   ],
+   "path_distance_to_spawns_cells": {
+    "centre": 80.0,
+    "north": 147.2,
+    "east": 97.8,
+    "south": 22.8,
+    "west": 145.5
+   },
+   "nearest_spawn": "south",
+   "reachable": true,
+   "garrison": {}
+  },
+  {
+   "name": "The Sanctum",
+   "rect_cells": 152,
+   "buildable_cells": 104,
+   "blocked_fraction": 0.36,
+   "water_cells": 0.0,
+   "tree_cells": 0.0,
+   "entrances": 1,
+   "entrance_widths_cells": [
+    3.0
+   ],
+   "total_entrance_width_cells": 3.0,
+   "entrance_details": [
+    {
+     "width_cells": 3.0,
+     "centre": [
+      8016,
+      -3584
+     ]
+    }
+   ],
+   "path_distance_to_spawns_cells": {
+    "centre": 80.2,
+    "north": 145.5,
+    "east": 22.8,
+    "south": 96.8,
+    "west": 148.5
+   },
+   "nearest_spawn": "east",
+   "reachable": true,
+   "garrison": {
+    "Firebat": 2,
+    "Cidiaus The Wizard": 1,
+    "Rocketeer": 1,
+    "Medic": 1
+   }
+  },
+  {
+   "name": "The Security Room",
+   "rect_cells": 448,
+   "buildable_cells": 301,
+   "blocked_fraction": 0.27,
+   "water_cells": 0.0,
+   "tree_cells": 0.0,
+   "entrances": 1,
+   "entrance_widths_cells": [
+    6.0
+   ],
+   "total_entrance_width_cells": 6.0,
+   "entrance_details": [
+    {
+     "width_cells": 6.0,
+     "centre": [
+      4944,
+      1920
+     ]
+    }
+   ],
+   "path_distance_to_spawns_cells": {
+    "centre": 47.8,
+    "north": 85.5,
+    "east": 45.8,
+    "south": 116.8,
+    "west": 116.0
+   },
+   "nearest_spawn": "east",
+   "reachable": true,
+   "garrison": {
+    "Civilan Recruit": 9,
+    "Weak Barricade": 6,
+    "z001": 2,
+    "Medic": 2,
+    "Rocketeer": 2,
+    "Command Center": 1,
+    "Lt Storm": 1,
+    "Firebat": 1,
+    "Mr. Saunders": 1,
+    "Secured Vault": 1
+   }
+  },
+  {
+   "name": "The Storage Room",
+   "rect_cells": 622,
+   "buildable_cells": 457,
+   "blocked_fraction": 0.23,
+   "water_cells": 0.0,
+   "tree_cells": 0.5,
+   "entrances": 2,
+   "entrance_widths_cells": [
+    4.0,
+    4.0
+   ],
+   "total_entrance_width_cells": 8.0,
+   "entrance_details": [
+    {
+     "width_cells": 4.0,
+     "centre": [
+      -720,
+      -5888
+     ]
+    },
+    {
+     "width_cells": 4.0,
+     "centre": [
+      -4016,
+      -5376
+     ]
+    }
+   ],
+   "path_distance_to_spawns_cells": {
+    "centre": 41.2,
+    "north": 108.5,
+    "east": 108.5,
+    "south": 23.8,
+    "west": 68.0
+   },
+   "nearest_spawn": "south",
+   "reachable": true,
+   "garrison": {
+    "Civilan Recruit": 4,
+    "Paratrooper": 2,
+    "Sniper": 2,
+    "Item Vendor": 1,
+    "Medic": 1,
+    "Wizard": 1
+   }
+  },
+  {
+   "name": "The Tavern",
+   "rect_cells": 77,
+   "buildable_cells": 56,
+   "blocked_fraction": 0.33,
+   "water_cells": 0.0,
+   "tree_cells": 0.0,
+   "entrances": 1,
+   "entrance_widths_cells": [
+    1.0
+   ],
+   "total_entrance_width_cells": 1.0,
+   "entrance_details": [
+    {
+     "width_cells": 1.0,
+     "centre": [
+      8048,
+      3072
+     ]
+    }
+   ],
+   "path_distance_to_spawns_cells": {
+    "centre": 83.5,
+    "north": 94.8,
+    "east": 26.0,
+    "south": 150.0,
+    "west": 151.8
+   },
+   "nearest_spawn": "east",
+   "reachable": true,
+   "garrison": {}
+  },
+  {
+   "name": "The Torture Chamber",
+   "rect_cells": 222,
+   "buildable_cells": 103,
+   "blocked_fraction": 0.53,
+   "water_cells": 0.0,
+   "tree_cells": 0.0,
+   "entrances": 1,
+   "entrance_widths_cells": [
+    3.0
+   ],
+   "total_entrance_width_cells": 3.0,
+   "entrance_details": [
+    {
+     "width_cells": 3.0,
+     "centre": [
+      2240,
+      304
+     ]
+    }
+   ],
+   "path_distance_to_spawns_cells": {
+    "centre": 15.5,
+    "north": 79.5,
+    "east": 48.2,
+    "south": 84.5,
+    "west": 83.8
+   },
+   "nearest_spawn": "centre",
+   "reachable": true,
+   "garrison": {
+    "Torturer Kael": 1,
+    "Rocketeer": 1,
+    "Medic": 1,
+    "z001": 1
+   }
+  },
+  {
+   "name": "The Waterfall",
+   "rect_cells": 165,
+   "buildable_cells": 72,
+   "blocked_fraction": 0.53,
+   "water_cells": 80.2,
+   "tree_cells": 0.0,
+   "entrances": 1,
+   "entrance_widths_cells": [
+    3.0
+   ],
+   "total_entrance_width_cells": 3.0,
+   "entrance_details": [
+    {
+     "width_cells": 3.0,
+     "centre": [
+      -5888,
+      2640
+     ]
+    }
+   ],
+   "path_distance_to_spawns_cells": {
+    "centre": 62.2,
+    "north": 88.2,
+    "east": 130.0,
+    "south": 131.2,
+    "west": 54.8
+   },
+   "nearest_spawn": "west",
+   "reachable": true,
+   "garrison": {
+    "Alchemist": 1
+   }
+  },
+  {
+   "name": "Woodlands",
+   "rect_cells": 152,
+   "buildable_cells": 112,
+   "blocked_fraction": 0.24,
+   "water_cells": 12.8,
+   "tree_cells": 0.0,
+   "entrances": 2,
+   "entrance_widths_cells": [
+    9.5,
+    5.25
+   ],
+   "total_entrance_width_cells": 14.75,
+   "entrance_details": [
+    {
+     "width_cells": 9.5,
+     "centre": [
+      -4704,
+      -8432
+     ]
+    },
+    {
+     "width_cells": 5.25,
+     "centre": [
+      -5850,
+      -8614
+     ]
+    }
+   ],
+   "path_distance_to_spawns_cells": {
+    "centre": 89.5,
+    "north": 156.8,
+    "east": 154.2,
+    "south": 32.8,
+    "west": 76.2
+   },
+   "nearest_spawn": "south",
+   "reachable": true,
+   "garrison": {
+    "Sniper": 2
+   }
+  }
+ ]
+}

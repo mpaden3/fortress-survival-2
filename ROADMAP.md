@@ -85,8 +85,22 @@ What we know about the original (sources at the bottom; much of it is old/unveri
   - **Test map:** small, about 64×64 cells, with 4–6 plots and centre + 4 edge spawns. It's for
     development and headless tests.
   - **MVP map:** full size, comparable to the original's 160×160 cells.
-- Players fortify **distinct plots** (districts) that differ in size, number of entrances and
-  terrain. Walls close off the entrances.
+- **Fixed plots, replicating the original's plot design.** Players fortify hand-placed plots
+  (districts) that differ in:
+  - size
+  - entrances: count and width
+  - walking distance from the spawns
+  - terrain inside: water, trees, obstacles
+  - trade-offs, such as big with several doors vs small with one door
+
+  Walls close off the entrances. The original's numbers, from
+  [plots.md](reference/fortress-survival-6.76/map/plots.md):
+  - 39 plots of 51–457 buildable cells
+  - mostly 1 entrance, 2–4 cells wide
+  - nearest spawn 15–85 cells away
+
+  Our full-size map follows the same profile. The test map uses a few plots with contrasting
+  profiles.
 - **Spawns follow the original:** one in the **centre**, which is also where players start,
   plus four at the **edges** (N/E/S/W) at the ends of the main routes. The opening is a scramble
   out of the middle to claim a plot.
@@ -238,7 +252,7 @@ What we know about the original (sources at the bottom; much of it is old/unveri
 - Art style direction (stylized low-poly? painterly? realistic?)
 - Final match length (MVP ~20 min; original was 45)
 - Primary resource name & lore (placeholder "wood")
-- Exact MVP map size and plot design
+- Exact MVP map layout (plot profile follows the original)
 
 ## Sources
 - [Fortress Survival — Hive Workshop thread](https://www.hiveworkshop.com/threads/fortress-survival.50919/)

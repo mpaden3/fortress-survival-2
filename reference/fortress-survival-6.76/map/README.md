@@ -9,6 +9,7 @@ blueprint.** Coordinates are in WC3 world units: 1 build cell = 128 units, 1 pat
 | `layout.png` | Top-down render with pathing, trees/doodads, districts, spawns, script regions and pre-placed allies (legend included) |
 | `layout.json` | Map bounds, start location, 19 spawn locations with unit types, 39 claimable districts with their garrisons, all 151 script regions with role guesses, all pre-placed units |
 | `minimap.png` | The map's own minimap (`war3mapMap.blp`), upscaled to 512 px |
+| `plots.md` / `plots.json` | Plot analysis per district: buildable cells, entrances (count, widths, coordinates), walking distance to each main spawn, water and trees inside, starting garrison |
 | `preview.png` | The map's loading-screen preview (`war3mapPreview.tga`) |
 
 ## The layout

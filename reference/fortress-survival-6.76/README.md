@@ -87,6 +87,21 @@ in [/ROADMAP.md](../../ROADMAP.md).
   spreads pressure across everyone's bases, and it's also why units got stuck.
 - Quest NPC zones (Brewery, Pirates, Garrison and others) trigger the "protect X for N minutes"
   side events.
+- **The plots are fixed**: hand-placed, with set sizes, entrances and garrisons. From
+  `map/plots.md`:
+  - **39 plots.**
+  - **Buildable area:** 51–457 cells, median 90. Most are small; a few big ones (Storage Room,
+    Summer Cottage Garden, Courtyard, Main Library) are the prizes.
+  - **Entrances:** most plots (30) have **1 entrance**, 7 have 2 and 2 have 3. Entrances are
+    usually **2–4 cells wide**; a few are wide, open edges (Fort Harbor 15, Bear Cave 9,
+    Woodlands 9.5).
+  - **Walking distance to the nearest spawn:** 15–85 cells, median about 40. Nearest spawns are
+    spread out: centre 10 plots, N 9, S 7, W 7, E 6.
+  - **Garrisons:** 26 plots come with a pre-placed garrison (defenders, a Command Center,
+    vendors, repair mechanics). Bigger and richer plots tend to have more entrances, more
+    water, or sit closer to a spawn.
+  - So the typical plot is "small room, one door". The real trade-offs are which door (how wide,
+    how close to a spawn) and whether to take a big plot with more openings.
 
 ### Economy
 - **Lumber is the main currency** and comes almost entirely from **Lumber Mills**:
@@ -158,8 +173,9 @@ What to **keep in spirit**:
    These are cheap replayability.
 7. **Named enemy families with tiers** (base → alpha → greater) and scheduled bosses with
    personality.
-8. **Pick-your-base maps.** A handcrafted map of distinct plots (size, entrances, terrain,
-   starting garrison) makes base choice a real decision and supports our "build anywhere" rule.
+8. **Pick-your-base maps.** A handcrafted map of distinct, **fixed** plots (size, entrances,
+   terrain, starting garrison) makes base choice a real decision. **We replicate this plot
+   design** (see `map/plots.md`).
    Fortifying chokepoints, like the original's street entrances, is the core spatial skill.
 9. **Spawns from several directions, including the middle**, so no base is fully safe.
 
