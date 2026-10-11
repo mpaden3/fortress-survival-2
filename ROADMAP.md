@@ -225,7 +225,7 @@ What we know about the original (sources at the bottom; much of it is old/unveri
 - [x] Minimal HUD (text): wood + income, timer, selection info, build/upgrade/sell keys, ability cooldowns, announcements
 - [x] Placeholder art (primitives)
 - [x] Sim events for presentation (shots, impacts, kills, destroyed buildings) + placeholder VFX: muzzle flash, hit spark, explosion, frost burst, enemy death, building fire; glow
-- [ ] Basic SFX on the same events
+- [x] Basic SFX on the same events (synthesized placeholders, capped per tick; M mutes)
 
 ### M2 — Depth
 - [ ] Research building + research tree; more tower branches (crit/anti-boss, long-range, bash, anti-air)

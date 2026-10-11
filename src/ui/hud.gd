@@ -76,7 +76,7 @@ func _process(_delta: float) -> void:
 		keys.append("%s[%s] %s (%d)" % [mark, OS.get_keycode_string(key), def.display_name, def.cost])
 	lines.append("  ".join(keys))
 	lines.append("LMB place/select   drag: walls / select units   Esc cancel   X sell   RMB move/repair   F blink   H haste   Shift queue")
-	lines.append("WASD/edge pan   wheel zoom   Q/E rotate   Space centre   L follow   P plots")
+	lines.append("WASD/edge pan   wheel zoom   Q/E rotate   Space centre   L follow   P plots   M mute")
 	var survivor := world.survivors.survivor_of(player_id)
 	if survivor:
 		var blink := maxi(0, survivor.blink_ready_tick - world.tick) / SimConstants.TICK_RATE

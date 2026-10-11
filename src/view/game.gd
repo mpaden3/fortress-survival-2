@@ -22,6 +22,7 @@ var building_views: BuildingViews
 var enemy_views: EnemyViews
 var projectile_views: ProjectileViews
 var fx_views: FxViews
+var sfx_views: SfxViews
 var camera: RtsCamera
 var builder: BuildController
 var hud: Hud
@@ -67,6 +68,11 @@ func _ready() -> void:
 	fx_views.name = "Fx"
 	add_child(fx_views)
 	fx_views.attach(world)
+
+	sfx_views = SfxViews.new()
+	sfx_views.name = "Sfx"
+	add_child(sfx_views)
+	sfx_views.attach(world)
 
 	unit_views = UnitViews.new()
 	unit_views.name = "Units"
@@ -142,6 +148,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		camera.focus(_survivor_point())
 	elif key.physical_keycode == KEY_L:
 		follow_survivor = not follow_survivor
+	elif key.physical_keycode == KEY_M:
+		AudioServer.set_bus_mute(0, not AudioServer.is_bus_mute(0))
 	elif OS.is_debug_build() and key.physical_keycode == KEY_BRACKETRIGHT:
 		speed = minf(speed * 2.0, 16.0)
 	elif OS.is_debug_build() and key.physical_keycode == KEY_BRACKETLEFT:

@@ -190,6 +190,9 @@ tools/           dev scripts: run_tests.sh, maps/ (map builders, Python 3, stdli
   buildings below 60% HP. Effects are `@tool`, so they loop in the editor while you tune them.
   `scenes/vfx/vfx_gallery.tscn` shows them all; run it with `-- --screenshot=/tmp/v.png
   --at=0.1,0.5` to capture frames at those seconds after a replay.
+- **SFX** (`src/view/sfx_views.gd`): plays a sound per event from a pool of positional
+  players, at most `PER_TICK` per sound per tick. Sounds are synthesized placeholders
+  (`src/view/sfx/sfx_synth.gd`) until real audio exists.
 - **Economy** (`src/sim/systems/economy_system.gd`): passive income per living player plus
   `BuildingDef.income_per_minute`, accumulated exactly per tick.
 - **Definitions** (`src/sim/defs/`, data in `data/defs/`) are `Resource` classes loaded by
