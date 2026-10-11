@@ -263,3 +263,32 @@ func test_build_order_uses_a_reachable_side_of_the_site() -> void:
 	_submit(Commands.place_building(0, &"wall", Vector2i(6, 0)))
 	assert_true(_run_until(func() -> bool: return survivor.orders.is_empty(), 15.0), "order done")
 	assert_ne(world.grid.occupant(Vector2i(6, 0)), BuildGrid.NONE, "built from the reachable side")
+
+
+func test_walks_a_straight_line_to_the_exact_point() -> void:
+	var start := survivor.position
+	var point := Vector2(17.3, 11.8)
+	_submit(Commands.move_survivor(0, Vector2i(17, 11), false, point))
+	var max_off_line := 0.0
+	assert_true(_run_until(func() -> bool:
+		var to_point := point - start
+		var off := absf(to_point.normalized().cross(survivor.position - start))
+		max_off_line = maxf(max_off_line, off)
+		return survivor.orders.is_empty(), 10.0))
+	assert_almost_eq(survivor.position, point, Vector2(0.001, 0.001), "stops on the clicked point")
+	assert_lt(max_off_line, 0.001, "no zig-zag: straight from start to point")
+
+
+func test_route_round_walls_never_overlaps_them() -> void:
+	for z in range(2, 12):
+		SimFixtures.build_now(world, &"wall", Vector2i(10, z))
+	var radius := survivor.def.radius / SimConstants.CELL_SIZE
+	var closest := INF
+	_submit(Commands.move_survivor(0, Vector2i(15, 6), false, Vector2(15.5, 6.5)))
+	assert_true(_run_until(func() -> bool:
+		var p := survivor.position
+		for z in range(2, 12):
+			var nearest := Vector2(clampf(p.x, 10.0, 11.0), clampf(p.y, z, z + 1))
+			closest = minf(closest, p.distance_to(nearest))
+		return survivor.orders.is_empty(), 15.0))
+	assert_gte(closest, radius - 0.001, "body stays clear of the wall")

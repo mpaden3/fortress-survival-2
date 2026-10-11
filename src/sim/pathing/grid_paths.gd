@@ -30,6 +30,130 @@ func find_path(world: World, from: Vector2i, to: Vector2i) -> PackedVector2Array
 	return out
 
 
+## A natural walking route (cell units) from the exact position `from` to the exact point `to`
+## for a body of `radius` cells: A* over the grid, then straightened. Waypoints remain only
+## where the body must turn around something; every leg is either checked to keep `radius`
+## clear of blocked cells or a single A* step. Ends at `to` (nudged off any wall it would
+## overlap); if `to` can't be reached, at the closest reachable cell.
+func find_route(world: World, from: Vector2, to: Vector2, radius: float) -> PackedVector2Array:
+	var start := Vector2i(floori(from.x), floori(from.y))
+	var goal := Vector2i(floori(to.x), floori(to.y)).clamp(Vector2i.ZERO, world.map.size - Vector2i.ONE)
+	var cells := find_path(world, start, goal)
+	# Candidate waypoints, each a safe step from the one before: into the own cell's centre,
+	# the A* cell centres, then within the goal cell to the exact point.
+	var points := PackedVector2Array()
+	var start_centre := Vector2(start) + Vector2(0.5, 0.5)
+	if not from.is_equal_approx(start_centre):
+		points.append(start_centre)
+	points.append_array(cells)
+	var reached := start if cells.is_empty() else Vector2i(floori(cells[cells.size() - 1].x), floori(cells[cells.size() - 1].y))
+	if reached == goal:
+		points.append(_clear_point(world, goal, to, radius))
+	# String pulling: from each anchor, head straight for the farthest waypoint in clear view
+	# (found by doubling, then bisecting). Falling back to the next waypoint is always safe.
+	var route := PackedVector2Array()
+	var anchor := from
+	var n := points.size()
+	var i := 0
+	while i < n:
+		var best := i
+		var span := 1
+		while i + span < n and segment_clear(world, anchor, points[i + span], radius):
+			best = i + span
+			span *= 2
+		var bad := mini(i + span, n)
+		while bad - best > 1:
+			var mid := (best + bad) / 2
+			if segment_clear(world, anchor, points[mid], radius):
+				best = mid
+			else:
+				bad = mid
+		route.append(points[best])
+		anchor = points[best]
+		i = best + 1
+	return route
+
+
+## True if a body of `radius` cells can move straight from `a` to `b` without overlapping a
+## blocked cell: the centre line and both side lines `radius` away must cross only open cells.
+func segment_clear(world: World, a: Vector2, b: Vector2, radius: float) -> bool:
+	var along := b - a
+	if along.length_squared() < 0.000001:
+		return true
+	var side := along.normalized().orthogonal() * radius
+	return _line_clear(world, a, b) and _line_clear(world, a + side, b + side) and _line_clear(world, a - side, b - side)
+
+
+## Walks every cell the line from `a` to `b` passes through (Amanatides-Woo traversal).
+func _line_clear(world: World, a: Vector2, b: Vector2) -> bool:
+	var width := world.map.size.x
+	var height := world.map.size.y
+	var blocked := world.grid.blocked
+	var x := floori(a.x)
+	var z := floori(a.y)
+	var end_x := floori(b.x)
+	var end_z := floori(b.y)
+	var d := b - a
+	var step_x := 1 if d.x > 0.0 else -1
+	var step_z := 1 if d.y > 0.0 else -1
+	var t_delta_x := absf(1.0 / d.x) if d.x != 0.0 else INF
+	var t_delta_z := absf(1.0 / d.y) if d.y != 0.0 else INF
+	var t_max_x := ((x + 1 - a.x) if d.x > 0.0 else (a.x - x)) * t_delta_x if d.x != 0.0 else INF
+	var t_max_z := ((z + 1 - a.y) if d.y > 0.0 else (a.y - z)) * t_delta_z if d.y != 0.0 else INF
+	for guard in width + height + 4:
+		if x < 0 or z < 0 or x >= width or z >= height or blocked[z * width + x] != 0:
+			return false
+		if x == end_x and z == end_z:
+			return true
+		# Through a corner exactly: both neighbours are touched, so check both.
+		if absf(t_max_x - t_max_z) < 0.000001:
+			if not _open(world, x + step_x, z) or not _open(world, x, z + step_z):
+				return false
+			x += step_x
+			z += step_z
+			t_max_x += t_delta_x
+			t_max_z += t_delta_z
+		elif t_max_x < t_max_z:
+			x += step_x
+			t_max_x += t_delta_x
+		else:
+			z += step_z
+			t_max_z += t_delta_z
+	return true
+
+
+func _open(world: World, x: int, z: int) -> bool:
+	return x >= 0 and z >= 0 and x < world.map.size.x and z < world.map.size.y \
+		and world.grid.blocked[z * world.map.size.x + x] == 0
+
+
+## `point` kept inside `cell`, at least `radius` away from each blocked neighbour side.
+func _clear_point(world: World, cell: Vector2i, point: Vector2, radius: float) -> Vector2:
+	var lo := Vector2(cell)
+	var hi := Vector2(cell) + Vector2.ONE
+	var x := clampf(point.x, lo.x, hi.x)
+	var z := clampf(point.y, lo.y, hi.y)
+	if not _open(world, cell.x - 1, cell.y):
+		x = maxf(x, lo.x + radius)
+	if not _open(world, cell.x + 1, cell.y):
+		x = minf(x, hi.x - radius)
+	if not _open(world, cell.x, cell.y - 1):
+		z = maxf(z, lo.y + radius)
+	if not _open(world, cell.x, cell.y + 1):
+		z = minf(z, hi.y - radius)
+	# A blocked diagonal neighbour only reaches into the cell's corner.
+	for corner: Vector2i in [Vector2i(-1, -1), Vector2i(1, -1), Vector2i(-1, 1), Vector2i(1, 1)]:
+		if _open(world, cell.x + corner.x, cell.y + corner.y):
+			continue
+		var tip := Vector2(lo.x if corner.x < 0 else hi.x, lo.y if corner.y < 0 else hi.y)
+		var away := Vector2(x, z) - tip
+		if away.length() < radius:
+			var pushed := tip + (away.normalized() if away.length() > 0.0001 else -Vector2(corner).normalized()) * radius
+			x = pushed.x
+			z = pushed.y
+	return Vector2(x, z)
+
+
 func sync(world: World) -> void:
 	if not _ready:
 		_astar.region = Rect2i(Vector2i.ZERO, world.map.size)
@@ -93,6 +217,11 @@ func reachable_cell_around(world: World, rect: Rect2i, from: Vector2) -> Vector2
 		if not path.is_empty() and path[path.size() - 1] == Vector2(cell) + Vector2(0.5, 0.5):
 			return cell
 	return Vector2i(-1, -1)
+
+
+## `point` if it lies in `cell`, else the cell's centre (commands may omit the exact point).
+static func point_in(cell: Vector2i, point: Vector2) -> Vector2:
+	return point if Rect2(Vector2(cell), Vector2.ONE).has_point(point) else Vector2(cell) + Vector2(0.5, 0.5)
 
 
 ## Distance (cells) from a point to the nearest point of a rect.

@@ -35,8 +35,9 @@ static func debug_spawn(player: int, def_id: StringName, spawn_id: String, amoun
 	return {"type": DEBUG_SPAWN, "player": player, "def": def_id, "spawn": spawn_id, "amount": amount, "target": target}
 
 
-static func move_survivor(player: int, cell: Vector2i, queue := false) -> Dictionary:
-	return {"type": MOVE_SURVIVOR, "player": player, "cell": cell, "queue": queue}
+## Walk to `cell`; `point` (cell units, inside that cell) is the exact spot, default its centre.
+static func move_survivor(player: int, cell: Vector2i, queue := false, point := Vector2(-1, -1)) -> Dictionary:
+	return {"type": MOVE_SURVIVOR, "player": player, "cell": cell, "queue": queue, "point": point}
 
 
 static func repair(player: int, building_id: int, queue := false) -> Dictionary:
@@ -54,10 +55,12 @@ static func train_unit(player: int, building_id: int, unit_def: StringName) -> D
 
 
 ## Order units: "move" (ignore enemies), "attack_move" (fight on the way), "stop" (stand and
-## guard here) or "hold" (never move, attack only in range). `cell` is used by moves.
+## guard here) or "hold" (never move, attack only in range). `cell` is used by moves, with
+## `point` (cell units) as the exact spot (default: the cell's centre).
 static func order_units(player: int, unit_ids: Array[int], order: String, cell := Vector2i.ZERO,
-		queue := false) -> Dictionary:
-	return {"type": ORDER_UNITS, "player": player, "units": unit_ids, "order": order, "cell": cell, "queue": queue}
+		queue := false, point := Vector2(-1, -1)) -> Dictionary:
+	return {"type": ORDER_UNITS, "player": player, "units": unit_ids, "order": order, "cell": cell,
+		"queue": queue, "point": point}
 
 
 static func haste(player: int) -> Dictionary:

@@ -95,7 +95,7 @@ func request_smart_order(cell: Vector2i, queue := false) -> void:
 	if building and building.owner == player_id and building.hp < building.def.max_hp and not building.constructing:
 		world.submit(Commands.repair(player_id, building.id, queue))
 	else:
-		world.submit(Commands.move_survivor(player_id, cell, queue))
+		world.submit(Commands.move_survivor(player_id, cell, queue, hover_point))
 
 
 ## Actions of a building, in key order: its upgrades (building ids), then the units it
@@ -122,10 +122,10 @@ func request_action_selected(option: int) -> void:
 
 
 ## Orders the selected units (`order`: move, attack_move, stop, hold).
-func request_unit_order(order: String, cell := Vector2i.ZERO, queue := false) -> void:
+func request_unit_order(order: String, cell := Vector2i.ZERO, queue := false, point := Vector2(-1, -1)) -> void:
 	_prune_selection()
 	if not selected_units.is_empty():
-		world.submit(Commands.order_units(player_id, selected_units.duplicate(), order, cell, queue))
+		world.submit(Commands.order_units(player_id, selected_units.duplicate(), order, cell, queue, point))
 
 
 func select_units(unit_ids: Array[int]) -> void:
@@ -200,7 +200,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			select_def(&"")
 			attack_move_armed = false
 		elif not selected_units.is_empty():
-			request_unit_order("move", hover_cell, button.shift_pressed)
+			request_unit_order("move", hover_cell, button.shift_pressed, hover_point)
 		else:
 			request_smart_order(hover_cell, button.shift_pressed)
 	elif button.button_index == MOUSE_BUTTON_LEFT:
@@ -211,7 +211,7 @@ func _unhandled_input(event: InputEvent) -> void:
 				request_place(hover_cell, button.shift_pressed or selected_def == &"wall")
 				_last_painted = hover_cell
 			elif attack_move_armed:
-				request_unit_order("attack_move", hover_cell, button.shift_pressed)
+				request_unit_order("attack_move", hover_cell, button.shift_pressed, hover_point)
 				attack_move_armed = false
 			else:
 				_box_selecting = true

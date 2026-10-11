@@ -143,8 +143,11 @@ tools/           dev scripts: run_tests.sh, maps/ (map builders, Python 3, stdli
   `data/defs/units/`) are plain entities. `train_unit` queues one at a building whose
   `BuildingDef.trains` lists it; `order_units` gives move / attack_move / stop / hold.
   Idle fighters guard their spot (chase within `leash_range`, then walk back); idle repairmen
-  repair damaged own buildings they see. Survivors and units path with A* through
-  `world.pathing.paths` (`GridPaths`). Unit attacks run inside the enemy batch, like combat.
+  repair damaged own buildings they see. Survivors and units walk `GridPaths.find_route()`:
+  A* over the grid, straightened by string pulling with the body's radius, ending at the
+  exact ordered point. No cell-centre hopping; legs never clip blocked cells (tested on random
+  maps). We use this rather than Godot's NavigationServer: walls change the map constantly
+  and the simulation must stay deterministic. Unit attacks run inside the enemy batch, like combat.
   Enemies whose Survivor is out of sight attack the nearest unit they see (a coarse enemy grid
   finds them), before buildings.
 - **Pathing** (`src/sim/pathing/`): `PathingSystem` keeps one `FlowField` per hunt target

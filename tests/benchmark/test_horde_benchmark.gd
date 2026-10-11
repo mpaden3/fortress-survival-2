@@ -142,3 +142,20 @@ func test_2000_enemies_with_60_fighters() -> void:
 	assert_eq(fighters, 60)
 	assert_gt(contact_tick, 0, "the horde reached the garrison")
 	assert_lt(avg_ms, TICK_BUDGET_MS, "enemies + units within budget")
+
+
+## Straightened A* routes across the full map must stay cheap (units re-route while chasing).
+func test_long_route_on_mvp_map() -> void:
+	var layout := MapLayout.load_file("res://data/maps/mvp_map.json")
+	var world := World.new(layout, DefRegistry.load_default(), 7)
+	var from := Vector2(layout.start) + Vector2(0.5, 0.5)
+	var worst_usec := 0
+	var longest := 0
+	for spawn in layout.spawns:
+		var to := Vector2(spawn.rect.get_center())
+		var started := Time.get_ticks_usec()
+		var route := world.pathing.paths.find_route(world, from, to, 0.2)
+		worst_usec = maxi(worst_usec, Time.get_ticks_usec() - started)
+		longest = maxi(longest, route.size())
+	gut.p("long routes: worst %.2f ms, at most %d waypoints" % [worst_usec / 1000.0, longest])
+	assert_lt(worst_usec / 1000.0, 5.0, "route within budget")

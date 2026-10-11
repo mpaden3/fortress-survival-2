@@ -167,11 +167,14 @@ func _approach(world: World, survivor: SurvivorState, order: Dictionary, rect: R
 	return true
 
 
-## Follows a path to `goal`, computing it on demand. Returns true once there (or stuck).
+## Follows a route to `goal` (the order's exact "point" there, else the cell's centre),
+## computing it on demand. Returns true once there (or as close as it gets).
 func _walk(world: World, survivor: SurvivorState, order: Dictionary, goal: Vector2i) -> bool:
 	if not order.get("pathed", false):
 		order["pathed"] = true
-		survivor.path = world.pathing.paths.find_path(world, survivor.cell(), goal)
+		var point := GridPaths.point_in(goal, order.get("point", Vector2(-1, -1)))
+		survivor.path = world.pathing.paths.find_route(world, survivor.position, point,
+			survivor.def.radius / SimConstants.CELL_SIZE)
 	var speed := survivor.def.speed
 	if world.tick < survivor.haste_until_tick:
 		speed *= survivor.def.haste_multiplier
@@ -192,7 +195,8 @@ func _move(world: World, command: Dictionary) -> String:
 	var survivor := _commandable(world, command)
 	if survivor == null:
 		return "no_survivor"
-	_order(survivor, {"kind": "move", "cell": command["cell"]}, command.get("queue", false))
+	_order(survivor, {"kind": "move", "cell": command["cell"], "point": command.get("point", Vector2(-1, -1))},
+		command.get("queue", false))
 	return ""
 
 

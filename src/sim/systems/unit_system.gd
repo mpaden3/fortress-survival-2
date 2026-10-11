@@ -161,7 +161,8 @@ func _order_command(world: World, command: Dictionary) -> String:
 					unit.target_enemy = 0
 					unit.target_building = 0
 				unit.holding = false
-				unit.orders.append({"kind": kind, "cell": command["cell"]})
+				unit.orders.append({"kind": kind, "cell": command["cell"],
+					"point": GridPaths.point_in(command["cell"], command.get("point", Vector2(-1, -1)))})
 	return "" if ordered > 0 else "no_units"
 
 
@@ -171,13 +172,13 @@ func _act(world: World, unit: UnitState) -> void:
 	var order: Dictionary = unit.orders[0] if not unit.orders.is_empty() else {}
 	var kind: String = order.get("kind", "")
 	if kind == "move":
-		if _walk_to(world, unit, order["cell"]):
+		if _walk_to(world, unit, order["cell"], order["point"]):
 			_finish(unit)
 		return
 	if unit.def.is_fighter() and _fight(world, unit, kind == ""):
 		return
 	if kind == "attack_move":
-		if _walk_to(world, unit, order["cell"]):
+		if _walk_to(world, unit, order["cell"], order["point"]):
 			_finish(unit)
 		return
 	if unit.holding:
@@ -185,7 +186,7 @@ func _act(world: World, unit: UnitState) -> void:
 	if unit.def.is_repairer() and _repair(world, unit):
 		return
 	if unit.position.distance_to(unit.home) > HOME_SLACK:
-		_walk_to(world, unit, Vector2i(floori(unit.home.x), floori(unit.home.y)))
+		_walk_to(world, unit, Vector2i(floori(unit.home.x), floori(unit.home.y)), unit.home)
 
 
 ## Engages an enemy: attacks it in range, otherwise chases it (unless holding). Returns false
@@ -222,7 +223,7 @@ func _fight(world: World, unit: UnitState, guarding: bool) -> bool:
 		return true
 	if unit.holding:
 		return true
-	_chase(world, unit, Vector2i(floori(target_pos.x), floori(target_pos.y)))
+	_chase(world, unit, target_pos)
 	return true
 
 
@@ -276,26 +277,30 @@ func _damaged_building_near(world: World, unit: UnitState) -> BuildingState:
 
 ## Walks toward `cell`, re-pathing when the goal or the walkable grid changed. Returns true
 ## once the path is used up (there, or as close as it gets).
-func _walk_to(world: World, unit: UnitState, cell: Vector2i) -> bool:
+func _walk_to(world: World, unit: UnitState, cell: Vector2i, point := Vector2(-1, -1)) -> bool:
 	var paths := world.pathing.paths
-	# Also re-path if the path was used up or cleared short of the goal (throttled, in case
-	# the goal can't be reached and the path keeps ending early).
+	# Also re-path if the route was used up or cleared short of the goal (throttled, in case
+	# the goal can't be reached and the route keeps ending early).
 	var short := unit.path.is_empty() and unit.cell() != cell and world.tick >= unit.repath_tick
 	if unit.walk_goal != cell or unit.walk_version != paths.version or short:
 		unit.walk_goal = cell
 		unit.walk_version = paths.version
-		unit.path = paths.find_path(world, unit.cell(), cell)
+		unit.path = paths.find_route(world, unit.position, GridPaths.point_in(cell, point), _radius(unit))
 		unit.repath_tick = world.tick + REPATH_TICKS
 	return GridPaths.walk(unit, _step(unit))
 
 
-## Follows something that moves or was just picked: a fresh path every REPATH_TICKS.
-func _chase(world: World, unit: UnitState, cell: Vector2i) -> void:
+## Follows something that moves or was just picked: a fresh route every REPATH_TICKS.
+func _chase(world: World, unit: UnitState, target: Vector2) -> void:
 	if unit.walk_goal != Vector2i(-1, -1) or unit.path.is_empty() or world.tick >= unit.repath_tick:
 		unit.walk_goal = Vector2i(-1, -1)
-		unit.path = world.pathing.paths.find_path(world, unit.cell(), cell)
+		unit.path = world.pathing.paths.find_route(world, unit.position, target, _radius(unit))
 		unit.repath_tick = world.tick + REPATH_TICKS
 	GridPaths.walk(unit, _step(unit))
+
+
+func _radius(unit: UnitState) -> float:
+	return unit.def.radius / SimConstants.CELL_SIZE
 
 
 ## Stops walking; the next walk computes a fresh path.
