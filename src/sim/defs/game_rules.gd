@@ -14,6 +14,12 @@ extends Resource
 ## Path cost of breaking through a building, per HP, in "cells walked" (10 = one cell).
 ## Higher = enemies prefer longer detours over smashing walls.
 @export var path_cost_per_building_hp := 0.5
+## Fog of war: players only see around their own (and allies') Survivors, units and
+## buildings. Off for now; the visibility query exists so views already respect it.
+@export var fog_of_war := false
+## How far (cells) Survivors and buildings see when fog is on; units use their sight_range.
+@export var survivor_vision := 8.0
+@export var building_vision := 6.0
 ## Most units a building can have queued for training.
 @export var max_train_queue := 5
 ## Damage type -> {armor type -> multiplier}. Missing entries count as 1.

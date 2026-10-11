@@ -6,6 +6,8 @@ extends Node3D
 const HEIGHT := 2.5
 
 var alpha := 1.0
+## Whose fog of war applies (set by Game).
+var player_id := 0
 var _world: World
 var _instance: MultiMeshInstance3D
 var _buffer := PackedFloat32Array()
@@ -40,9 +42,13 @@ func _process(_delta: float) -> void:
 	if n == 0:
 		return
 	var cell := SimConstants.CELL_SIZE
+	var fog := _world.visibility.mask(player_id)
+	var width := _world.map.size.x
+	var o := 0
 	for i in n:
-		var o := i * 12
 		var p := previous[i] + (positions[i] - previous[i]) * alpha
+		if not VisibilitySystem.shown(fog, width, p):
+			continue
 		_buffer[o] = 1.0
 		_buffer[o + 1] = 0.0
 		_buffer[o + 2] = 0.0
@@ -55,4 +61,6 @@ func _process(_delta: float) -> void:
 		_buffer[o + 9] = 0.0
 		_buffer[o + 10] = 1.0
 		_buffer[o + 11] = p.y * cell
+		o += 12
+	multimesh.visible_instance_count = o / 12
 	multimesh.buffer = _buffer

@@ -32,6 +32,8 @@ class Pool:
 
 
 var _world: World
+## Whose fog of war applies (set by Game): events in hidden cells make no effect or sound.
+var player_id := 0
 var _pools: Dictionary[PackedScene, Pool] = {}
 var _fires: Dictionary[int, VfxLoop] = {}
 
@@ -79,7 +81,10 @@ func fire_of(building_id: int) -> VfxLoop:
 func _on_stepped() -> void:
 	var events := _world.events
 	var cell := SimConstants.CELL_SIZE
+	var fog := _world.visibility.mask(player_id)
 	for i in events.count():
+		if not VisibilitySystem.shown(fog, _world.map.size.x, events.positions[i]):
+			continue
 		var at := Vector3(events.positions[i].x * cell, 0.0, events.positions[i].y * cell)
 		match events.kinds[i]:
 			SimEvents.Kind.FIRED:

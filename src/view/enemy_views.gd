@@ -14,6 +14,8 @@ const COLOURS := {
 
 ## Fraction of a tick since the last one: 0 draws the previous tick, 1 the latest.
 var alpha := 1.0
+## Whose fog of war applies (set by Game).
+var player_id := 0
 var _world: World
 var _instances: Array[MultiMeshInstance3D] = []
 var _buffers: Array[PackedFloat32Array] = []
@@ -48,9 +50,17 @@ func _process(_delta: float) -> void:
 	var previous := enemies.previous_positions if enemies.previous_positions.size() == positions.size() else positions
 	var t_alpha := alpha
 	var n := enemies.count()
+	# Fog of war: hidden enemies aren't drawn (the mask is empty while everything is visible).
+	var fog := _world.visibility.mask(player_id)
+	var hidden := PackedByteArray()
+	if not fog.is_empty():
+		hidden.resize(n)
+		for i in n:
+			hidden[i] = 0 if VisibilitySystem.shown(fog, _world.map.size.x, positions[i]) else 1
 	_counts.fill(0)
 	for i in n:
-		_counts[types[i]] += 1
+		if hidden.is_empty() or hidden[i] == 0:
+			_counts[types[i]] += 1
 	for t in _instances.size():
 		var multimesh := _instances[t].multimesh
 		if multimesh.instance_count < _counts[t]:
@@ -66,7 +76,7 @@ func _process(_delta: float) -> void:
 		var buffer := _buffers[t]
 		var o := 0
 		for i in n:
-			if types[i] != t:
+			if types[i] != t or (not hidden.is_empty() and hidden[i] == 1):
 				continue
 			var q := previous[i]
 			var p := q + (positions[i] - q) * t_alpha

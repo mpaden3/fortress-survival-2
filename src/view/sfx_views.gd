@@ -10,6 +10,8 @@ const POOL_SIZE := 24
 const PER_TICK := 2
 
 var _world: World
+## Whose fog of war applies (set by Game): events in hidden cells make no effect or sound.
+var player_id := 0
 var _streams: Array[AudioStreamWAV] = []
 var _pool: Array[AudioStreamPlayer3D] = []
 var _next := 0
@@ -70,7 +72,10 @@ func _on_stepped() -> void:
 	_this_tick.fill(0)
 	var events := _world.events
 	var cell := SimConstants.CELL_SIZE
+	var fog := _world.visibility.mask(player_id)
 	for i in events.count():
+		if not VisibilitySystem.shown(fog, _world.map.size.x, events.positions[i]):
+			continue
 		var at := Vector3(events.positions[i].x * cell, 1.0, events.positions[i].y * cell)
 		match events.kinds[i]:
 			SimEvents.Kind.FIRED:

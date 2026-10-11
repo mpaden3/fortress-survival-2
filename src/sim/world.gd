@@ -37,6 +37,7 @@ var combat: CombatSystem
 var economy: EconomySystem
 var match_system: MatchSystem
 var debug: DebugSystem
+var visibility: VisibilitySystem
 
 var _next_id := 1
 var _pending: Array[Dictionary] = []
@@ -61,6 +62,7 @@ func _init(map_layout: MapLayout, definitions: DefRegistry, seed_value: int = 0)
 	combat = CombatSystem.new()
 	economy = EconomySystem.new()
 	match_system = MatchSystem.new()
+	visibility = VisibilitySystem.new()
 	debug = DebugSystem.new()
 	debug.register(self)
 
@@ -83,6 +85,14 @@ func submit(command: Dictionary) -> void:
 	_pending.append(command)
 
 
+## Removes and returns the commands submitted since the last step. A co-op client's World
+## never steps; its client sends these to the host instead.
+func take_pending() -> Array[Dictionary]:
+	var commands := _pending
+	_pending = []
+	return commands
+
+
 func step() -> void:
 	DebugLog.tick = tick
 	last_results.clear()
@@ -99,6 +109,7 @@ func step() -> void:
 	enemies.update(self)
 	combat.update(self)
 	units.update(self)
+	visibility.update(self)
 	tick += 1
 	stepped.emit()
 
