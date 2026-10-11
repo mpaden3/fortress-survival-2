@@ -1,0 +1,2083 @@
+[
+ {
+  "id": "Bpxf",
+  "base_id": "Bpxf",
+  "Tooltip": "Blast Staff",
+  "Is an Effect": 0,
+  "Race": "human"
+ },
+ {
+  "id": "Buhf",
+  "base_id": "Buhf",
+  "Tooltip": "Adrenaline",
+  "Tooltip - Extended": "This unit has Adrenaline; its attack rate is increased.",
+  "Is an Effect": 0,
+  "Race": "undead",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNUnholyFrenzy.blp",
+  "Target": "Abilities\\Spells\\Human\\InnerFire\\InnerFireTarget.mdl",
+  "Target Attachment Point 1": "overhead"
+ },
+ {
+  "id": "Bam2",
+  "base_id": "Bam2",
+  "Editor Suffix": "(Extra)",
+  "Tooltip": "Anti-magic Shell",
+  "Tooltip - Extended": "This unit has Anti-magic Shell (30000 hp).",
+  "Is an Effect": 0,
+  "Race": "undead",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNAntiMagicShell.blp",
+  "Target": "war3mapImported\\Energy Shield.mdx",
+  "Target Attachment Point 1": "chest"
+ },
+ {
+  "id": "Bams",
+  "base_id": "Bams",
+  "Tooltip": "Anti-magic Shell",
+  "Tooltip - Extended": "This unit has Anti-magic Shell; it cannot be targeted by spells. It can be dispelled.",
+  "Is an Effect": 0,
+  "Race": "undead",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNAntiMagicShell.blp",
+  "Target": "war3mapImported\\MagicShieldRed1Big.mdx",
+  "Target Attachment Point 1": "chest"
+ },
+ {
+  "id": "Brpb",
+  "base_id": "Brpb",
+  "Tooltip": "Replenish",
+  "Tooltip - Extended": "This unit has been hit by Replenish; some of its mana have been restored.",
+  "Is an Effect": 0,
+  "Race": "undead",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNReplenishMana.blp"
+ },
+ {
+  "id": "Basl",
+  "base_id": "Basl",
+  "Editor Suffix": "(Slow Aura)",
+  "Tooltip": "Tornado",
+  "Tooltip - Extended": "This unit is soaked, it moves and attacks 1% slower. This unit can also be electricuted.",
+  "Is an Effect": 0,
+  "Race": "other",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNTornado.blp"
+ },
+ {
+  "id": "Bbsk",
+  "base_id": "Bbsk",
+  "Tooltip": "Rage",
+  "Tooltip - Extended": "This unit entered a rage mode to defend his mistress.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNPossession.blp",
+  "Target": "Abilities\\Spells\\Undead\\Possession\\PossessionCaster.mdl,Abilities\\Spells\\Orc\\TrollBerserk\\HeadhunterWEAPONSRight.mdl",
+  "Target Attachments": "2",
+  "Target Attachment Point 1": "weapon,left",
+  "Target Attachment Point 2": "weapon,right"
+ },
+ {
+  "id": "BEsh",
+  "base_id": "BEsh",
+  "Tooltip": "Shadow Strike",
+  "Tooltip - Extended": "This unit was hit by Shadow Strike; it will take damage over time and move more slowly.",
+  "Is an Effect": 0,
+  "Race": "nightelf",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNShadowStrike.blp",
+  "Target": "Abilities\\Weapons\\PoisonSting\\PoisonStingTarget.mdl",
+  "Target Attachment Point 1": "overhead"
+ },
+ {
+  "id": "BEme",
+  "base_id": "BEme",
+  "Tooltip": "Metamorphosis",
+  "Tooltip - Extended": "Transforms the Demon Hunter into a powerful Demon with a ranged attack.",
+  "Is an Effect": 0,
+  "Race": "nightelf"
+ },
+ {
+  "id": "Bspl",
+  "base_id": "Bspl",
+  "Tooltip": "Cohesive Structures",
+  "Tooltip - Extended": "This unit is superglued; it will distribute some of the damage it takes across other glued units.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNStoneArchitecture.blp",
+  "Target": "Abilities\\Spells\\Undead\\Possession\\PossessionTarget.mdl",
+  "Target Attachment Point 1": "origin"
+ },
+ {
+  "id": "BIpv",
+  "base_id": "BIpv",
+  "Tooltip": "Vampiric Potion",
+  "Tooltip - Extended": "This Unit used a Vampiric Potion; the Unit has increased damage and a life-draining attack.",
+  "Is an Effect": 0,
+  "Race": "other",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNPotionOfVampirism.blp"
+ },
+ {
+  "id": "BIrg",
+  "base_id": "BIrg",
+  "Editor Suffix": "(Item)",
+  "Tooltip": "Rejuvenation",
+  "Tooltip - Extended": "This unit will regenerate health and mana over time.",
+  "Is an Effect": 0,
+  "Race": "other",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNHealingWave.blp",
+  "Target Attachments": "2",
+  "Target Attachment Point 1": "origin",
+  "Target Attachment Point 2": "origin"
+ },
+ {
+  "id": "BOmi",
+  "base_id": "BOmi",
+  "Tooltip": "Mirror Image",
+  "Tooltip - Extended": "A duplicate illusion of the original Hero.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNMirrorImage.blp",
+  "Special": "Abilities\\Spells\\Orc\\MirrorImage\\MirrorImageDeathCaster.mdl"
+ },
+ {
+  "id": "B000",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to the original Creator ofr Fortress Survival Alpha.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNBeastMaster.blp"
+ },
+ {
+  "id": "B001",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to the current Lead Developer of the Fortress Survival Community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNInfernal.blp"
+ },
+ {
+  "id": "B002",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Veteran of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNArthas.blp"
+ },
+ {
+  "id": "B003",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Veteran of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNDoomGuard.blp"
+ },
+ {
+  "id": "B004",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Veteran of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNMedivh.blp"
+ },
+ {
+  "id": "B005",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Veteran of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNFelGuard.blp"
+ },
+ {
+  "id": "B006",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Veteran of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNFootman.blp"
+ },
+ {
+  "id": "B007",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a former Developer of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNDranaiMage.blp"
+ },
+ {
+  "id": "B008",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNHeroBloodElfPrince.blp"
+ },
+ {
+  "id": "B009",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNSatyrTrickster.blp"
+ },
+ {
+  "id": "B00A",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Veteran of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNGhoul.blp"
+ },
+ {
+  "id": "B00B",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Veteran of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNMetamorphosis.blp"
+ },
+ {
+  "id": "B00C",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Veteran of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNPitLord.blp"
+ },
+ {
+  "id": "B00D",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Veteran of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNBlueDragonSpawn.blp"
+ },
+ {
+  "id": "B00E",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a playing survivor inside this game.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNMilitia.blp"
+ },
+ {
+  "id": "B00F",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Veteran of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNMountainGiant.blp"
+ },
+ {
+  "id": "B00G",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Tester of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNSpiritOfVengeance.blp"
+ },
+ {
+  "id": "B00H",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Veteran of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNSheep.blp"
+ },
+ {
+  "id": "B00I",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Veteran of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNTreant.blp"
+ },
+ {
+  "id": "B00J",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Tester of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNEvilIllidan.blp"
+ },
+ {
+  "id": "B00K",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Tester of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNGoblinSapper.blp"
+ },
+ {
+  "id": "B00L",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Tester of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNNagaMyrmidon.blp"
+ },
+ {
+  "id": "B00M",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Veteran of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNWendigo.blp"
+ },
+ {
+  "id": "B00N",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Super Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNSummonWaterElemental.blp"
+ },
+ {
+  "id": "B00O",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a former Developer of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNPriest.blp"
+ },
+ {
+  "id": "B00P",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a former Developer of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNHeroWarden.blp"
+ },
+ {
+  "id": "B00Q",
+  "base_id": "BOac",
+  "Tooltip": "Easter Egg",
+  "Tooltip - Extended": "|cff0000Mention that you saw this on the Community's Forums and recieve a special prize.",
+  "Is an Effect": 0,
+  "Race": "human",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNVialFull.blp",
+  "Required Spell Detail": 0
+ },
+ {
+  "id": "B00R",
+  "base_id": "BOac",
+  "Tooltip": "Normal Mode",
+  "Tooltip - Extended": "Enemies have 25% increased damage and 100% max health in Normal Mode.",
+  "Is an Effect": 0,
+  "Race": "creeps",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNSell2.blp",
+  "Required Spell Detail": 0
+ },
+ {
+  "id": "B00S",
+  "base_id": "BOac",
+  "Tooltip": "Impossible Mode",
+  "Tooltip - Extended": "Enemies have 75% increased damage and 400% max health in Impossible Mode.",
+  "Is an Effect": 0,
+  "Race": "creeps",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNHire3.blp",
+  "Required Spell Detail": 0
+ },
+ {
+  "id": "B00T",
+  "base_id": "BOac",
+  "Tooltip": "Mad Mode",
+  "Tooltip - Extended": "Enemies have 50% increased damage and 200% max health in Mad Mode.",
+  "Is an Effect": 0,
+  "Race": "creeps",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNHire.blp",
+  "Required Spell Detail": 0
+ },
+ {
+  "id": "B00U",
+  "base_id": "BOac",
+  "Tooltip": "Cerberus",
+  "Tooltip - Extended": "Cerberus sharpens his fangs and progressively becomes stronger in battle: gains +30 damage with every 6 attacks that he deals.",
+  "Is an Effect": 0,
+  "Race": "human",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNAdvancedCreatureAttack.blp",
+  "Required Spell Detail": 0
+ },
+ {
+  "id": "B00V",
+  "base_id": "BUau",
+  "Tooltip": "Burning Fury",
+  "Tooltip - Extended": "This unit is under the effects of Burning Fury; it will disintegrate due to the Trojan's rage.",
+  "Is an Effect": 0,
+  "Race": "undead",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNUnholyAura.blp",
+  "Target": "Environment\\UndeadBuildingFire\\UndeadLargeBuildingFire2.mdl",
+  "Target Attachment Point 1": "origin",
+  "Required Spell Detail": 0
+ },
+ {
+  "id": "B00W",
+  "base_id": "BPSE",
+  "Editor Suffix": "(Pause)",
+  "Tooltip": "Frozen",
+  "Tooltip - Extended": "This unit is frozen.",
+  "Is an Effect": 0,
+  "Race": "other",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNFreezingBreath.blp",
+  "Target": "Abilities\\Spells\\Undead\\FreezingBreath\\FreezingBreathTargetArt.mdl",
+  "Target Attachment Point 1": "overhead"
+ },
+ {
+  "id": "B00X",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Veteran of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNKnight.blp"
+ },
+ {
+  "id": "B00Y",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNAssassin.blp"
+ },
+ {
+  "id": "B00Z",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Tester of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNSpellBreaker.blp"
+ },
+ {
+  "id": "B010",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNWarEagle.blp"
+ },
+ {
+  "id": "B011",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNDryad.blp"
+ },
+ {
+  "id": "B012",
+  "base_id": "BOac",
+  "Tooltip": "Easy Mode",
+  "Tooltip - Extended": "Enemies have 20% decreased damage and 75% max health in Easy Mode.",
+  "Is an Effect": 0,
+  "Race": "creeps",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNSell.blp",
+  "Required Spell Detail": 0
+ },
+ {
+  "id": "B013",
+  "base_id": "Broa",
+  "Name (Editor Only)": "Roar",
+  "Tooltip": "Roar",
+  "Tooltip - Extended": "This unit has Roar; its attack damage has been increased by 10%.",
+  "Is an Effect": 0,
+  "Race": "nightelf",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNBattleRoar.blp",
+  "Target Attachment Point 1": "overhead",
+  "Required Spell Detail": 0
+ },
+ {
+  "id": "B014",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Contributor of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNHeroBloodElfPrince.blp"
+ },
+ {
+  "id": "B015",
+  "base_id": "Bbsk",
+  "Tooltip": "Dimensional Rift",
+  "Tooltip - Extended": "This tower has 200% attack speed.",
+  "Is an Effect": 0,
+  "Race": "human",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNBerserkForTrolls.blp",
+  "Target Attachments": "2",
+  "Target Attachment Point 1": "weapon,left",
+  "Target Attachment Point 2": "weapon,right"
+ },
+ {
+  "id": "B016",
+  "base_id": "BUau",
+  "Tooltip": "Regenerative Aura",
+  "Tooltip - Extended": "This structure is under the regenerating health.",
+  "Is an Effect": 0,
+  "Race": "undead",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNUnholyAura.blp",
+  "Target": "DivineAura.mdx",
+  "Target Attachment Point 1": "origin",
+  "Required Spell Detail": 0
+ },
+ {
+  "id": "B017",
+  "base_id": "BNab",
+  "Tooltip": "Grenaded",
+  "Tooltip - Extended": "This unit has been hit by a grenade; It is taking additional damage.",
+  "Is an Effect": 0,
+  "Race": "other",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNFlare.blp",
+  "Target": "Abilities\\Spells\\Human\\Thunderclap\\ThunderClapCaster.mdl",
+  "Target Attachments": 1,
+  "Target Attachment Point 1": "chest"
+ },
+ {
+  "id": "B018",
+  "base_id": "BOac",
+  "Tooltip": "Enhanced Weaponry",
+  "Tooltip - Extended": "This structure gains an additional damage from enhanced weaponry.",
+  "Is an Effect": 0,
+  "Race": "human",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNArcaniteRanged.blp",
+  "Required Spell Detail": 0
+ },
+ {
+  "id": "B019",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNHeroFarseer.blp"
+ },
+ {
+  "id": "B01A",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNSpiritOfVengeance.blp"
+ },
+ {
+  "id": "B01B",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Veteran of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNJaina.blp"
+ },
+ {
+  "id": "B01C",
+  "base_id": "Boar",
+  "Tooltip": "Healing Ward Aura2",
+  "Tooltip - Extended": "Increases life regeneration.",
+  "Is an Effect": 0,
+  "Race": "human",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNHealingWard.blp",
+  "Effect Sound (Looping)": "FountainOfLifeLoop",
+  "Required Spell Detail": 0
+ },
+ {
+  "id": "B01D",
+  "base_id": "BOac",
+  "Tooltip": "Fury",
+  "Tooltip - Extended": "This unit is MAD; its damage increases gradually while attacking. +50% maximum.",
+  "Is an Effect": 0,
+  "Race": "creeps",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNImprovedStrengthOfTheWild.blp",
+  "Required Spell Detail": 0
+ },
+ {
+  "id": "B01E",
+  "base_id": "Bcmg",
+  "Tooltip": "Boss",
+  "Tooltip - Extended": "This unit is a boss!",
+  "Is an Effect": 0,
+  "Race": "human",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNDestroyer.blp"
+ },
+ {
+  "id": "B01F",
+  "base_id": "Brej",
+  "Tooltip": "Scrap Metal",
+  "Tooltip - Extended": "This unit is being repaired by scrap metal",
+  "Is an Effect": 0,
+  "Race": "nightelf",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNCreatureCarapace.blp",
+  "Target": "Abilities\\Weapons\\Bolt\\BoltImpact.mdl",
+  "Target Attachment Point 1": "chest"
+ },
+ {
+  "id": "B01G",
+  "base_id": "BOac",
+  "Tooltip": "Fury",
+  "Tooltip - Extended": "This unit is Impossible; its damage increases gradually while attacking. +100% maximum.",
+  "Is an Effect": 0,
+  "Race": "creeps",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNImprovedStrengthOfTheWild.blp",
+  "Required Spell Detail": 0
+ },
+ {
+  "id": "B01H",
+  "base_id": "BUau",
+  "Tooltip": "Garden Aura",
+  "Tooltip - Extended": "Structures gain 3 additional armor.",
+  "Is an Effect": 0,
+  "Race": "undead",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNEntanglingRoots.blp",
+  "Target Attachment Point 1": "origin",
+  "Required Spell Detail": 0
+ },
+ {
+  "id": "B01I",
+  "base_id": "BHtc",
+  "Tooltip": "Nuclear Strike",
+  "Tooltip - Extended": "This unit has been hit by a Nuclear Strike; its movement speed and attack rate are reduced.",
+  "Is an Effect": 0,
+  "Race": "human",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNSpy.blp",
+  "Target Attachment Point 1": "overhead"
+ },
+ {
+  "id": "B01J",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNHeroAvatarOfFlame.blp"
+ },
+ {
+  "id": "B01K",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a former Developer of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNDoomGuard.blp"
+ },
+ {
+  "id": "B01L",
+  "base_id": "BHad",
+  "Tooltip": "Tyrant Aura",
+  "Tooltip - Extended": "This unit has Tyrant Aura; it decreases the armor of nearby structure by 10.",
+  "Is an Effect": 0,
+  "Race": "human",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNDevourMagic.blp",
+  "Target": "Abilities\\Spells\\Human\\Banish\\BanishTarget.mdl",
+  "Target Attachment Point 1": "origin",
+  "Required Spell Detail": 0
+ },
+ {
+  "id": "B01M",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNMarkOfFire.blp"
+ },
+ {
+  "id": "B01N",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNSacrificialSkull.blp"
+ },
+ {
+  "id": "B01O",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNPriestessOfTheMoon.blp"
+ },
+ {
+  "id": "B01P",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a former Developer of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNGnollWarden.blp"
+ },
+ {
+  "id": "B01Q",
+  "base_id": "BOac",
+  "Tooltip": "Charmed Damage",
+  "Tooltip - Extended": "This unit is under the effects of Charm; it has increased damage.",
+  "Is an Effect": 0,
+  "Race": "human",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNCharm.blp",
+  "Target Attachment Point 1": "origin",
+  "Required Spell Detail": 0
+ },
+ {
+  "id": "B01R",
+  "base_id": "BOac",
+  "Tooltip": "Fury",
+  "Tooltip - Extended": "This unit is a Nightmare; its damage increases gradually while attacking. +150% maximum.",
+  "Is an Effect": 0,
+  "Race": "creeps",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNImprovedStrengthOfTheWild.blp",
+  "Required Spell Detail": 0
+ },
+ {
+  "id": "B01S",
+  "base_id": "BOac",
+  "Tooltip": "Nightmare Mode",
+  "Tooltip - Extended": "Enemies have 125% increased damage and 600% max health in Nightmare Mode.",
+  "Is an Effect": 0,
+  "Race": "creeps",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNHire2.blp",
+  "Required Spell Detail": 0
+ },
+ {
+  "id": "B01T",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNRedDragon.blp"
+ },
+ {
+  "id": "B01U",
+  "base_id": "BHab",
+  "Tooltip": "Energy Regeneration",
+  "Tooltip - Extended": "This unit is under the effects of Energy Regeneration; it has an increased mana regeneration based on Player Rank.",
+  "Is an Effect": 0,
+  "Race": "human",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNBrilliance.blp",
+  "Required Spell Detail": 0
+ },
+ {
+  "id": "B01V",
+  "base_id": "Bhea",
+  "Tooltip": "Add Lumber",
+  "Tooltip - Extended": "This unit is adding Lumber.",
+  "Is an Effect": 0,
+  "Race": "human",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNBundleOfLumber.blp",
+  "Required Spell Detail": 0
+ },
+ {
+  "id": "B01W",
+  "base_id": "Bhea",
+  "Tooltip": "Reconstruction",
+  "Tooltip - Extended": "This unit is being reconstructed.",
+  "Is an Effect": 0,
+  "Race": "human",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNEngineeringUpgrade.blp",
+  "Required Spell Detail": "1"
+ },
+ {
+  "id": "B01X",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNBanshee.blp"
+ },
+ {
+  "id": "B01Y",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a playing survivor inside this game.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNVillagerWoman.blp"
+ },
+ {
+  "id": "B01Z",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNNetherDragon.blp"
+ },
+ {
+  "id": "B020",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNHeroAvatarOfFlame.blp"
+ },
+ {
+  "id": "B021",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNHeroAvatarOfFlame.blp"
+ },
+ {
+  "id": "B022",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNArthas.blp"
+ },
+ {
+  "id": "B023",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Contributor of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNYouDirtyRat!.blp"
+ },
+ {
+  "id": "B024",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Tester of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNHeroPaladin.blp"
+ },
+ {
+  "id": "B025",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNMetamorphosis.blp"
+ },
+ {
+  "id": "B026",
+  "base_id": "BHab",
+  "Tooltip": "Enhanced Mana Regeneration",
+  "Tooltip - Extended": "This unit has an increased mana regeneration.",
+  "Is an Effect": 0,
+  "Race": "human",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNSpell_Nature_MoonGlow.blp",
+  "Target": "war3mapImported\\MoonSight_Buff.mdx",
+  "Target Attachment Point 1": "overhead",
+  "Required Spell Detail": 1
+ },
+ {
+  "id": "X000",
+  "base_id": "XEsf",
+  "Name (Editor Only)": "Starfall (Effect2)",
+  "Is an Effect": 1,
+  "Race": "nightelf",
+  "Effect": "war3mapImported\\StarfallCaster.mdx"
+ },
+ {
+  "id": "B027",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNVoidWalker.blp"
+ },
+ {
+  "id": "B028",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNMountainGiant.blp"
+ },
+ {
+  "id": "B029",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNDireWolf.blp"
+ },
+ {
+  "id": "B02A",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Super Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNDruidOfTheClaw.blp"
+ },
+ {
+  "id": "B02B",
+  "base_id": "BEim",
+  "Tooltip": "Morale Aura",
+  "Tooltip - Extended": "This unit has Morale Aura; nearby units are regenerated.",
+  "Is an Effect": 0,
+  "Race": "nightelf",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNHolyBolt.blp",
+  "Target": "DivineAura.mdx",
+  "Special": "DivineAura.mdx",
+  "Special Attachment Point": "head",
+  "Required Spell Detail": 1
+ },
+ {
+  "id": "B02C",
+  "base_id": "BOac",
+  "Tooltip": "Physical Enhancement",
+  "Tooltip - Extended": "This unit has bonus health and damage based on the Commander's Strength.",
+  "Is an Effect": 0,
+  "Race": "human",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNGhoulFrenzy.blp",
+  "Required Spell Detail": 0
+ },
+ {
+  "id": "B02D",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Developer of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNCloakOfFlames.blp"
+ },
+ {
+  "id": "B02E",
+  "base_id": "Basl",
+  "Editor Suffix": "(Slow Aura)",
+  "Tooltip": "Soaked",
+  "Tooltip - Extended": "This unit is soaked",
+  "Is an Effect": 0,
+  "Race": "other",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNCrushingWave.blp"
+ },
+ {
+  "id": "B02F",
+  "base_id": "BOac",
+  "Tooltip": "Science Lab Electroturbocharge",
+  "Tooltip - Extended": "This structure gains an additional 25% damage from Science Lab.",
+  "Is an Effect": 0,
+  "Race": "human",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNArcaniteRanged.blp",
+  "Required Spell Detail": 0
+ },
+ {
+  "id": "B02G",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a former Developer of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNEvilIllidan.blp"
+ },
+ {
+  "id": "B02H",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Developer of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNFrostWyrm.blp"
+ },
+ {
+  "id": "B02I",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNSeaTurtleRed.blp"
+ },
+ {
+  "id": "B02J",
+  "base_id": "BNht",
+  "Tooltip": "Howl of Terror",
+  "Tooltip - Extended": "This unit heard the terrifying scream of a Failed Zer0o Clone, it's damage is decreased.",
+  "Is an Effect": 0,
+  "Race": "other",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNHowlOfTerror.blp"
+ },
+ {
+  "id": "B02K",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNArmoredOge.blp"
+ },
+ {
+  "id": "B02L",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNHeroDemonHunter.blp"
+ },
+ {
+  "id": "B02M",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNSylvanusWindrunner.blp"
+ },
+ {
+  "id": "B02N",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNArthas.blp"
+ },
+ {
+  "id": "B02O",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNHeroMountainKing.blp"
+ },
+ {
+  "id": "B02P",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNHeroDemonHunter.blp"
+ },
+ {
+  "id": "B02Q",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNPriestessOfTheMoon.blp"
+ },
+ {
+  "id": "B02R",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNSeaTurtleGreen.blp"
+ },
+ {
+  "id": "B02S",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNCritterRabbit.blp"
+ },
+ {
+  "id": "B02T",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNShaman.blp"
+ },
+ {
+  "id": "B02U",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNArthas.blp"
+ },
+ {
+  "id": "B02V",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNFrostWyrm.blp"
+ },
+ {
+  "id": "B02W",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Contributor of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNHeroBloodElfPrince.blp"
+ },
+ {
+  "id": "B02X",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Veteran of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNLichVersion2.blp"
+ },
+ {
+  "id": "B02Y",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNChaosSpaceOrc.blp"
+ },
+ {
+  "id": "B02Z",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNChaosGrom.blp"
+ },
+ {
+  "id": "B030",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNHeroDemonHunter.blp"
+ },
+ {
+  "id": "B031",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNSpinyCrab.blp"
+ },
+ {
+  "id": "B032",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNHeroBlademaster.blp"
+ },
+ {
+  "id": "B033",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNSheep.blp"
+ },
+ {
+  "id": "B034",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Contributor of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNGarithos.blp"
+ },
+ {
+  "id": "B035",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNHeroAvatarOfFlame.blp"
+ },
+ {
+  "id": "B036",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNHeroDemonHunter.blp"
+ },
+ {
+  "id": "B037",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a former Developer of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNHeroDreadLord.blp"
+ },
+ {
+  "id": "B038",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNBeastMaster.blp"
+ },
+ {
+  "id": "B039",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNSpiritWolf.blp"
+ },
+ {
+  "id": "B03A",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNPig.blp"
+ },
+ {
+  "id": "B03B",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNDeepLordRevenant.blp"
+ },
+ {
+  "id": "B03C",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNKiljaedin.blp"
+ },
+ {
+  "id": "B03D",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Developer of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNTrollBatRider.blp"
+ },
+ {
+  "id": "B03E",
+  "base_id": "BNab",
+  "Tooltip": "Poison",
+  "Tooltip - Extended": "This unit looses hitpoints over time.",
+  "Is an Effect": 0,
+  "Race": "human",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNSacrificialSkull.blp",
+  "Target": "Abilities\\Spells\\NightElf\\CorrosiveBreath\\ChimaeraAcidTargetArt.mdl",
+  "Target Attachment Point 1": "chest"
+ },
+ {
+  "id": "B03F",
+  "base_id": "BUau",
+  "Tooltip": "Purge of Nature",
+  "Tooltip - Extended": "This unit has an improved regeneration of hitpoints.",
+  "Is an Effect": 0,
+  "Race": "human",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNTranquility.blp",
+  "Target": "Abilities\\Spells\\NightElf\\Tranquility\\TranquilityTarget.mdl",
+  "Target Attachment Point 1": "origin",
+  "Required Spell Detail": "2"
+ },
+ {
+  "id": "B03G",
+  "base_id": "BNab",
+  "Tooltip": "Venom",
+  "Tooltip - Extended": "This unit receives damage over time and has lowered armour, movementspeed and attackspeed.",
+  "Is an Effect": 0,
+  "Race": "human",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNCorrosiveBreath.blp",
+  "Target": "Abilities\\Spells\\NightElf\\CorrosiveBreath\\ChimaeraAcidTargetArt.mdl",
+  "Target Attachment Point 1": "chest"
+ },
+ {
+  "id": "B03H",
+  "base_id": "BPSE",
+  "Name (Editor Only)": "Rooted",
+  "Editor Suffix": "(Pause)",
+  "Tooltip": "Rooted",
+  "Tooltip - Extended": "This unit is temporaly stunned.",
+  "Is an Effect": 0,
+  "Race": "human",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNEntanglingRoots.blp",
+  "Target": "Abilities\\Spells\\NightElf\\EntanglingRoots\\EntanglingRootsTarget.mdl",
+  "Target Attachment Point 1": "origin"
+ },
+ {
+  "id": "B03I",
+  "base_id": "BNto",
+  "Editor Suffix": "(Timed Life)",
+  "Tooltip": "Roots",
+  "Is an Effect": 0,
+  "Race": "human"
+ },
+ {
+  "id": "B03J",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Developer of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNKiljaedin.blp"
+ },
+ {
+  "id": "B03K",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNAcidBomb.blp"
+ },
+ {
+  "id": "B03L",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNShade.blp"
+ },
+ {
+  "id": "B03M",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNArthas.blp"
+ },
+ {
+  "id": "B03N",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNBloodElfSupplyWagon.blp"
+ },
+ {
+  "id": "B03O",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNTauren.blp"
+ },
+ {
+  "id": "B03P",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNBanshee.blp"
+ },
+ {
+  "id": "B03Q",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Veteran of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNAncientOfWonders.blp"
+ },
+ {
+  "id": "B03R",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Contributor of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNRifleman.blp"
+ },
+ {
+  "id": "B03S",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNHeroAvatarOfFlame.blp"
+ },
+ {
+  "id": "B03T",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNDranaiMage.blp"
+ },
+ {
+  "id": "B03U",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNSkeletonMage.blp"
+ },
+ {
+  "id": "B03V",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNShaman.blp"
+ },
+ {
+  "id": "B03W",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNRedDragon.blp"
+ },
+ {
+  "id": "B03X",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNHeroMountainKing.blp"
+ },
+ {
+  "id": "B03Y",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNBlackDragon.blp"
+ },
+ {
+  "id": "B03Z",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNPenguin.blp"
+ },
+ {
+  "id": "B040",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNNightElfRunner.blp"
+ },
+ {
+  "id": "B041",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNWisp.blp"
+ },
+ {
+  "id": "B042",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNRockGolem.blp"
+ },
+ {
+  "id": "B043",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNSheep.blp"
+ },
+ {
+  "id": "B044",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNAvengingWatcher.blp"
+ },
+ {
+  "id": "B045",
+  "base_id": "BOac",
+  "Tooltip": "General Command Aura",
+  "Is an Effect": 0,
+  "Race": "human",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNGnollCommandAura.blp",
+  "Target Attachment Point 1": "origin"
+ },
+ {
+  "id": "B046",
+  "base_id": "BHad",
+  "Tooltip": "General Devotion Aura",
+  "Tooltip - Extended": "This unit is under the effects of Devotion Aura; it has increased armor.",
+  "Is an Effect": 0,
+  "Race": "human",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNDevotion.blp",
+  "Target Attachment Point 1": "origin",
+  "Required Spell Detail": "2"
+ },
+ {
+  "id": "B047",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Developer of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNPeon.blp"
+ },
+ {
+  "id": "B048",
+  "base_id": "BUau",
+  "Tooltip": "Unholy Aura Lookalike",
+  "Tooltip - Extended": "This unit is under the effects of what appears to be like an Unholy Aura.",
+  "Is an Effect": 0,
+  "Race": "undead",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNUnholyAura.blp",
+  "Target": "Abilities\\Spells\\Undead\\UnholyAura\\UnholyAura.mdl",
+  "Target Attachment Point 1": "origin",
+  "Required Spell Detail": "2"
+ },
+ {
+  "id": "B049",
+  "base_id": "BNab",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Developer of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNCloakOfFlames.blp",
+  "Required Spell Detail": 1
+ },
+ {
+  "id": "B04A",
+  "base_id": "BOwk",
+  "Tooltip": "Wind Walk",
+  "Tooltip - Extended": "The Dreadlord is currently invisible, giving increased movement speed and able to walk through units.  Dealing bonus damage on the first attack when breaking out of invisibility.",
+  "Is an Effect": 0,
+  "Race": "human",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNCloakOfFlames.blp"
+ },
+ {
+  "id": "B04B",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNHeroAvatarOfFlame.blp"
+ },
+ {
+  "id": "B04C",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Contributor of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNHeroPaladin.blp"
+ },
+ {
+  "id": "B04D",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Developer of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNAssassin.blp"
+ },
+ {
+  "id": "B04E",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a former Developer of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNSasquatchShaman.blp"
+ },
+ {
+  "id": "B04F",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Developer of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNSpiritOfVengeance.blp"
+ },
+ {
+  "id": "B04G",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNHeroDemonHunter.blp"
+ },
+ {
+  "id": "B04H",
+  "base_id": "Bblo",
+  "Name (Editor Only)": "Virus - Benign",
+  "Tooltip": "Benign Virus Infection",
+  "Tooltip - Extended": "This unit is showing signs of being Infected!\n- 500 Bonus Health Points\n- 30 Bonus Attack Speed\n- 90 Bonus Damage\n- 65 Bonus Movement Speed\n- 6 Bonus Armor Defense",
+  "Is an Effect": 0,
+  "Race": "human",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNBenignVirus.blp",
+  "Target Attachments": "2",
+  "Target Attachment Point 1": "hand,left",
+  "Target Attachment Point 2": "hand,right",
+  "Required Spell Detail": "1"
+ },
+ {
+  "id": "B04I",
+  "base_id": "BIil",
+  "Name (Editor Only)": "Fragmented",
+  "Tooltip": "Devil's fragment",
+  "Tooltip - Extended": "This unit has found its way to life from a devil's fragment.",
+  "Is an Effect": 0,
+  "Race": "other",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNShadowPact.blp",
+  "Special": "Abilities\\Spells\\Other\\ImmolationRed\\ImmolationRedDamage.mdl"
+ },
+ {
+  "id": "B04J",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Tester of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNJunkGolem.blp"
+ },
+ {
+  "id": "B04K",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNAcolyte.blp"
+ },
+ {
+  "id": "B04L",
+  "base_id": "Bfro",
+  "Name (Editor Only)": "Permafrost",
+  "Tooltip": "Permafrost",
+  "Tooltip - Extended": "This unit is very cold from within. When it dies, a frozen creature will from from its ice.",
+  "Is an Effect": 0,
+  "Race": "other",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNFrost.blp",
+  "Target": "Abilities\\Spells\\Undead\\FrostArmor\\FrostArmorDamage.mdl"
+ },
+ {
+  "id": "B04M",
+  "base_id": "Binf",
+  "Name (Editor Only)": "Leaking Soul",
+  "Tooltip": "Leaking Soul",
+  "Tooltip - Extended": "This unit has a Leaking Soul; its life regeneration and attack damage are decreased.",
+  "Is an Effect": 0,
+  "Race": "human",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNLifeDrain.blp",
+  "Target": "Abilities\\Spells\\NightElf\\shadowstrike\\shadowstrike.mdl",
+  "Target Attachments": "1",
+  "Target Attachment Point 1": "overhead",
+  "Required Spell Detail": "1"
+ },
+ {
+  "id": "B04N",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNShadowHunter.blp"
+ },
+ {
+  "id": "B04O",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNNecromancer.blp"
+ },
+ {
+  "id": "B04P",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNSummonWaterElemental.blp"
+ },
+ {
+  "id": "B04Q",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNHeroDeathKnight.blp"
+ },
+ {
+  "id": "B04R",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNHeadHunterBerserker.blp"
+ },
+ {
+  "id": "B04S",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNMarkOfFire.blp"
+ },
+ {
+  "id": "B04T",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNHeadHunterBerserker.blp"
+ },
+ {
+  "id": "B04U",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Player that has met the after-life and was brought back from the dead.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNArmorGolem.blp"
+ },
+ {
+  "id": "B04V",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNManaDrain.blp"
+ },
+ {
+  "id": "B04W",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNHeroMountainKing.blp"
+ },
+ {
+  "id": "B04X",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Veteran of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNORCFirebat.blp"
+ },
+ {
+  "id": "B04Y",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Tester of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNWisp.blp"
+ },
+ {
+  "id": "B04Z",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a former Developer of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNForestTroll.blp"
+ },
+ {
+  "id": "B050",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNFurion.blp"
+ },
+ {
+  "id": "B051",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Tester of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNBasicStruct.blp"
+ },
+ {
+  "id": "B052",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Donator of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNIceShard.blp"
+ },
+ {
+  "id": "B053",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Contributor of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNFelGuard.blp"
+ },
+ {
+  "id": "B054",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Veteran of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNFrostWyrm.blp"
+ },
+ {
+  "id": "B055",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Developer of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNCorruptedAncientOfWar.blp"
+ },
+ {
+  "id": "B056",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Veteran of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNHeroDeathKnight.blp"
+ },
+ {
+  "id": "B057",
+  "base_id": "Bblo",
+  "Name (Editor Only)": "Virus - Malignant",
+  "Tooltip": "Malignant Virus Infection",
+  "Tooltip - Extended": "This unit is showing signs of being Infected!\n- 800 Bonus Health Points\n- 45 Bonus Attack Speed\n- 180 Bonus Damage\n- 85 Bonus Movement Speed\n- 8 Bonus Armor Defense",
+  "Is an Effect": 0,
+  "Race": "human",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNMalignantVirus.blp",
+  "Target Attachments": "2",
+  "Target Attachment Point 1": "hand,left",
+  "Target Attachment Point 2": "hand,right",
+  "Required Spell Detail": "1"
+ },
+ {
+  "id": "B058",
+  "base_id": "Brai",
+  "Tooltip": "Undead Minion",
+  "Tooltip - Extended": "Summoned units take damage from dispels.",
+  "Is an Effect": 0,
+  "Race": "undead",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNShade.blp"
+ },
+ {
+  "id": "B059",
+  "base_id": "BOac",
+  "Tooltip": "About Me",
+  "Tooltip - Extended": "This unit belongs to a Developer of the Fortress Survival community.",
+  "Is an Effect": 0,
+  "Race": "orc",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNCloakOfFlames.blp"
+ },
+ {
+  "id": "B05A",
+  "base_id": "BUau",
+  "Tooltip": "Medic's Presence",
+  "Tooltip - Extended": "This unit is under the effects of Medic's Presence; it has an increased movement speed and hit point regeneration.",
+  "Is an Effect": 0,
+  "Race": "undead",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNRegenerationAura.blp",
+  "Target": "war3mapImported\\GreenHeal.mdx",
+  "Target Attachment Point 1": "origin",
+  "Required Spell Detail": "2"
+ },
+ {
+  "id": "B05B",
+  "base_id": "BHad",
+  "Tooltip": "Rikimaru's Presence",
+  "Tooltip - Extended": "This unit is under the effects of Lt. Rikimaru; it has increased armor.",
+  "Is an Effect": 0,
+  "Race": "human",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNMassTeleport.blp",
+  "Target Attachment Point 1": "origin",
+  "Required Spell Detail": "2"
+ },
+ {
+  "id": "B05C",
+  "base_id": "BOac",
+  "Tooltip": "Barathrum's Presence",
+  "Tooltip - Extended": "This unit is under the effects of Lt. Barathrum; it has increased attack damage.",
+  "Is an Effect": 0,
+  "Race": "human",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNMassTeleport.blp",
+  "Target Attachment Point 1": "origin"
+ },
+ {
+  "id": "B05D",
+  "base_id": "BUfa",
+  "Tooltip": "Frosty Armor",
+  "Tooltip - Extended": "This unit has Frost Armor; it has increased armor, and melee units that attack it will have their movement speed and attack rate reduced for a short duration.",
+  "Is an Effect": 0,
+  "Race": "human",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNFrostChillingArmor.blp",
+  "Target Attachment Point 1": "chest",
+  "Special Attachment Point": "chest",
+  "Required Spell Detail": "1"
+ },
+ {
+  "id": "B05E",
+  "base_id": "BHad",
+  "Tooltip": "Flower Aura",
+  "Tooltip - Extended": "This unit is under the effects of Pretty Flower; it has increased armor.",
+  "Is an Effect": 0,
+  "Race": "human",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNDeathAndDecay.blp",
+  "Target Attachment Point 1": "origin",
+  "Required Spell Detail": "2"
+ },
+ {
+  "id": "B05F",
+  "base_id": "BNab",
+  "Tooltip": "Dynamited",
+  "Tooltip - Extended": "This unit has been hit by explosive dynamite; It is taking additional damage.",
+  "Is an Effect": 0,
+  "Race": "other",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNSelfDestruct.blp",
+  "Target": "Abilities\\Spells\\Items\\AIfb\\AIfbSpecialArt.mdl",
+  "Target Attachments": 1,
+  "Target Attachment Point 1": "chest"
+ },
+ {
+  "id": "B05G",
+  "base_id": "BOac",
+  "Tooltip": "Offensive Aura",
+  "Tooltip - Extended": "This unit is under the effects of Offensive Aura; it has increased attack damage.",
+  "Is an Effect": 0,
+  "Race": "human",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNFragmentationBombs.blp",
+  "Target Attachment Point 1": "origin"
+ },
+ {
+  "id": "B05H",
+  "base_id": "BHad",
+  "Tooltip": "Defensive Aura",
+  "Tooltip - Extended": "This unit is under the effects of Defensive Aura; it has increased armor.",
+  "Is an Effect": 0,
+  "Race": "human",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNPillage.blp",
+  "Target": "Abilities\\Spells\\Other\\GeneralAuraTarget\\GeneralAuraTarget.mdl",
+  "Target Attachment Point 1": "origin",
+  "Required Spell Detail": "2"
+ },
+ {
+  "id": "B05I",
+  "base_id": "BHbd",
+  "Tooltip": "Arcane Contagion",
+  "Tooltip - Extended": "This unit is being damaged by Arcane Contagion Effect.",
+  "Is an Effect": 0,
+  "Race": "human",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNBreathOfFrost.blp"
+ },
+ {
+  "id": "B05J",
+  "base_id": "BHbz",
+  "Name (Editor Only)": "Arcane Contagion (Caster)",
+  "Is an Effect": 0,
+  "Race": "human",
+  "Missile Art": "war3mapImported\\ArcaneExplosion.mdx"
+ },
+ {
+  "id": "X001",
+  "base_id": "XHbz",
+  "Name (Editor Only)": "Arcane Contagion (Effect)",
+  "Is an Effect": 1,
+  "Race": "human",
+  "Effect": "war3mapImported\\CrystalNova.mdx",
+  "Effect Sound": "BlizzardWave",
+  "Effect Sound (Looping)": "BlizzardLoop"
+ },
+ {
+  "id": "B05K",
+  "base_id": "BUav",
+  "Tooltip": "Ghost Aura",
+  "Tooltip - Extended": "This unit is under the effects of Ghost Aura; damage it deals to enemy units will restore hit points.",
+  "Is an Effect": 0,
+  "Race": "undead",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNSacrificialSkull.blp",
+  "Target Attachment Point 1": "origin",
+  "Special Attachment Point": "origin",
+  "Required Spell Detail": "2"
+ },
+ {
+  "id": "B05L",
+  "base_id": "BOac",
+  "Tooltip": "Innocence",
+  "Tooltip - Extended": "This unit is hiding from its enemies, unable to do anything to help the fight.",
+  "Is an Effect": 0,
+  "Race": "human",
+  "Icon": "ReplaceableTextures\\CommandButtons\\BTNSentinel.blp",
+  "Required Spell Detail": 0
+ }
+]
