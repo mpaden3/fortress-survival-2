@@ -71,7 +71,87 @@ func find_route(world: World, from: Vector2, to: Vector2, radius: float) -> Pack
 		route.append(points[best])
 		anchor = points[best]
 		i = best + 1
+	_hug_corners(world, from, route, radius)
 	return route
+
+
+## Turn points are cell centres, half a cell off the obstacle. Each turn may instead use a
+## spot just off a nearby obstacle corner (set back by the body's radius on both axes, so it
+## keeps clear). A shortest-path pass over the turns' candidates picks the best combination
+## whose legs are all clear, so the route hugs corners. If none is clear, it stays as it was.
+func _hug_corners(world: World, from: Vector2, route: PackedVector2Array, radius: float) -> void:
+	var turns := route.size() - 1
+	if turns < 1:
+		return
+	# layers[0] = start, layers[1..turns] = candidates per turn, last = the destination.
+	var layers: Array[PackedVector2Array] = [PackedVector2Array([from])]
+	for k in turns:
+		layers.append(_turn_candidates(world, route[k], radius))
+	layers.append(PackedVector2Array([route[turns]]))
+	var cost: Array[PackedFloat32Array] = []
+	var back: Array[PackedInt32Array] = []
+	for layer in layers:
+		var c := PackedFloat32Array()
+		c.resize(layer.size())
+		c.fill(INF)
+		cost.append(c)
+		var b := PackedInt32Array()
+		b.resize(layer.size())
+		back.append(b)
+	cost[0][0] = 0.0
+	for l in range(1, layers.size()):
+		for a in layers[l - 1].size():
+			if cost[l - 1][a] == INF:
+				continue
+			for b in layers[l].size():
+				var total := cost[l - 1][a] + layers[l - 1][a].distance_to(layers[l][b])
+				if total < cost[l][b] and segment_clear(world, layers[l - 1][a], layers[l][b], radius):
+					cost[l][b] = total
+					back[l][b] = a
+	if cost[layers.size() - 1][0] == INF:
+		return
+	var pick := 0
+	for l in range(layers.size() - 1, 1, -1):
+		pick = back[l][pick]
+		route[l - 2] = layers[l - 1][pick]
+
+
+## The turn itself, plus spots just off the corners of the cells around it that touch a
+## blocked cell and leave room for the body.
+func _turn_candidates(world: World, turn: Vector2, radius: float) -> PackedVector2Array:
+	var out := PackedVector2Array([turn])
+	var offset := radius * 1.01
+	var cx := floori(turn.x)
+	var cz := floori(turn.y)
+	for z in range(cz - 1, cz + 2):
+		for x in range(cx - 1, cx + 2):
+			if not _open(world, x, z):
+				continue
+			for corner: Vector2i in [Vector2i(0, 0), Vector2i(1, 0), Vector2i(0, 1), Vector2i(1, 1)]:
+				var q := Vector2i(x, z) + corner
+				# Only corners of an obstacle: one of the four cells meeting there is blocked.
+				if _open(world, q.x - 1, q.y - 1) and _open(world, q.x, q.y - 1) \
+						and _open(world, q.x - 1, q.y) and _open(world, q.x, q.y):
+					continue
+				var inward := Vector2(1 - corner.x * 2, 1 - corner.y * 2)
+				var spot := Vector2(q) + inward * offset
+				if point_clear(world, spot, radius) and not out.has(spot):
+					out.append(spot)
+	return out
+
+
+## True if a body of `radius` cells standing at `point` overlaps no blocked cell.
+func point_clear(world: World, point: Vector2, radius: float) -> bool:
+	var cx := floori(point.x)
+	var cz := floori(point.y)
+	for z in range(cz - 1, cz + 2):
+		for x in range(cx - 1, cx + 2):
+			if _open(world, x, z):
+				continue
+			var closest := Vector2(clampf(point.x, x, x + 1), clampf(point.y, z, z + 1))
+			if point.distance_squared_to(closest) < radius * radius:
+				return false
+	return true
 
 
 ## True if a body of `radius` cells can move straight from `a` to `b` without overlapping a

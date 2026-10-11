@@ -151,11 +151,16 @@ func test_long_route_on_mvp_map() -> void:
 	var from := Vector2(layout.start) + Vector2(0.5, 0.5)
 	var worst_usec := 0
 	var longest := 0
+	var goals: Array[Vector2] = []
 	for spawn in layout.spawns:
-		var to := Vector2(spawn.rect.get_center())
+		goals.append(Vector2(spawn.rect.get_center()))
+	for plot in layout.plots:  # into enclosed plots: many turns
+		goals.append(Vector2(plot.rects[0].get_center()))
+	for to in goals:
 		var started := Time.get_ticks_usec()
 		var route := world.pathing.paths.find_route(world, from, to, 0.2)
 		worst_usec = maxi(worst_usec, Time.get_ticks_usec() - started)
 		longest = maxi(longest, route.size())
 	gut.p("long routes: worst %.2f ms, at most %d waypoints" % [worst_usec / 1000.0, longest])
+	assert_gt(longest, 3, "some routes turn several times")
 	assert_lt(worst_usec / 1000.0, 5.0, "route within budget")

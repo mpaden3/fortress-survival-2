@@ -227,6 +227,14 @@ What we know about the original (sources at the bottom; much of it is old/unveri
 - [x] Sim events for presentation (shots, impacts, kills, destroyed buildings) + placeholder VFX: muzzle flash, hit spark, explosion, frost burst, enemy death, building fire; glow
 - [x] Basic SFX on the same events (synthesized placeholders, capped per tick; M mutes)
 
+- [x] Save / restore the whole world (identical continuation; quick save/load); co-op view snapshots
+- [x] Co-op spike: host-authoritative over ENet (join, own player + Survivor, commands, snapshots); tested headless on localhost
+- [ ] Co-op: Steam networking, lobby, reconnect, client-side prediction for own orders, snapshot deltas
+- [x] Fog-of-war hook: per-player visibility query used by all views (fog off by default)
+- [x] Enemies are blocked by Survivors and units; smooth spreading of packed spawns
+- [x] Routes hug corners (corner candidates + shortest combination)
+- [x] Main menu (map, single / host / join, waves), in-game menu (pause, save, load, restart), end screen
+
 ### M2 — Depth
 - [ ] Research building + research tree; more tower branches (crit/anti-boss, long-range, bash, anti-air)
 - [ ] Aura statues (armor, damage, attack speed)

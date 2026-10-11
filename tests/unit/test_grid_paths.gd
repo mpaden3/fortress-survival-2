@@ -99,3 +99,33 @@ func test_segment_clear_sees_walls_and_corners() -> void:
 	assert_false(paths.segment_clear(world, Vector2(0.5, 1.5), Vector2(3.5, 1.5), RADIUS), "through the block")
 	assert_false(paths.segment_clear(world, Vector2(0.5, 0.5), Vector2(2.5, 2.5), RADIUS), "across its corner")
 	assert_true(paths.segment_clear(world, Vector2(0.5, 0.5), Vector2(3.5, 0.5), RADIUS), "past it with room")
+
+
+static func _length(from: Vector2, route: PackedVector2Array) -> float:
+	var total := 0.0
+	var a := from
+	for b in route:
+		total += a.distance_to(b)
+		a = b
+	return total
+
+
+func test_turns_hug_the_corner() -> void:
+	# Round the top of a wall column (x = 6, rows 2-5): the shortest way passes its two top
+	# corners, (6, 2) and (7, 2). Turning at cell centres instead would add about 7%.
+	var world := _world([
+		"............",
+		"............",
+		"......#.....",
+		"......#.....",
+		"......#.....",
+		"......#.....",
+		"......#.....",
+		"......#.....",
+	] as Array[String])
+	var from := Vector2(2.5, 3.5)
+	var to := Vector2(10.5, 3.5)
+	var route := world.pathing.paths.find_route(world, from, to, RADIUS)
+	var shortest := from.distance_to(Vector2(6, 2)) + 1.0 + Vector2(7, 2).distance_to(to)
+	assert_lt(_length(from, route), shortest * 1.03, "hugs the corners: %s" % route)
+	assert_gte(_min_clearance(world, from, route), RADIUS - 0.001, "still never clips")

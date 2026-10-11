@@ -54,10 +54,14 @@ FS_LOG_ECHO=1 tools/run_tests.sh                # also print the debug log to st
 
 ## Running the game
 ```sh
-godot --path .                                   # play the test map
-godot --path . -- --map=mvp_map                  # full-size map
+godot --path .                                   # main menu (map, single player / host / join)
+godot --path . -- --map=mvp_map                  # straight into a match on the full-size map
+godot --path . -- --no-waves                     # sandbox: no waves, spawn from the panel
+godot --path . -- --host                         # co-op host (port 7777, or --host=<port>)
+godot --path . -- --join=127.0.0.1               # co-op client (--join=<address>[:port])
 godot --path . -- --demo --screenshot=/tmp/s.png # place sample buildings, save a frame, quit
 ```
+- Any game option on the command line skips the menu (`scenes/menu.tscn`, `MainMenu`).
 - `godot --headless -s tools/sim_match.gd -- [--map=mvp_map] [--minutes=20] [--immortal]`
   runs a whole match headless and prints per-minute load (enemies alive, tick ms). Add
   `--bot` to have `DefenceBot` (`src/sim/ai/`) fortify a plot through commands. It's a smoke
@@ -106,13 +110,14 @@ addons/gut/      vendored test framework (don't edit)
 data/maps/       map JSON files (format: data/maps/README.md)
 docs/            generated previews and tables (Godot-ignored)
 reference/       original WC3 map data, inspiration only (Godot-ignored)
-scenes/          Godot scenes (presentation); main.tscn is the entry scene
+scenes/          Godot scenes (presentation); menu.tscn is the entry scene, main.tscn the game
 src/core/        simulation basics: constants, fixed-tick clock, ids, commands, rng
 src/debug/       DebugLog autoload
 src/sim/         simulation (no rendering/input): map/, and later pathing/, buildings/,
                  units/, enemies/, combat/, economy/, waves/
 src/view/        presentation that observes the simulation (renderers, camera) - later
-src/ui/          HUD and menus - later
+src/ui/          HUD, main menu, in-game menu, end screen
+src/net/         co-op networking (host / client over ENet)
 tests/           GUT tests (unit/, integration/, benchmark/)
 tools/           dev scripts: run_tests.sh, maps/ (map builders, Python 3, stdlib only)
 ```
@@ -145,9 +150,11 @@ tools/           dev scripts: run_tests.sh, maps/ (map builders, Python 3, stdli
   Idle fighters guard their spot (chase within `leash_range`, then walk back); idle repairmen
   repair damaged own buildings they see. Survivors and units walk `GridPaths.find_route()`:
   A* over the grid, straightened by string pulling with the body's radius, ending at the
-  exact ordered point. No cell-centre hopping; legs never clip blocked cells (tested on random
-  maps). We use this rather than Godot's NavigationServer: walls change the map constantly
-  and the simulation must stay deterministic. Unit attacks run inside the enemy batch, like combat.
+  exact ordered point, with turns moved to just off obstacle corners (a small shortest-path
+  pass over corner candidates), so routes hug corners at the body's radius. No cell-centre
+  hopping; legs never clip blocked cells (tested on random maps). We use this rather than
+  Godot's NavigationServer: walls change the map constantly and the simulation must stay
+  deterministic. Unit attacks run inside the enemy batch, like combat.
   Enemies whose Survivor is out of sight attack the nearest unit they see (a coarse enemy grid
   finds them), before buildings.
 - **Pathing** (`src/sim/pathing/`): `PathingSystem` keeps one `FlowField` per hunt target
@@ -167,6 +174,10 @@ tools/           dev scripts: run_tests.sh, maps/ (map builders, Python 3, stdli
   the hottest code in the game: keep it free of per-enemy function calls and allocations,
   read the grid through `grid.blocked` / `grid.occupants()`, and re-run the benchmark
   (`tests/benchmark/`) after any change to it.
+- **Bodies:** enemies never end up inside a Survivor or unit: each enemy knows the nearest one
+  within `BODY_CONTACT` (coarse grid) and is moved to its edge, sliding round it. Separation
+  pushes are capped (`MAX_PUSH_STEPS`) so packed spawns spread smoothly, and spawns are laid
+  out on a sunflower spiral. Separation looks at most `MAX_CANDIDATES` neighbours.
 - **Enemy sight:** while an enemy's Survivor is farther than `EnemyDef.sight_range`, it goes
   for the nearest building within that walking distance and attacks it, using
   `PathingSystem.sight` (`BuildingSightField`). That field is rebuilt on building changes and
@@ -206,6 +217,20 @@ tools/           dev scripts: run_tests.sh, maps/ (map builders, Python 3, stdli
   buildings and the Survivor, waypoint ribbons along selected movers' routes and queued
   orders, and pings where orders are clicked (`BuildController.ordered`). `HealthBars`
   (`src/ui/`) draws HP bars over the selection.
+- **Save / restore** (`src/sim/save/`): `WorldState.capture(world)` is the whole simulation as
+  plain Variants (entities via `ObjectState`, each system's `save_state()`, the RNG);
+  `restore()` into a fresh World on the same map continues identically (tested by running
+  both). Every system with state of its own needs `save_state()` / `load_state()`; new entity
+  fields are saved automatically. `capture_view()` / `apply_view()` are the light version for
+  co-op clients. Quick save / load: F5 / F9, the sandbox panel, or the in-game menu.
+- **Co-op** (`src/net/`): host-authoritative over ENet. `NetHost` admits clients (a player id
+  and a Survivor each), runs their commands stamped with their own player id, and sends a
+  gzip view snapshot every `NetProtocol.SNAPSHOT_TICKS`. `NetClient` builds a World it never
+  steps, applies snapshots (interpolating between them) and sends what's submitted to it
+  (`world.take_pending()`) to the host. Tested headless over localhost (`test_net.gd`).
+- **Visibility** (`src/sim/systems/visibility_system.gd`): the fog-of-war hook. Views ask
+  `world.visibility.mask(player)` (empty = all visible) and skip hidden enemies, projectiles,
+  effects, sounds and minimap dots. `GameRules.fog_of_war` is off for now; allies share vision.
 - **Economy** (`src/sim/systems/economy_system.gd`): passive income per living player plus
   `BuildingDef.income_per_minute`, accumulated exactly per tick.
 - **Definitions** (`src/sim/defs/`, data in `data/defs/`) are `Resource` classes loaded by
