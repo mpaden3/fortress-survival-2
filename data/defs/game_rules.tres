@@ -8,3 +8,4 @@ primary_resource_name = "wood"
 starting_resource = 100
 sell_refund_ratio = 0.5
 construction_start_hp_ratio = 0.1
+path_cost_per_building_hp = 0.5

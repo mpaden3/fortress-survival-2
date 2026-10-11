@@ -3,15 +3,21 @@ extends Node3D
 ## Entry scene: runs a World in real time and wires up views, camera, input and HUD.
 ##
 ## User args (after `--`): --map=<id> (default test_map), --screenshot=<png path> saves one
-## frame and quits, --demo places a few sample buildings.
+## frame and quits, --demo places a few sample buildings and spawns a wave.
+##
+## Until the Survivor exists, enemies hunt the map's start cell (target `HUNT_TARGET`).
+## Debug keys: G 50 grunts, B 5 brutes, R 30 runners, each from a random spawn.
 
 const LOCAL_PLAYER := 0
 const DEFAULT_MAP := "test_map"
+const HUNT_TARGET := &"survivor"
+const DEBUG_SPAWNS := {KEY_G: [&"grunt", 50], KEY_B: [&"brute", 5], KEY_R: [&"runner", 30]}
 
 var world: World
 var clock := SimClock.new()
 var map_view: MapView
 var building_views: BuildingViews
+var enemy_views: EnemyViews
 var camera: RtsCamera
 var builder: BuildController
 var hud: Hud
@@ -26,6 +32,7 @@ func _ready() -> void:
 	var layout := MapLayout.load_file("res://data/maps/%s.json" % map_id)
 	world = World.new(layout, DefRegistry.load_default(), 1)
 	world.add_player(LOCAL_PLAYER)
+	world.pathing.set_target(HUNT_TARGET, [layout.start] as Array[Vector2i])
 	_setup_environment()
 
 	map_view = MapView.new()
@@ -37,6 +44,11 @@ func _ready() -> void:
 	building_views.name = "Buildings"
 	add_child(building_views)
 	building_views.attach(world)
+
+	enemy_views = EnemyViews.new()
+	enemy_views.name = "Enemies"
+	add_child(enemy_views)
+	enemy_views.attach(world)
 
 	camera = RtsCamera.new()
 	camera.name = "Camera"
@@ -78,8 +90,14 @@ func step() -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	var key := event as InputEventKey
-	if key and key.pressed and not key.echo and key.physical_keycode == KEY_P:
+	if key == null or not key.pressed or key.echo:
+		return
+	if key.physical_keycode == KEY_P:
 		map_view.show_plots = not map_view.show_plots
+	elif OS.is_debug_build() and DEBUG_SPAWNS.has(key.physical_keycode):
+		var entry: Array = DEBUG_SPAWNS[key.physical_keycode]
+		var spawn: MapLayout.Spawn = world.map.spawns.pick_random()
+		world.submit(Commands.debug_spawn(LOCAL_PLAYER, entry[0], spawn.id, entry[1], HUNT_TARGET))
 
 
 func _setup_environment() -> void:
@@ -105,7 +123,11 @@ func _place_demo() -> void:
 	world.submit(Commands.place_building(LOCAL_PLAYER, &"basic_tower", start + Vector2i(-4, 2)))
 	world.submit(Commands.place_building(LOCAL_PLAYER, &"mill", start + Vector2i(3, 2)))
 	world.submit(Commands.place_building(LOCAL_PLAYER, &"barracks", start + Vector2i(-1, 3)))
-	world.run_seconds(1.0)
+	for spawn in world.map.spawns:
+		world.submit(Commands.debug_spawn(LOCAL_PLAYER, &"grunt", spawn.id, 60, HUNT_TARGET))
+	world.submit(Commands.debug_spawn(LOCAL_PLAYER, &"brute", world.map.spawns[1].id, 6, HUNT_TARGET))
+	world.submit(Commands.debug_spawn(LOCAL_PLAYER, &"runner", world.map.spawns[2].id, 30, HUNT_TARGET))
+	world.run_seconds(4.0)
 
 
 static func _parse_user_args() -> Dictionary:

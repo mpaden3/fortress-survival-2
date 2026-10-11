@@ -47,6 +47,8 @@ func _process(_delta: float) -> void:
 		keys.append("%s[%s] %s (%d)" % [mark, OS.get_keycode_string(key), def.display_name, def.cost])
 	lines.append("  ".join(keys))
 	lines.append("LMB place/select   drag: walls   RMB/Esc cancel   X sell   WASD/edge pan   wheel zoom   Q/E rotate   P plots")
+	lines.append("Enemies: %d (sim %.1f ms)    debug: G grunts  B brutes  R runners" % [world.enemies.count(),
+		world.enemies.update_usec / 1000.0])
 	_top.text = "\n".join(lines)
 	var bottom := PackedStringArray()
 	var building := world.entities.get(builder.selected_entity) as BuildingState

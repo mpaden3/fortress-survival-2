@@ -19,6 +19,8 @@ var entities: Dictionary[int, SimEntity] = {}
 var last_results: Array[Dictionary] = []
 
 var buildings: BuildingSystem
+var pathing: PathingSystem
+var enemies: EnemyManager
 
 var _next_id := 1
 var _pending: Array[Dictionary] = []
@@ -32,6 +34,10 @@ func _init(map_layout: MapLayout, definitions: DefRegistry, seed_value: int = 0)
 	grid = BuildGrid.new(map)
 	buildings = BuildingSystem.new()
 	buildings.register(self)
+	pathing = PathingSystem.new()
+	pathing.register(self)
+	enemies = EnemyManager.new()
+	enemies.register(self)
 
 
 func add_player(player_id: int) -> PlayerState:
@@ -60,6 +66,8 @@ func step() -> void:
 	for command in commands:
 		_execute(command)
 	buildings.update(self)
+	pathing.update(self)
+	enemies.update(self)
 	tick += 1
 
 
@@ -72,9 +80,14 @@ func run_seconds(seconds: float) -> void:
 	run(roundi(seconds * SimConstants.TICK_RATE))
 
 
-func add_entity(entity: SimEntity) -> int:
-	entity.id = _next_id
+## Next stable entity id (also used for enemies, which aren't SimEntity objects).
+func new_id() -> int:
 	_next_id += 1
+	return _next_id - 1
+
+
+func add_entity(entity: SimEntity) -> int:
+	entity.id = new_id()
 	entities[entity.id] = entity
 	entity_added.emit(entity)
 	return entity.id
@@ -96,7 +109,8 @@ func snapshot() -> Dictionary:
 	ids.sort()
 	for entity_id in ids:
 		entity_data.append(entities[entity_id].snapshot())
-	return {"tick": tick, "map": map.id, "players": player_data, "entities": entity_data}
+	return {"tick": tick, "map": map.id, "players": player_data, "entities": entity_data,
+		"enemies": enemies.snapshot()}
 
 
 func _execute(command: Dictionary) -> void:

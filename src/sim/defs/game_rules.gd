@@ -9,3 +9,6 @@ extends Resource
 @export_range(0.0, 1.0) var sell_refund_ratio := 0.5
 ## HP a building has the moment construction starts, as a share of max HP.
 @export_range(0.0, 1.0) var construction_start_hp_ratio := 0.1
+## Path cost of breaking through a building, per HP, in "cells walked" (10 = one cell).
+## Higher = enemies prefer longer detours over smashing walls.
+@export var path_cost_per_building_hp := 0.5

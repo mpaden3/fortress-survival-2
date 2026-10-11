@@ -18,6 +18,7 @@ static func rules(starting_resource := 100) -> GameRules:
 	game_rules.starting_resource = starting_resource
 	game_rules.sell_refund_ratio = 0.5
 	game_rules.construction_start_hp_ratio = 0.1
+	game_rules.path_cost_per_building_hp = 0.5
 	return game_rules
 
 
@@ -35,13 +36,26 @@ static func building(id: StringName, footprint := Vector2i.ONE, cost := 10, buil
 	return def
 
 
-## Registry with a 1x1 `wall`, a 2x2 `tower` and a non-placeable `tower_2`.
+static func enemy(id: StringName, max_hp := 50.0, speed := 4.0, damage := 10.0, cooldown := 0.5,
+		radius := 0.4) -> EnemyDef:
+	var def := EnemyDef.new()
+	def.id = id
+	def.max_hp = max_hp
+	def.speed = speed
+	def.damage = damage
+	def.attack_cooldown = cooldown
+	def.radius = radius
+	return def
+
+
+## Registry with a 1x1 `wall`, a 2x2 `tower`, a non-placeable `tower_2`, and a `grunt` enemy.
 static func defs(starting_resource := 100) -> DefRegistry:
 	var registry := DefRegistry.new()
 	registry.rules = rules(starting_resource)
 	registry.add_building(building(&"wall", Vector2i.ONE, 5, 1.0, 100))
 	registry.add_building(building(&"tower", Vector2i(2, 2), 20, 2.0, 300, true, [&"tower_2"] as Array[StringName]))
 	registry.add_building(building(&"tower_2", Vector2i(2, 2), 30, 2.0, 500, false))
+	registry.add_enemy(enemy(&"grunt"))
 	return registry
 
 
@@ -49,3 +63,21 @@ static func world(map: MapLayout = null, registry: DefRegistry = null, seed_valu
 	var w := World.new(map if map else open_map(16, 16), registry if registry else defs(), seed_value)
 	w.add_player(0)
 	return w
+
+
+## Map from rows of '.', '#', '~', 'T'.
+static func map_from_rows(rows: Array[String]) -> MapLayout:
+	return MapLayout.from_dict({"format": 1, "id": "fixture", "size": [rows[0].length(), rows.size()],
+		"start": [0, 0], "rows": rows})
+
+
+## Places a building and finishes its construction instantly.
+static func build_now(world: World, def_id: StringName, cell: Vector2i, player := 0) -> BuildingState:
+	world.players[player].resource += world.defs.building(def_id).cost
+	world.submit(Commands.place_building(player, def_id, cell))
+	world.step()
+	var building := world.entities.get(world.grid.occupant(cell)) as BuildingState
+	building.constructing = false
+	building.hp = building.def.max_hp
+	world.buildings._constructing.erase(building)
+	return building

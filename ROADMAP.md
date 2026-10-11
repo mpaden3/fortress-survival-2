@@ -209,8 +209,11 @@ What we know about the original (sources at the bottom; much of it is old/unveri
 - [ ] Upgrade-tree system: root buildings with branching in-place upgrades (data-driven)
 - [ ] Buildings: wall line; Basic Tower → arrow / cannon (splash) / frost (slow) lines; mill line; barracks
 - [ ] Barracks units: repairman (auto-repair), fighter
-- [ ] Flowfield per Survivor (wall HP as cost) + continuous steering/separation; no stuck units
-- [ ] Enemy AI: group picks random living Survivor; clear blocking buildings; attack visible buildings/units when target not in sight
+- [x] Flowfield per hunt target (wall HP as cost) + continuous steering/separation; never inside terrain (tested)
+- [x] Horde benchmark: 2000 enemies on the MVP map ≈ 7 ms/tick (budget 8), field build ≈ 30 ms
+- [ ] Enemy render interpolation between ticks (30 Hz sim, 60+ FPS render)
+- [x] Enemies break the building blocking their path (cheapest wall), buildings take damage and get destroyed
+- [ ] Enemy AI: group picks random living Survivor; attack visible buildings/units when target not in sight
 - [ ] Enemies: grunt, brute/siege, runner, mini-boss; continuous timed spawner with ramp + boss timings
 - [ ] Combat: targeting, projectiles, splash, slow, damage/armor, death
 - [ ] Win = survive ~20 min timer; lose = your Survivor dies

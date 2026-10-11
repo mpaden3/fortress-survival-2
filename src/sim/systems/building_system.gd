@@ -28,6 +28,20 @@ func update(world: World) -> void:
 				DebugLog.event(&"build", {"completed": building.id, "def": building.def.id, "hp": building.hp})
 
 
+## Damages a building; returns true if that destroyed it (it's removed immediately).
+func damage(world: World, building_id: int, amount: float) -> bool:
+	var building := world.entities.get(building_id) as BuildingState
+	if building == null:
+		return false
+	building.hp -= ceili(amount)
+	if building.hp > 0:
+		return false
+	if DebugLog.on(&"combat"):
+		DebugLog.event(&"combat", {"building_destroyed": building.id, "def": building.def.id, "cell": building.rect.position})
+	_remove(world, building)
+	return true
+
+
 func _place(world: World, command: Dictionary) -> String:
 	var def := world.defs.building(command["def"])
 	if def == null:
@@ -65,12 +79,16 @@ func _sell(world: World, command: Dictionary) -> String:
 		return _reject(command, "not_owner")
 	var refund := floori(building.invested * world.defs.rules.sell_refund_ratio)
 	world.players[building.owner].resource += refund
-	world.grid.release(building.rect)
-	_constructing.erase(building)
-	world.remove_entity(building.id)
+	_remove(world, building)
 	if DebugLog.on(&"build"):
 		DebugLog.event(&"build", {"sold": building.id, "def": building.def.id, "refund": refund})
 	return ""
+
+
+func _remove(world: World, building: BuildingState) -> void:
+	world.grid.release(building.rect)
+	_constructing.erase(building)
+	world.remove_entity(building.id)
 
 
 func _start_hp(world: World, def: BuildingDef) -> int:

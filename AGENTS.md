@@ -129,6 +129,15 @@ tools/           dev scripts: run_tests.sh, maps/ (map builders, Python 3, stdli
 - **Commands** (`src/core/commands.gd`) are dictionaries built by static helpers. A system
   registers a handler with `world.register_command()`. The handler returns `""` or a
   rejection reason, which ends up in `world.last_results` and the `build`/`state` log.
+- **Pathing** (`src/sim/pathing/`): `PathingSystem` keeps one `FlowField` per hunt target
+  (`set_target(key, cells)`). It rebuilds the field when buildings appear or disappear, or
+  when the target changes cell. Building cells are passable at
+  `max_hp * rules.path_cost_per_building_hp`, so blocked enemies break the cheapest wall.
+- **Enemies** (`src/sim/enemies/enemy_manager.gd`) are flat packed arrays (SoA) indexed by
+  a dense slot, with stable ids in `ids`. Positions are in **cell units**. The update loop is
+  the hottest code in the game: keep it free of per-enemy function calls and allocations,
+  read the grid through `grid.blocked` / `grid.occupants()`, and re-run the benchmark
+  (`tests/benchmark/`) after any change to it.
 - **Definitions** (`src/sim/defs/`, data in `data/defs/`) are `Resource` classes loaded by
   `DefRegistry.load_default()`. Tests build small registries in code with
   `tests/helpers/sim_fixtures.gd`.
