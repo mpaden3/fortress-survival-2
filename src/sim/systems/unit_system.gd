@@ -232,6 +232,7 @@ func _repair(world: World, unit: UnitState) -> bool:
 	if building == null or building.constructing or building.hp >= building.def.max_hp:
 		building = _damaged_building_near(world, unit)
 		unit.target_building = building.id if building else 0
+		unit.repair_goal = Vector2i(-1, -1)
 		_halt(unit)
 		if building == null:
 			return false
@@ -243,11 +244,16 @@ func _repair(world: World, unit: UnitState) -> bool:
 			world.buildings.repair(building, whole)
 			unit.repair_carry -= whole
 		return true
-	var goal := GridPaths.free_cell_around(world, building.rect, unit.position)
-	if goal.x < 0:
+	var paths := world.pathing.paths
+	if unit.repair_goal_version != paths.version or unit.repair_goal.x < 0:
+		unit.repair_goal = paths.reachable_cell_around(world, building.rect, unit.position)
+		unit.repair_goal_version = paths.version
+	if unit.repair_goal.x < 0:
+		unit.unreachable_building = building.id
+		unit.unreachable_version = paths.version
 		unit.target_building = 0
 		return false
-	_walk_to(world, unit, goal)
+	_walk_to(world, unit, unit.repair_goal)
 	return true
 
 
@@ -258,6 +264,8 @@ func _damaged_building_near(world: World, unit: UnitState) -> BuildingState:
 		var building := entity as BuildingState
 		if building == null or building.owner != unit.owner or building.constructing \
 				or building.hp >= building.def.max_hp:
+			continue
+		if building.id == unit.unreachable_building and unit.unreachable_version == world.pathing.paths.version:
 			continue
 		var distance := GridPaths.distance_to_rect(unit.position, building.rect)
 		if distance <= best_distance:

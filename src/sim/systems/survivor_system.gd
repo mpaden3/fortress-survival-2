@@ -154,14 +154,16 @@ func _work(world: World, survivor: SurvivorState) -> void:
 				_finish(survivor)
 
 
-## Walks toward a free cell next to `rect`. Returns false if none is reachable.
+## Walks toward a reachable free cell next to `rect`. Returns false if there's none, or if the
+## walk ended without getting within reach (the way got cut off).
 func _approach(world: World, survivor: SurvivorState, order: Dictionary, rect: Rect2i) -> bool:
 	if not order.has("goal"):
-		var best := GridPaths.free_cell_around(world, rect, survivor.position)
+		var best := world.pathing.paths.reachable_cell_around(world, rect, survivor.position)
 		if best.x < 0:
 			return false
 		order["goal"] = best
-	_walk(world, survivor, order, order["goal"])
+	if _walk(world, survivor, order, order["goal"]):
+		return GridPaths.distance_to_rect(survivor.position, rect) <= survivor.def.work_reach
 	return true
 
 

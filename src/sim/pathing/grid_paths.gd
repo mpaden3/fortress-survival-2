@@ -70,6 +70,31 @@ static func free_cell_around(world: World, rect: Rect2i, from: Vector2) -> Vecto
 	return best
 
 
+## Like free_cell_around(), but only cells A* can reach from `from`: nearest first, skipping
+## free cells sealed off from it (e.g. a pocket on the far side of a ridge). (-1, -1) if none.
+func reachable_cell_around(world: World, rect: Rect2i, from: Vector2) -> Vector2i:
+	var start := Vector2i(floori(from.x), floori(from.y))
+	var candidates: Array[Vector2i] = []
+	var ring := rect.grow(1)
+	var width := world.map.size.x
+	for z in range(ring.position.y, ring.end.y):
+		for x in range(ring.position.x, ring.end.x):
+			var cell := Vector2i(x, z)
+			if not rect.has_point(cell) and world.map.in_bounds(cell) and world.grid.blocked[z * width + x] == 0:
+				candidates.append(cell)
+	candidates.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
+		var da := from.distance_squared_to(Vector2(a) + Vector2(0.5, 0.5))
+		var db := from.distance_squared_to(Vector2(b) + Vector2(0.5, 0.5))
+		return da < db if da != db else (a.y < b.y if a.y != b.y else a.x < b.x))
+	for cell in candidates:
+		if cell == start:
+			return cell
+		var path := find_path(world, start, cell)
+		if not path.is_empty() and path[path.size() - 1] == Vector2(cell) + Vector2(0.5, 0.5):
+			return cell
+	return Vector2i(-1, -1)
+
+
 ## Distance (cells) from a point to the nearest point of a rect.
 static func distance_to_rect(position: Vector2, rect: Rect2i) -> float:
 	var closest := Vector2(clampf(position.x, rect.position.x, rect.end.x), clampf(position.y, rect.position.y, rect.end.y))

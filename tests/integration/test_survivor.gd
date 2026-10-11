@@ -232,3 +232,34 @@ func test_coop_survivors_start_on_separate_free_cells_near_the_start() -> void:
 		assert_lte(maxi(absi(cell.x - map.start.x), absi(cell.y - map.start.y)), SurvivorSystem.START_SPREAD)
 		cells.append(cell)
 	assert_eq(cells[0], map.start, "the first player starts on the map start")
+
+
+func test_build_order_fails_when_the_site_cannot_be_reached() -> void:
+	# Terrain splits the map; the site is on the far side with no way round.
+	var map := SimFixtures.map_from_rows([
+		".....#......",
+		".....#......",
+		".....#......",
+		".....#......",
+		".....#......",
+	] as Array[String])
+	world = SimFixtures.world(map)
+	survivor = world.survivors.spawn(world, 0, Vector2i(2, 2))
+	_submit(Commands.place_building(0, &"wall", Vector2i(8, 2)))
+	assert_true(_run_until(func() -> bool: return survivor.orders.is_empty(), 10.0), "order given up, not stuck")
+	assert_eq(world.grid.occupant(Vector2i(8, 2)), BuildGrid.NONE)
+	assert_string_contains("\n".join(DebugLog.captured_in(&"units")), "reason=unreachable")
+
+
+func test_build_order_uses_a_reachable_side_of_the_site() -> void:
+	# Site (6,0): its nearest free neighbour (5,0) is a sealed pocket; (7,1) is reachable.
+	var map := SimFixtures.map_from_rows([
+		"....#..##...",
+		"....###.....",
+		"............",
+	] as Array[String])
+	world = SimFixtures.world(map)
+	survivor = world.survivors.spawn(world, 0, Vector2i(2, 2))
+	_submit(Commands.place_building(0, &"wall", Vector2i(6, 0)))
+	assert_true(_run_until(func() -> bool: return survivor.orders.is_empty(), 15.0), "order done")
+	assert_ne(world.grid.occupant(Vector2i(6, 0)), BuildGrid.NONE, "built from the reachable side")

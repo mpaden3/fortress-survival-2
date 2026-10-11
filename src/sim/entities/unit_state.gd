@@ -28,6 +28,12 @@ var repath_tick := 0
 var walk_goal := Vector2i(-1, -1)
 var walk_version := -1
 var repair_carry := 0.0
+## Where a repairman stands to work on `target_building`, and the GridPaths version that was
+## checked on. A building found unreachable is skipped until the grid changes.
+var repair_goal := Vector2i(-1, -1)
+var repair_goal_version := -1
+var unreachable_building := 0
+var unreachable_version := -1
 
 
 func cell() -> Vector2i:

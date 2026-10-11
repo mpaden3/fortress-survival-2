@@ -231,3 +231,23 @@ func test_enemies_ignore_units_out_of_sight() -> void:
 func test_units_block_construction_on_their_cell() -> void:
 	var unit := world.units.spawn(world, 0, &"repairman", Vector2(10.5, 10.5))
 	assert_eq(world.buildings.start_construction(world, 0, &"wall", unit.cell()), "blocked_by_unit")
+
+
+func test_repairman_skips_a_damaged_building_it_cannot_reach() -> void:
+	var map := SimFixtures.map_from_rows([
+		".....#......",
+		".....#......",
+		".....#......",
+		".....#......",
+		".....#......",
+	] as Array[String])
+	world = SimFixtures.world(map, SimFixtures.defs(1000))
+	var across := SimFixtures.build_now(world, &"wall", Vector2i(7, 2))  # other side of the ridge
+	var near := SimFixtures.build_now(world, &"wall", Vector2i(1, 0))
+	across.hp = 40
+	near.hp = 40
+	var unit := world.units.spawn(world, 0, &"repairman", Vector2(4.5, 2.5))  # nearer the unreachable wall
+	assert_true(_run_until(func() -> bool: return near.hp == near.def.max_hp, 10.0), "repairs the reachable one")
+	assert_eq(across.hp, 40)
+	world.run_seconds(2.0)
+	assert_eq(unit.target_building, 0, "doesn't hang on the unreachable one")
