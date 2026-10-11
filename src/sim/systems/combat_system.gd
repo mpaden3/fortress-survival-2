@@ -4,6 +4,8 @@ extends RefCounted
 ## apply damage, splash and slow on impact. Projectiles are flat arrays like enemies.
 
 var proj_pos := PackedVector2Array()
+## Positions before the last move, for render interpolation (views only).
+var proj_prev := PackedVector2Array()
 ## Target's stable enemy id; the projectile keeps flying to its last position if it dies.
 var proj_target := PackedInt32Array()
 var proj_aim := PackedVector2Array()
@@ -60,6 +62,7 @@ func _fire(world: World) -> void:
 
 func _move_projectiles(world: World) -> void:
 	var enemies := world.enemies
+	proj_prev = proj_pos.duplicate()
 	for i in range(proj_pos.size() - 1, -1, -1):
 		var index := enemies.index_of(proj_target[i])
 		if enemies.is_alive(index):
@@ -99,12 +102,14 @@ func _remove_projectile(i: int) -> void:
 	var last := proj_pos.size() - 1
 	if i != last:
 		proj_pos[i] = proj_pos[last]
+		proj_prev[i] = proj_prev[last]
 		proj_target[i] = proj_target[last]
 		proj_aim[i] = proj_aim[last]
 		proj_speed[i] = proj_speed[last]
 		proj_def[i] = proj_def[last]
 		proj_source[i] = proj_source[last]
 	proj_pos.resize(last)
+	proj_prev.resize(last)
 	proj_target.resize(last)
 	proj_aim.resize(last)
 	proj_speed.resize(last)

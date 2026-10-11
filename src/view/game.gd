@@ -79,6 +79,7 @@ func _ready() -> void:
 	camera.name = "Camera"
 	camera.bounds = Rect2(0, 0, layout.size.x * Coords.CELL, layout.size.y * Coords.CELL)
 	add_child(camera)
+	camera.edge_pan = not _args.has("screenshot")  # the mouse may sit at the window edge
 	camera.focus(Coords.cell_centre(layout.start))
 
 	builder = BuildController.new()
@@ -98,11 +99,15 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	for i in clock.consume(delta * speed):
 		step()
+	# Views draw between the last two ticks (children process after this node).
+	var alpha := clock.alpha()
+	enemy_views.alpha = alpha
+	projectile_views.alpha = alpha
+	survivor_views.alpha = alpha
 	if follow_survivor:
 		camera.focus(_survivor_point())
 	_frames += 1
 	if _args.has("screenshot") and _frames == int(_args.get("screenshot_frame", "30")):
-		camera.edge_pan = false
 		var image := get_viewport().get_texture().get_image()
 		image.save_png(_args["screenshot"])
 		print("screenshot saved: ", _args["screenshot"])
@@ -180,7 +185,8 @@ func _place_demo() -> void:
 
 
 func _survivor_point() -> Vector3:
-	return Vector3(survivor.position.x * Coords.CELL, 0.0, survivor.position.y * Coords.CELL)
+	var at := survivor.position_at(clock.alpha())
+	return Vector3(at.x * Coords.CELL, 0.0, at.y * Coords.CELL)
 
 
 static func _parse_user_args() -> Dictionary:

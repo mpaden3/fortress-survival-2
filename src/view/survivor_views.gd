@@ -1,11 +1,13 @@
 class_name SurvivorViews
 extends Node3D
 ## One capsule per Survivor (placeholder art). Glows while hasted; turns grey when dead.
+## Interpolated between the last two ticks by `alpha` (set by Game each frame).
 
 const ALIVE := Color(0.20, 0.45, 0.95)
 const HASTED := Color(0.35, 0.90, 1.00)
 const DEAD := Color(0.35, 0.35, 0.38)
 
+var alpha := 1.0
 var _world: World
 var _views: Dictionary[int, MeshInstance3D] = {}
 
@@ -36,7 +38,8 @@ func _process(_delta: float) -> void:
 	for entity_id in _views:
 		var survivor := _world.entities.get(entity_id) as SurvivorState
 		var view := _views[entity_id]
-		view.position = Vector3(survivor.position.x * Coords.CELL, 0.9, survivor.position.y * Coords.CELL)
+		var at := survivor.position_at(alpha)
+		view.position = Vector3(at.x * Coords.CELL, 0.9, at.y * Coords.CELL)
 		var mat := view.material_override as StandardMaterial3D
 		if not survivor.alive:
 			mat.albedo_color = DEAD

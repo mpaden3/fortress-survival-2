@@ -26,6 +26,8 @@ const PURSUIT_COST := 50
 var ids := PackedInt32Array()
 var types := PackedInt32Array()
 var positions := PackedVector2Array()
+## Positions at the start of the last update, for render interpolation (views only).
+var previous_positions := PackedVector2Array()
 var hp := PackedFloat32Array()
 var cooldowns := PackedInt32Array()
 ## Index into target_keys of each enemy's hunt target.
@@ -98,6 +100,7 @@ func spawn(world: World, def_id: StringName, area: Rect2i, amount: int, target: 
 		ids.append(entity_id)
 		types.append(type_index)
 		positions.append(Vector2(cell.x + 0.2 + world.rng.randf() * 0.6, cell.y + 0.2 + world.rng.randf() * 0.6))
+		previous_positions.append(positions[positions.size() - 1])
 		hp.append(def.max_hp)
 		cooldowns.append(0)
 		targets.append(target_index)
@@ -247,12 +250,13 @@ func update(world: World) -> void:
 	var heads := _bucket_head
 	var nexts := _bucket_next
 	var old := positions.duplicate()
+	previous_positions = old
 	var dir_fields: Array[PackedVector2Array] = []
-	var cost_fields: Array[PackedInt64Array] = []
+	var cost_fields: Array[PackedInt32Array] = []
 	for key in target_keys:
 		var flow := world.pathing.field(key)
 		dir_fields.append(flow.direction if flow else PackedVector2Array())
-		cost_fields.append(flow.cost if flow else PackedInt64Array())
+		cost_fields.append(flow.cost if flow else PackedInt32Array())
 	# Per target: the hunted Survivor's position, reach and whether it's alive.
 	var hunted: Array[SurvivorState] = []
 	var hunt_pos := PackedVector2Array()
@@ -447,6 +451,7 @@ func _remove(index: int) -> void:
 		ids[index] = ids[last]
 		types[index] = types[last]
 		positions[index] = positions[last]
+		previous_positions[index] = previous_positions[last]
 		hp[index] = hp[last]
 		cooldowns[index] = cooldowns[last]
 		targets[index] = targets[last]
@@ -454,6 +459,7 @@ func _remove(index: int) -> void:
 	ids.resize(last)
 	types.resize(last)
 	positions.resize(last)
+	previous_positions.resize(last)
 	hp.resize(last)
 	cooldowns.resize(last)
 	targets.resize(last)

@@ -140,8 +140,16 @@ tools/           dev scripts: run_tests.sh, maps/ (map builders, Python 3, stdli
   dies, its player is defeated (`world.player_defeated`).
 - **Pathing** (`src/sim/pathing/`): `PathingSystem` keeps one `FlowField` per hunt target
   (`set_target(key, cells)`). It rebuilds the field when buildings appear or disappear, or
-  when the target changes cell. Building cells are passable at
+  when the target changes cell; a Survivor moves its field only after going
+  `SurvivorSystem.RETARGET_CELLS` away. Building cells are passable at
   `max_hp * rules.path_cost_per_building_hp`, so blocked enemies break the cheapest wall.
+  Fields use a bucket queue (Dial's algorithm). The first build of a field is immediate;
+  rebuilds are sliced at `PathingSystem.CELLS_PER_TICK` cells per tick (a count, so it stays
+  deterministic) while enemies follow the old field, so no tick stalls.
+- **Render interpolation:** the sim keeps each mover's previous-tick position
+  (`enemies.previous_positions`, `combat.proj_prev`, `SurvivorState.previous_position`).
+  `Game` sets `alpha = clock.alpha()` on the views each frame and they draw in between.
+  Anything that teleports sets its previous position too, so it doesn't slide.
 - **Enemies** (`src/sim/enemies/enemy_manager.gd`) are flat packed arrays (SoA) indexed by
   a dense slot, with stable ids in `ids`. Positions are in **cell units**. The update loop is
   the hottest code in the game: keep it free of per-enemy function calls and allocations,

@@ -5,6 +5,9 @@ extends SimEntity
 var def: SurvivorDef
 ## Position in cell units (like enemies).
 var position := Vector2.ZERO
+## Position before this tick's movement (after commands, so a Blink doesn't slide), for
+## render interpolation.
+var previous_position := Vector2.ZERO
 var hp := 0.0
 var alive := true
 ## Queue of orders: {"kind": "move"|"build"|"repair", ...}. The first one is active.
@@ -14,6 +17,11 @@ var path := PackedVector2Array()
 var blink_ready_tick := 0
 var haste_until_tick := 0
 var haste_ready_tick := 0
+
+
+## Where to draw it `alpha` (0..1) of the way from the previous tick to this one.
+func position_at(alpha: float) -> Vector2:
+	return previous_position.lerp(position, alpha)
 
 
 func cell() -> Vector2i:

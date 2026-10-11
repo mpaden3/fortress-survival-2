@@ -4,11 +4,18 @@ extends RefCounted
 ## buildings appear or disappear, or when a target moves to another cell. Also keeps the
 ## BuildingSightField that enemies use to go for the buildings they see.
 
+## Cells a field rebuild may settle per tick (~2.5 ms). A full rebuild on the MVP map (~11k
+## open cells) is spread over ~6 ticks so it never stalls a frame; enemies follow the old field
+## meanwhile. Counted in cells, not time, so the simulation stays deterministic.
+const CELLS_PER_TICK := 2048
+
 var fields: Dictionary[StringName, FlowField] = {}
 var sight := BuildingSightField.new()
 var _target_cells: Dictionary[StringName, Array] = {}
 var _dirty: Dictionary[StringName, bool] = {}
 var _extra := PackedInt32Array()
+var _terrain := PackedInt32Array()
+var _max_extra := 0
 var _extra_dirty := true
 
 
@@ -44,29 +51,42 @@ func update(world: World) -> void:
 		_rebuild_sight(world)
 		for key in fields:
 			_dirty[key] = true
-	for key in _dirty:
+	# A field already rebuilding finishes first; it starts again afterwards if still dirty.
+	for key: StringName in _dirty.keys():
 		var flow := fields[key]
+		if flow.is_building():
+			continue
 		var cells: Array[Vector2i] = []
 		cells.assign(_target_cells[key])
-		flow.build(world.map.size, _extra, cells)
-		if DebugLog.on(&"pathing"):
-			DebugLog.event(&"pathing", {"field": key, "targets": cells.size(), "build_ms": flow.build_usec / 1000.0})
-	_dirty.clear()
+		flow.begin(world.map.size, _extra, cells, _max_extra)
+		_dirty.erase(key)
+	for key in fields:
+		var flow := fields[key]
+		if not flow.is_building():
+			continue
+		# The first field is needed right away; later ones keep the old field until done.
+		if flow.advance(CELLS_PER_TICK if flow.builds > 0 else 1 << 30) and DebugLog.on(&"pathing"):
+			DebugLog.event(&"pathing", {"field": key, "targets": flow.targets.size(), "build_ms": flow.build_usec / 1000.0})
 
 
-## Per-cell extra cost: terrain IMPASSABLE, building cells their break cost.
+## Per-cell extra cost: terrain IMPASSABLE, building cells their break cost. Terrain never
+## changes, so it's computed once and copied (natively) before stamping the buildings.
 func _rebuild_extra(world: World) -> void:
 	var map := world.map
-	_extra.resize(map.size.x * map.size.y)
-	for z in map.size.y:
-		for x in map.size.x:
-			_extra[z * map.size.x + x] = 0 if map.is_walkable(Vector2i(x, z)) else FlowField.IMPASSABLE
+	if _terrain.size() != map.size.x * map.size.y:
+		_terrain.resize(map.size.x * map.size.y)
+		for z in map.size.y:
+			for x in map.size.x:
+				_terrain[z * map.size.x + x] = 0 if map.is_walkable(Vector2i(x, z)) else FlowField.IMPASSABLE
+	_extra = _terrain.duplicate()
 	var per_hp := world.defs.rules.path_cost_per_building_hp
+	_max_extra = 0
 	for entity: SimEntity in world.entities.values():
 		var building := entity as BuildingState
 		if building == null:
 			continue
 		var break_cost := maxi(1, roundi(building.def.max_hp * per_hp))
+		_max_extra = maxi(_max_extra, break_cost)
 		for z in range(building.rect.position.y, building.rect.end.y):
 			for x in range(building.rect.position.x, building.rect.end.x):
 				_extra[z * map.size.x + x] = break_cost

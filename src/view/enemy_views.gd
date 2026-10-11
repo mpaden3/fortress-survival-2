@@ -2,6 +2,7 @@ class_name EnemyViews
 extends Node3D
 ## Draws every enemy with one MultiMesh per enemy type, refilled from the EnemyManager's
 ## arrays each frame through the raw transform buffer (one call per type, not per enemy).
+## Positions are interpolated between the last two ticks by `alpha` (set by Game each frame).
 
 const COLOURS := {
 	"grunt": Color(0.62, 0.22, 0.16),
@@ -11,6 +12,8 @@ const COLOURS := {
 	"behemoth": Color(0.12, 0.05, 0.05),
 }
 
+## Fraction of a tick since the last one: 0 draws the previous tick, 1 the latest.
+var alpha := 1.0
 var _world: World
 var _instances: Array[MultiMeshInstance3D] = []
 var _buffers: Array[PackedFloat32Array] = []
@@ -42,6 +45,8 @@ func _process(_delta: float) -> void:
 	var enemies := _world.enemies
 	var types := enemies.types
 	var positions := enemies.positions
+	var previous := enemies.previous_positions if enemies.previous_positions.size() == positions.size() else positions
+	var t_alpha := alpha
 	var n := enemies.count()
 	_counts.fill(0)
 	for i in n:
@@ -63,7 +68,8 @@ func _process(_delta: float) -> void:
 		for i in n:
 			if types[i] != t:
 				continue
-			var p := positions[i]
+			var q := previous[i]
+			var p := q + (positions[i] - q) * t_alpha
 			buffer[o] = 1.0
 			buffer[o + 1] = 0.0
 			buffer[o + 2] = 0.0

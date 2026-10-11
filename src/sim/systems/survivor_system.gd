@@ -1,18 +1,18 @@
 class_name SurvivorSystem
 extends RefCounted
 ## Survivors: orders (move, build, repair), A* movement, Blink, Haste, damage and defeat.
-## Each Survivor is a hunt target: its flow field follows it as it moves (throttled).
+## Each Survivor is a hunt target: its flow field follows it once it has moved a few cells.
 
-## A hunt field follows a moving Survivor at most this often: a rebuild costs tens of ms on
-## the full map, and enemies close to the Survivor chase it directly anyway.
-const RETARGET_TICKS := 15
+## A hunt field is moved once the Survivor is this many cells (Chebyshev) from the field's
+## target cell. Far away the field barely changes; up close enemies chase the Survivor
+## directly (EnemyManager.PURSUIT_RANGE, which must stay above this distance).
+const RETARGET_CELLS := 2
 
 var _by_player: Dictionary[int, SurvivorState] = {}
 var _astar := AStarGrid2D.new()
 var _astar_ready := false
 var _dirty_rects: Array[Rect2i] = []
 var _field_cell: Dictionary[int, Vector2i] = {}
-var _last_retarget: Dictionary[int, int] = {}
 var _repair_carry: Dictionary[int, float] = {}
 
 
@@ -30,11 +30,11 @@ func spawn(world: World, player_id: int, cell: Vector2i) -> SurvivorState:
 	survivor.owner = player_id
 	survivor.def = world.defs.survivor
 	survivor.position = Vector2(cell) + Vector2(0.5, 0.5)
+	survivor.previous_position = survivor.position
 	survivor.hp = survivor.def.max_hp
 	world.add_entity(survivor)
 	_by_player[player_id] = survivor
 	_field_cell[player_id] = cell
-	_last_retarget[player_id] = world.tick
 	world.pathing.set_target(survivor.target_key(), [cell] as Array[Vector2i])
 	if DebugLog.on(&"units"):
 		DebugLog.event(&"units", {"survivor_spawned": survivor.id, "player": player_id, "cell": cell})
@@ -93,6 +93,8 @@ func damage(world: World, survivor: SurvivorState, amount: float) -> bool:
 
 func update(world: World) -> void:
 	_sync_astar(world)
+	for survivor: SurvivorState in _by_player.values():
+		survivor.previous_position = survivor.position
 	for survivor in living():
 		_work(world, survivor)
 		_follow_with_field(world, survivor)
@@ -183,13 +185,13 @@ func _walk(world: World, survivor: SurvivorState, order: Dictionary, goal: Vecto
 	return survivor.path.is_empty()
 
 
-## Moves this Survivor's hunt field to its current cell, at most every RETARGET_TICKS.
+## Moves this Survivor's hunt field to its current cell once it's RETARGET_CELLS away.
 func _follow_with_field(world: World, survivor: SurvivorState) -> void:
 	var cell := survivor.cell()
-	if cell == _field_cell[survivor.owner] or world.tick - _last_retarget[survivor.owner] < RETARGET_TICKS:
+	var offset := (cell - _field_cell[survivor.owner]).abs()
+	if maxi(offset.x, offset.y) < RETARGET_CELLS:
 		return
 	_field_cell[survivor.owner] = cell
-	_last_retarget[survivor.owner] = world.tick
 	world.pathing.set_target(survivor.target_key(), [cell] as Array[Vector2i])
 
 

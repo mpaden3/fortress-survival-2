@@ -86,3 +86,64 @@ func test_sample_blends_between_cells() -> void:
 	var d := flow.sample(Vector2(7.5, 7.0))
 	assert_almost_eq(d.length(), 1.0, 0.001)
 	assert_true(d.x < 0.0 and d.y < 0.0, "heads up-left toward the target")
+
+
+func _mvp_extra(world: World) -> PackedInt32Array:
+	world.step()  # builds the PathingSystem's per-cell costs
+	return world.pathing._extra
+
+
+func test_sliced_build_equals_one_shot_build() -> void:
+	var world := SimFixtures.world(MapLayout.load_file("res://data/maps/mvp_map.json"))
+	world.players[0].resource = 100000
+	var start := world.map.start
+	var walls := 0
+	for dx in range(-6, 7):
+		if world.buildings.start_construction(world, 0, &"wall", start + Vector2i(dx, -5)).is_empty():
+			walls += 1
+	assert_gt(walls, 4)
+	var extra := _mvp_extra(world)
+	var whole := FlowField.new()
+	whole.build(world.map.size, extra, [start] as Array[Vector2i])
+	var sliced := FlowField.new()
+	sliced.begin(world.map.size, extra, [start] as Array[Vector2i])
+	var slices := 1
+	while not sliced.advance(1000):
+		slices += 1
+	assert_gt(slices, 5, "really sliced")
+	assert_eq(sliced.cost, whole.cost)
+	assert_eq(sliced.direction, whole.direction)
+
+
+func test_keeps_the_old_field_until_the_new_one_is_done() -> void:
+	var size := Vector2i(40, 40)
+	var extra := PackedInt32Array()
+	extra.resize(size.x * size.y)
+	var flow := FlowField.new()
+	flow.build(size, extra, [Vector2i(0, 0)] as Array[Vector2i])
+	var old_cost := flow.cost_at(Vector2i(39, 39))
+	flow.begin(size, extra, [Vector2i(39, 39)] as Array[Vector2i])
+	assert_false(flow.advance(100))
+	assert_true(flow.is_building())
+	assert_eq(flow.cost_at(Vector2i(39, 39)), old_cost, "still the old field")
+	while not flow.advance(100):
+		pass
+	assert_eq(flow.cost_at(Vector2i(39, 39)), 0, "switched to the new field")
+	assert_eq(flow.builds, 2)
+
+
+func test_pathing_spreads_rebuilds_over_ticks() -> void:
+	var world := SimFixtures.world(MapLayout.load_file("res://data/maps/mvp_map.json"))
+	var start := world.map.start
+	world.pathing.set_target(&"t", [start] as Array[Vector2i])
+	world.step()
+	var flow := world.pathing.field(&"t")
+	assert_eq(flow.builds, 1, "the first field is built at once")
+	world.pathing.set_target(&"t", [start + Vector2i(3, 0)] as Array[Vector2i])
+	var ticks := 0
+	while flow.builds == 1:
+		world.step()
+		ticks += 1
+		assert_lt(ticks, 60, "rebuild finishes")
+	assert_gt(ticks, 1, "rebuild took several ticks")
+	assert_eq(flow.cost_at(start + Vector2i(3, 0)), 0)

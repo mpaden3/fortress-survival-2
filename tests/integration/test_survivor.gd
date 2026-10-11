@@ -169,3 +169,24 @@ func test_groups_pick_random_living_survivors() -> void:
 	world.survivors.damage(world, second, 1e9)
 	for t in world.enemies.targets:
 		assert_eq(world.enemies.target_keys[t], survivor.target_key(), "dead survivor's hunters retarget")
+
+
+func test_hunt_field_follows_only_after_moving_a_few_cells() -> void:
+	var key := survivor.target_key()
+	world.step()
+	assert_eq(world.pathing.field(key).targets, [Vector2i(5, 5)] as Array[Vector2i])
+	_submit(Commands.move_survivor(0, Vector2i(6, 5)))
+	assert_true(_run_until(func() -> bool: return survivor.orders.is_empty(), 5.0))
+	world.step()
+	assert_eq(world.pathing.field(key).targets, [Vector2i(5, 5)] as Array[Vector2i], "one cell: field stays")
+	_submit(Commands.move_survivor(0, Vector2i(5 + SurvivorSystem.RETARGET_CELLS, 5)))
+	assert_true(_run_until(func() -> bool: return survivor.orders.is_empty(), 5.0))
+	world.step()
+	assert_eq(world.pathing.field(key).targets, [Vector2i(5 + SurvivorSystem.RETARGET_CELLS, 5)] as Array[Vector2i],
+		"moved %d cells: field follows" % SurvivorSystem.RETARGET_CELLS)
+
+
+func test_retarget_distance_stays_within_enemy_pursuit_range() -> void:
+	# Worst case: the Survivor at the far corner of the cell next to the field's target.
+	var worst := Vector2(SurvivorSystem.RETARGET_CELLS - 1 + 0.5, SurvivorSystem.RETARGET_CELLS - 1 + 0.5).length()
+	assert_lt(worst, EnemyManager.PURSUIT_RANGE, "enemies at the old target still chase the Survivor directly")

@@ -8,6 +8,8 @@ const TICK_BUDGET_MS := 8.0
 const FIELD_BUDGET_MS := 60.0
 ## Rebuilt on every building change, on top of the flow fields.
 const SIGHT_BUDGET_MS := 10.0
+## A rebuild after the Survivor moves is sliced over ticks; one slice must stay small.
+const SLICE_BUDGET_MS := 3.0
 
 
 func test_2000_enemies_on_mvp_map() -> void:
@@ -34,6 +36,29 @@ func test_2000_enemies_on_mvp_map() -> void:
 	assert_eq(world.enemies.count(), ENEMIES)
 	assert_lt(field_ms, FIELD_BUDGET_MS, "flow field build within budget")
 	assert_lt(avg_ms, TICK_BUDGET_MS, "enemy update within budget")
+
+
+## The Survivor moves: the field rebuild is spread over ticks, each slice within budget.
+func test_sliced_field_rebuild_on_mvp_map() -> void:
+	DebugLog.active = false
+	var layout := MapLayout.load_file("res://data/maps/mvp_map.json")
+	var world := World.new(layout, DefRegistry.load_default(), 7)
+	world.add_player(0)
+	world.pathing.set_target(&"survivor", [layout.start] as Array[Vector2i])
+	world.step()
+	var flow := world.pathing.field(&"survivor")
+	world.pathing.set_target(&"survivor", [layout.start + Vector2i(2, 0)] as Array[Vector2i])
+	var ticks := 0
+	var worst_usec := 0
+	while flow.builds == 1 and ticks < 100:
+		world.step()
+		ticks += 1
+		worst_usec = maxi(worst_usec, flow.advance_usec)
+	DebugLog.active = true
+	gut.p("sliced rebuild: %d ticks, worst slice %.2f ms, total %.1f ms"
+		% [ticks, worst_usec / 1000.0, flow.build_usec / 1000.0])
+	assert_eq(flow.builds, 2, "rebuild finished")
+	assert_lt(worst_usec / 1000.0, SLICE_BUDGET_MS, "each slice within budget")
 
 
 ## Same horde, plus 32 towers around the start firing into it.
