@@ -81,7 +81,8 @@ A central logging autoload is the agent's "eyes" on the game.
 - `reference/` has a `.gdignore`, so Godot doesn't import it. Never load it from game code.
 
 ## Workflow
-- Small, focused commits. Branch `master`, remote `origin` (GitHub, SSH).
+- Small, focused commits **directly on `master`**. No PRs or CI yet; tests run locally.
+  Remote is `origin` (GitHub, SSH).
 - Commit or push only when the user asks.
 - Update ROADMAP.md checkboxes when a milestone item is completed and tested.
 - Don't edit `.godot/` (generated). Commit `.import` files, `project.godot` and `.uid` files.
