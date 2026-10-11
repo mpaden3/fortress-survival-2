@@ -207,8 +207,9 @@ What we know about the original (sources at the bottom; much of it is old/unveri
 - [x] Grid placement with footprints + validity checks; construction time; sell (partial refund)
 - [x] Survivor walks to the site before construction starts (queued orders with Shift)
 - [ ] Resource "wood" (placeholder name): passive income + mill line
-- [ ] Upgrade-tree system: root buildings with branching in-place upgrades (data-driven)
-- [ ] Buildings: wall line; Basic Tower → arrow / cannon (splash) / frost (slow) lines; mill line; barracks
+- [x] Upgrade-tree system: root buildings with branching in-place upgrades (data-driven)
+- [x] Buildings: wall line; Basic Tower → arrow / cannon (splash) / frost (slow) lines (placeholder stats)
+- [ ] Mill income, barracks training
 - [ ] Barracks units: repairman (auto-repair), fighter
 - [x] Flowfield per hunt target (wall HP as cost) + continuous steering/separation; never inside terrain (tested)
 - [x] Horde benchmark: 2000 enemies on the MVP map ≈ 7 ms/tick (budget 8), field build ≈ 30 ms
@@ -217,7 +218,8 @@ What we know about the original (sources at the bottom; much of it is old/unveri
 - [x] Enemy groups hunt a random living Survivor, chase it when close, attack it; retarget when it dies
 - [ ] Enemies attack visible buildings/units when their Survivor is not in sight; attack-move along the way
 - [ ] Enemies: grunt, brute/siege, runner, mini-boss; continuous timed spawner with ramp + boss timings
-- [ ] Combat: targeting, projectiles, splash, slow, damage/armor, death
+- [x] Combat: targeting, homing projectiles, splash, slow, death (benchmark: 32 towers + 2000 enemies ≈ 5 ms/tick)
+- [ ] Armor / damage types
 - [ ] Win = survive ~20 min timer; lose = your Survivor dies
 - [ ] Minimal HUD: wood, timer, selection info, build/upgrade/sell menu, ability buttons
 - [ ] Placeholder art (primitives), basic SFX hooks

@@ -72,8 +72,22 @@ func _process(_delta: float) -> void:
 	if building:
 		var state := "building %d%%" % (100 * building.build_progress / building.def.build_ticks()) \
 			if building.constructing else "ready"
+		if building.upgrading_to:
+			state = "upgrading to %s %d%%" % [building.upgrading_to.display_name,
+				100 * building.upgrade_progress / building.upgrading_to.build_ticks()]
 		bottom.append("Selected: %s #%d  HP %d/%d  %s" % [building.def.display_name, building.id, building.hp,
 			building.def.max_hp, state])
+		if building.def.is_armed():
+			bottom.append("Attack: %.0f dmg every %.1fs, range %.1f%s%s" % [building.def.attack_damage,
+				building.def.attack_cooldown, building.def.attack_range,
+				", splash %.1f" % building.def.splash_radius if building.def.splash_radius > 0 else "",
+				", slows to %d%%" % (building.def.slow_multiplier * 100) if building.def.slow_multiplier < 1 else ""])
+		var options := PackedStringArray()
+		for k in building.def.upgrades.size():
+			var target := world.defs.building(building.def.upgrades[k])
+			options.append("[%s] %s (%d)" % [OS.get_keycode_string(BuildController.UPGRADE_KEYS[k]), target.display_name, target.cost])
+		if not options.is_empty():
+			bottom.append("Upgrade: " + "  ".join(options))
 	bottom.append("Cell %s" % builder.hover_cell)
 	if world.tick < _message_until:
 		bottom.append(_message)

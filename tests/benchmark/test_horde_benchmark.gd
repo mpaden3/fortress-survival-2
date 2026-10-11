@@ -32,3 +32,44 @@ func test_2000_enemies_on_mvp_map() -> void:
 	assert_eq(world.enemies.count(), ENEMIES)
 	assert_lt(field_ms, FIELD_BUDGET_MS, "flow field build within budget")
 	assert_lt(avg_ms, TICK_BUDGET_MS, "enemy update within budget")
+
+
+## Same horde, plus 32 towers around the start firing into it.
+func test_2000_enemies_with_32_towers() -> void:
+	DebugLog.active = false
+	var layout := MapLayout.load_file("res://data/maps/mvp_map.json")
+	var world := World.new(layout, DefRegistry.load_default(), 7)
+	world.add_player(0)
+	world.players[0].resource = 1_000_000
+	world.pathing.set_target(&"survivor", [layout.start] as Array[Vector2i])
+	var towers := 0
+	var defs := [&"basic_tower"]
+	for dz in range(-14, 15, 2):
+		for dx in range(-14, 15, 2):
+			if towers >= 32 or (absi(dx) < 6 and absi(dz) < 6):
+				continue
+			if world.buildings.start_construction(world, 0, defs[0], layout.start + Vector2i(dx, dz)).is_empty():
+				towers += 1
+	world.run_seconds(4.0)  # finish construction
+	for entity in world.entities.values():
+		var tower := entity as BuildingState
+		var branch: StringName = [&"arrow_tower", &"cannon_tower", &"frost_tower"][tower.id % 3]
+		world.submit(Commands.upgrade_building(0, tower.id, branch))
+	world.run_seconds(7.0)
+	for spawn in layout.spawns:
+		world.enemies.spawn(world, &"grunt", spawn.rect, ENEMIES / layout.spawns.size(), &"survivor")
+	world.run_seconds(8.0)  # let the horde reach the towers
+	var enemy_usec := 0
+	var combat_usec := 0
+	var ticks := 90
+	for i in ticks:
+		world.step()
+		enemy_usec += world.enemies.update_usec
+		combat_usec += world.combat.update_usec
+	DebugLog.active = true
+	var enemy_ms := enemy_usec / 1000.0 / ticks
+	var combat_ms := combat_usec / 1000.0 / ticks
+	gut.p("combat benchmark: %d towers, %d enemies left, enemies %.2f ms + combat %.2f ms per tick, %d projectiles"
+		% [towers, world.enemies.count(), enemy_ms, combat_ms, world.combat.projectile_count()])
+	assert_eq(towers, 32)
+	assert_lt(enemy_ms + combat_ms, TICK_BUDGET_MS, "enemies + combat within budget")

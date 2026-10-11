@@ -30,12 +30,23 @@ var cooldowns := PackedInt32Array()
 var targets := PackedInt32Array()
 ## Building id each enemy is attacking this tick, 0 if none.
 var attacking := PackedInt32Array()
+## Slow effect: speed multiplier and the tick it wears off.
+var slow_multiplier := PackedFloat32Array()
+var slow_until := PackedInt32Array()
 var target_keys: Array[StringName] = []
 ## Microseconds the last update took.
 var update_usec := 0
 
+## Stable id -> current slot.
+var _slot: Dictionary[int, int] = {}
+## While batching (combat), deaths are queued and removed at end_batch() so slot indices and
+## buckets stay valid for the whole batch.
+var _batching := false
+var _dead := PackedInt32Array()
 var _bucket_head := PackedInt32Array()
 var _bucket_next := PackedInt32Array()
+var _bucket_width := 0
+var _bucket_height := 0
 ## Per enemy type: cells moved per tick, body radius in cells.
 var _type_step := PackedFloat32Array()
 var _type_radius := PackedFloat32Array()
@@ -86,6 +97,9 @@ func spawn(world: World, def_id: StringName, area: Rect2i, amount: int, target: 
 		cooldowns.append(0)
 		targets.append(target_index)
 		attacking.append(0)
+		slow_multiplier.append(1.0)
+		slow_until.append(0)
+		_slot[entity_id] = ids.size() - 1
 		spawned.append(entity_id)
 	if DebugLog.on(&"waves"):
 		DebugLog.event(&"waves", {"spawned": amount, "def": def_id, "area": area.position, "target": target})
@@ -93,7 +107,73 @@ func spawn(world: World, def_id: StringName, area: Rect2i, amount: int, target: 
 
 
 func index_of(entity_id: int) -> int:
-	return ids.find(entity_id)
+	return _slot.get(entity_id, -1)
+
+
+func is_alive(index: int) -> bool:
+	return index >= 0 and hp[index] > 0.0
+
+
+func begin_batch() -> void:
+	_batching = true
+
+
+func end_batch() -> void:
+	_batching = false
+	if _dead.is_empty():
+		return
+	_dead.sort()
+	for k in range(_dead.size() - 1, -1, -1):
+		_remove(_dead[k])
+	_dead.clear()
+
+
+## Slows enemy `index` to `multiplier` of its speed until `until_tick`. Overlapping slows
+## keep the strongest multiplier and the latest end.
+func apply_slow(index: int, multiplier: float, now: int, until_tick: int) -> void:
+	if slow_until[index] <= now:
+		slow_multiplier[index] = multiplier
+	else:
+		slow_multiplier[index] = minf(slow_multiplier[index], multiplier)
+	slow_until[index] = maxi(slow_until[index], until_tick)
+
+
+## Nearest living enemy within `radius` cells of `centre`, or -1. Uses last update's buckets.
+func nearest_in_range(centre: Vector2, radius: float) -> int:
+	var best := -1
+	var best_sq := radius * radius
+	for index in _candidates(centre, radius):
+		var d := positions[index].distance_squared_to(centre)
+		if d <= best_sq and hp[index] > 0.0:
+			best_sq = d
+			best = index
+	return best
+
+
+## Living enemies within `radius` cells of `centre`.
+func indices_in_radius(centre: Vector2, radius: float) -> PackedInt32Array:
+	var out := PackedInt32Array()
+	for index in _candidates(centre, radius):
+		if positions[index].distance_squared_to(centre) <= radius * radius and hp[index] > 0.0:
+			out.append(index)
+	return out
+
+
+func _candidates(centre: Vector2, radius: float) -> PackedInt32Array:
+	var out := PackedInt32Array()
+	if _bucket_next.size() != ids.size() or _bucket_width == 0:
+		return out
+	var x0 := maxi(floori(centre.x - radius) - 1, 0)
+	var x1 := mini(floori(centre.x + radius) + 1, _bucket_width - 1)
+	var z0 := maxi(floori(centre.y - radius) - 1, 0)
+	var z1 := mini(floori(centre.y + radius) + 1, _bucket_height - 1)
+	for z in range(z0, z1 + 1):
+		for x in range(x0, x1 + 1):
+			var j := _bucket_head[z * _bucket_width + x]
+			while j >= 0:
+				out.append(j)
+				j = _bucket_next[j]
+	return out
 
 
 func any_in_rect(rect: Rect2i) -> bool:
@@ -122,14 +202,20 @@ func _target_index(key: StringName) -> int:
 	return index
 
 
-## Damages enemy slot `index`; returns true if it died (it's removed immediately).
+## Damages enemy slot `index`; returns true if that killed it. Removed immediately, or at
+## end_batch() while batching.
 func damage(index: int, amount: float) -> bool:
+	if hp[index] <= 0.0:
+		return false
 	hp[index] -= amount
 	if hp[index] > 0.0:
 		return false
 	if DebugLog.on(&"combat"):
 		DebugLog.event(&"combat", {"enemy_killed": ids[index], "pos": positions[index]})
-	_remove(index)
+	if _batching:
+		_dead.append(index)
+	else:
+		_remove(index)
 	return true
 
 
@@ -226,6 +312,8 @@ func update(world: World) -> void:
 				dir = dir.normalized()
 
 		var desired := dir * step_of[t]
+		if slow_until[i] > world.tick:
+			desired *= slow_multiplier[i]
 		if not engaged:
 			attacking[i] = 0
 		if dir != Vector2.ZERO:
@@ -312,6 +400,8 @@ func _cache_types(world: World) -> void:
 
 
 func _fill_buckets(width: int, height: int) -> void:
+	_bucket_width = width
+	_bucket_height = height
 	if _bucket_head.size() != width * height:
 		_bucket_head.resize(width * height)
 	_bucket_head.fill(-1)
@@ -325,7 +415,11 @@ func _fill_buckets(width: int, height: int) -> void:
 
 func _remove(index: int) -> void:
 	var last := ids.size() - 1
+	_slot.erase(ids[index])
 	if index != last:
+		_slot[ids[last]] = index
+		slow_multiplier[index] = slow_multiplier[last]
+		slow_until[index] = slow_until[last]
 		ids[index] = ids[last]
 		types[index] = types[last]
 		positions[index] = positions[last]
@@ -340,3 +434,7 @@ func _remove(index: int) -> void:
 	cooldowns.resize(last)
 	targets.resize(last)
 	attacking.resize(last)
+	slow_multiplier.resize(last)
+	slow_until.resize(last)
+	# Slots moved: buckets are stale until the next update.
+	_bucket_width = 0

@@ -12,3 +12,7 @@ cost = 20
 build_time = 5.0
 max_hp = 400
 upgrades = Array[StringName]([&"arrow_tower_2"])
+attack_range = 7.0
+attack_damage = 14.0
+attack_cooldown = 0.8
+projectile_speed = 30.0

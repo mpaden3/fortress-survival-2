@@ -18,6 +18,7 @@ var clock := SimClock.new()
 var map_view: MapView
 var building_views: BuildingViews
 var enemy_views: EnemyViews
+var projectile_views: ProjectileViews
 var camera: RtsCamera
 var builder: BuildController
 var hud: Hud
@@ -51,6 +52,11 @@ func _ready() -> void:
 	enemy_views.name = "Enemies"
 	add_child(enemy_views)
 	enemy_views.attach(world)
+
+	projectile_views = ProjectileViews.new()
+	projectile_views.name = "Projectiles"
+	add_child(projectile_views)
+	projectile_views.attach(world)
 
 	survivor_views = SurvivorViews.new()
 	survivor_views.name = "Survivors"
@@ -136,11 +142,21 @@ func _place_demo() -> void:
 		world.submit(Commands.place_building(LOCAL_PLAYER, &"wall", start + Vector2i(-3 + i, -4), true))
 	world.submit(Commands.place_building(LOCAL_PLAYER, &"basic_tower", start + Vector2i(-4, 2), true))
 	world.submit(Commands.place_building(LOCAL_PLAYER, &"mill", start + Vector2i(3, 2), true))
+	# Pre-built defence so the demo shows combat right away.
+	world.players[LOCAL_PLAYER].resource += 200
+	for offset in [Vector2i(-6, -2), Vector2i(5, -2), Vector2i(-1, 5)]:
+		world.buildings.start_construction(world, LOCAL_PLAYER, &"basic_tower", start + offset)
+	world.run_seconds(3.5)
+	for entity in world.entities.values():
+		var tower := entity as BuildingState
+		if tower and tower.def.id == &"basic_tower":
+			var branch: StringName = tower.def.upgrades[tower.id % tower.def.upgrades.size()]
+			world.submit(Commands.upgrade_building(LOCAL_PLAYER, tower.id, branch))
 	for spawn in world.map.spawns.slice(1):
 		world.submit(Commands.debug_spawn(LOCAL_PLAYER, &"grunt", spawn.id, 60, &""))
 	world.submit(Commands.debug_spawn(LOCAL_PLAYER, &"brute", world.map.spawns[1].id, 6, &""))
 	world.submit(Commands.debug_spawn(LOCAL_PLAYER, &"runner", world.map.spawns[2].id, 30, &""))
-	world.run_seconds(4.0)
+	world.run_seconds(float(_args.get("demo_seconds", "4")))
 
 
 func _survivor_point() -> Vector3:

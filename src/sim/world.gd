@@ -7,6 +7,8 @@ extends RefCounted
 
 signal entity_added(entity: SimEntity)
 signal entity_removed(entity: SimEntity)
+## An entity changed in a way other systems care about (e.g. a building finished upgrading).
+signal entity_changed(entity: SimEntity)
 ## A player's Survivor died: that player is out.
 signal player_defeated(player_id: int)
 
@@ -24,6 +26,7 @@ var buildings: BuildingSystem
 var survivors: SurvivorSystem
 var pathing: PathingSystem
 var enemies: EnemyManager
+var combat: CombatSystem
 
 var _next_id := 1
 var _pending: Array[Dictionary] = []
@@ -43,6 +46,7 @@ func _init(map_layout: MapLayout, definitions: DefRegistry, seed_value: int = 0)
 	pathing.register(self)
 	enemies = EnemyManager.new()
 	enemies.register(self)
+	combat = CombatSystem.new()
 
 
 func add_player(player_id: int) -> PlayerState:
@@ -74,6 +78,7 @@ func step() -> void:
 	survivors.update(self)
 	pathing.update(self)
 	enemies.update(self)
+	combat.update(self)
 	tick += 1
 
 

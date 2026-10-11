@@ -6,8 +6,10 @@ extends Node3D
 ## Build: 1 Wall, 2 Basic Tower, 3 Mill, 4 Barracks; LMB place (drag paints walls); Esc or
 ## RMB cancels. Shift queues orders. LMB on a building selects it; X sells the selection.
 ## Survivor: RMB move (RMB on own damaged building repairs), F Blink at cursor, H Haste.
+## Selected building: 7 / 8 / 9 upgrade into its 1st / 2nd / 3rd upgrade option.
 
 const HOTKEYS := {KEY_1: &"wall", KEY_2: &"basic_tower", KEY_3: &"mill", KEY_4: &"barracks"}
+const UPGRADE_KEYS: Array[Key] = [KEY_7, KEY_8, KEY_9]
 
 signal selection_changed(entity_id: int)
 
@@ -79,6 +81,13 @@ func request_smart_order(cell: Vector2i, queue := false) -> void:
 		world.submit(Commands.move_survivor(player_id, cell, queue))
 
 
+## Upgrades the selected building into its `option`-th upgrade.
+func request_upgrade_selected(option: int) -> void:
+	var building := world.entities.get(selected_entity) as BuildingState
+	if building and option < building.def.upgrades.size():
+		world.submit(Commands.upgrade_building(player_id, building.id, building.def.upgrades[option]))
+
+
 func request_sell_selected() -> void:
 	if selected_entity and world.entities.has(selected_entity):
 		world.submit(Commands.sell_building(player_id, selected_entity))
@@ -94,6 +103,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			select_def(&"")
 		elif key.physical_keycode == KEY_X:
 			request_sell_selected()
+		elif key.physical_keycode in UPGRADE_KEYS:
+			request_upgrade_selected(UPGRADE_KEYS.find(key.physical_keycode))
 		elif key.physical_keycode == KEY_F:
 			world.submit(Commands.blink(player_id, hover_cell))
 		elif key.physical_keycode == KEY_H:

@@ -4,14 +4,29 @@ extends RefCounted
 ## Holds no reference to the World (it's passed in) so the two don't form a reference cycle.
 
 var _constructing: Array[BuildingState] = []
+var _upgrading: Array[BuildingState] = []
 
 
 func register(world: World) -> void:
 	world.register_command(Commands.PLACE_BUILDING, _place)
 	world.register_command(Commands.SELL_BUILDING, _sell)
+	world.register_command(Commands.UPGRADE_BUILDING, _upgrade)
 
 
 func update(world: World) -> void:
+	for i in range(_upgrading.size() - 1, -1, -1):
+		var building := _upgrading[i]
+		building.upgrade_progress += 1
+		if building.upgrade_progress >= building.upgrading_to.build_ticks():
+			var old := building.def
+			building.def = building.upgrading_to
+			building.hp += building.def.max_hp - old.max_hp
+			building.upgrading_to = null
+			building.upgrade_progress = 0
+			_upgrading.remove_at(i)
+			world.entity_changed.emit(building)
+			if DebugLog.on(&"build"):
+				DebugLog.event(&"build", {"upgraded": building.id, "from": old.id, "to": building.def.id, "hp": building.hp})
 	for i in range(_constructing.size() - 1, -1, -1):
 		var building := _constructing[i]
 		var total := building.def.build_ticks()
@@ -111,6 +126,30 @@ func _place(world: World, command: Dictionary) -> String:
 	return ""
 
 
+func _upgrade(world: World, command: Dictionary) -> String:
+	var building := world.entities.get(command["building"]) as BuildingState
+	if building == null:
+		return _reject(command, "unknown_building")
+	if building.owner != command["player"]:
+		return _reject(command, "not_owner")
+	if building.constructing or building.upgrading_to != null:
+		return _reject(command, "busy")
+	if not command["def"] in building.def.upgrades:
+		return _reject(command, "not_an_upgrade")
+	var target := world.defs.building(command["def"])
+	var player := world.players[building.owner]
+	if player.resource < target.cost:
+		return _reject(command, "not_enough_resource")
+	player.resource -= target.cost
+	building.invested += target.cost
+	building.upgrading_to = target
+	building.upgrade_progress = 0
+	_upgrading.append(building)
+	if DebugLog.on(&"build"):
+		DebugLog.event(&"build", {"upgrading": building.id, "from": building.def.id, "to": target.id, "cost": target.cost})
+	return ""
+
+
 func _sell(world: World, command: Dictionary) -> String:
 	var building := world.entities.get(command["building"]) as BuildingState
 	if building == null:
@@ -128,6 +167,7 @@ func _sell(world: World, command: Dictionary) -> String:
 func _remove(world: World, building: BuildingState) -> void:
 	world.grid.release(building.rect)
 	_constructing.erase(building)
+	_upgrading.erase(building)
 	world.remove_entity(building.id)
 
 

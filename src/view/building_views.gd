@@ -12,6 +12,7 @@ func attach(world: World) -> void:
 	_world = world
 	world.entity_added.connect(_on_entity_added)
 	world.entity_removed.connect(_on_entity_removed)
+	world.entity_changed.connect(_on_entity_changed)
 
 
 func view_count() -> int:
@@ -31,6 +32,9 @@ func _process(_delta: float) -> void:
 		var progress := 1.0
 		if building.constructing:
 			progress = float(building.build_progress) / building.def.build_ticks()
+		elif building.upgrading_to:
+			# Pulse while upgrading.
+			progress = 0.9 + 0.1 * sin(_world.tick * 0.4)
 		view.scale.y = lerpf(0.15, 1.0, progress)
 		var mat := (view.get_child(0) as MeshInstance3D).material_override as StandardMaterial3D
 		var colour: Color = PlaceholderStyle.building(building.def.id)[0]
@@ -60,6 +64,13 @@ func _on_entity_added(entity: SimEntity) -> void:
 	pivot.add_child(mesh)
 	add_child(pivot)
 	_views[building.id] = pivot
+
+
+## A building changed def (upgrade): rebuild its placeholder for the new look.
+func _on_entity_changed(entity: SimEntity) -> void:
+	if _views.has(entity.id):
+		_on_entity_removed(entity)
+		_on_entity_added(entity)
 
 
 func _on_entity_removed(entity: SimEntity) -> void:

@@ -13,6 +13,7 @@ var _extra_dirty := true
 func register(world: World) -> void:
 	world.entity_added.connect(_on_building_changed)
 	world.entity_removed.connect(_on_building_changed)
+	world.entity_changed.connect(_on_building_changed)
 
 
 ## Sets (or moves) a target. Rebuilds next update only if its cells changed.

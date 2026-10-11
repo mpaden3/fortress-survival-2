@@ -5,6 +5,7 @@ class_name Commands
 
 const PLACE_BUILDING := &"place_building"
 const SELL_BUILDING := &"sell_building"
+const UPGRADE_BUILDING := &"upgrade_building"
 const MOVE_SURVIVOR := &"move_survivor"
 const REPAIR := &"repair"
 const BLINK := &"blink"
@@ -21,6 +22,11 @@ static func place_building(player: int, def_id: StringName, cell: Vector2i, queu
 
 static func sell_building(player: int, building_id: int) -> Dictionary:
 	return {"type": SELL_BUILDING, "player": player, "building": building_id}
+
+
+## Upgrade a completed building in place into `def_id` (one of its def's `upgrades`).
+static func upgrade_building(player: int, building_id: int, def_id: StringName) -> Dictionary:
+	return {"type": UPGRADE_BUILDING, "player": player, "building": building_id, "def": def_id}
 
 
 static func debug_spawn(player: int, def_id: StringName, spawn_id: String, amount: int, target: StringName) -> Dictionary:

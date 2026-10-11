@@ -12,3 +12,7 @@ cost = 50
 build_time = 8.0
 max_hp = 600
 upgrades = Array[StringName]([])
+attack_range = 8.0
+attack_damage = 24.0
+attack_cooldown = 0.6
+projectile_speed = 34.0

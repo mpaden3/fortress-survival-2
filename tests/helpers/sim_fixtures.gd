@@ -83,3 +83,16 @@ static func build_now(world: World, def_id: StringName, cell: Vector2i, player :
 	building.hp = building.def.max_hp
 	world.buildings._constructing.erase(building)
 	return building
+
+
+## Gives a building def an attack (ranges in cells, speeds in m/s; projectile 0 = instant).
+static func armed(def: BuildingDef, attack_range := 5.0, damage := 10.0, cooldown := 1.0, projectile_speed := 0.0,
+		splash := 0.0, slow := 1.0, slow_duration := 0.0) -> BuildingDef:
+	def.attack_range = attack_range
+	def.attack_damage = damage
+	def.attack_cooldown = cooldown
+	def.projectile_speed = projectile_speed
+	def.splash_radius = splash
+	def.slow_multiplier = slow
+	def.slow_duration = slow_duration
+	return def

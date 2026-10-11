@@ -15,6 +15,28 @@ extends Resource
 ## Buildings this one can be upgraded into, in place. More than one = a branch.
 @export var upgrades: Array[StringName] = []
 
+@export_group("Attack")
+## Attack range in cells (from the footprint centre); 0 = doesn't attack.
+@export var attack_range := 0.0
+@export var attack_damage := 0.0
+## Seconds between shots.
+@export var attack_cooldown := 1.0
+## Projectile speed in m/s; 0 = hits instantly.
+@export var projectile_speed := 20.0
+## Splash radius in cells around the impact; 0 = single target.
+@export var splash_radius := 0.0
+## Slow on hit: enemy speed multiplier (e.g. 0.5) for `slow_duration` seconds; 1 = none.
+@export var slow_multiplier := 1.0
+@export var slow_duration := 0.0
+
 
 func build_ticks() -> int:
 	return maxi(1, roundi(build_time * SimConstants.TICK_RATE))
+
+
+func is_armed() -> bool:
+	return attack_range > 0.0 and attack_damage > 0.0
+
+
+func cooldown_ticks() -> int:
+	return maxi(1, roundi(attack_cooldown * SimConstants.TICK_RATE))
