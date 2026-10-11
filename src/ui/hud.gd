@@ -141,6 +141,8 @@ func _process(_delta: float) -> void:
 	_bottom.text = "\n".join(bottom)
 	if match_system.result == MatchSystem.Result.WON and player.alive:
 		_show_banner("VICTORY - you survived!", Color(0.4, 0.95, 0.4))
+	elif not player.alive and match_system.result == MatchSystem.Result.RUNNING:
+		_show_banner("Your Survivor died - spectating", Color(0.95, 0.25, 0.2))
 	elif not player.alive:
 		_show_banner("DEFEAT - your Survivor died", Color(0.95, 0.25, 0.2))
 	elif match_system.announcement_tick >= 0 and world.tick - match_system.announcement_tick < 4 * SimConstants.TICK_RATE:

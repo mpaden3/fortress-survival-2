@@ -77,7 +77,7 @@ func _ready() -> void:
 	survivor_views.name = "Survivors"
 	add_child(survivor_views)
 	survivor_views.attach(world)
-	survivor = world.survivors.spawn(world, LOCAL_PLAYER, layout.start)
+	survivor = world.survivors.spawn(world, LOCAL_PLAYER, SurvivorSystem.start_cell(world, LOCAL_PLAYER))
 	if not _args.has("no-waves") and not _args.has("demo"):
 		world.match_system.start(world, world.defs.schedule)
 
@@ -94,6 +94,10 @@ func _ready() -> void:
 	add_child(builder)
 	builder.selection_changed.connect(building_views.set_selected)
 	builder.units_selected.connect(unit_views.set_selected)
+	# Spectating after defeat: the camera no longer follows the dead Survivor.
+	world.player_defeated.connect(func(player_id: int) -> void:
+		if player_id == LOCAL_PLAYER:
+			follow_survivor = false)
 
 	hud = Hud.new()
 	hud.setup(world, builder, LOCAL_PLAYER)

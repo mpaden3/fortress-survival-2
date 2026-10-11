@@ -148,6 +148,8 @@ func _execute(command: Dictionary) -> void:
 		reason = "unknown_player"
 	elif not _handlers.has(command.get("type", &"")):
 		reason = "unknown_command"
+	elif not players[command["player"]].alive:
+		reason = "defeated"  # spectating: a defeated player can't act
 	else:
 		reason = _handlers[command["type"]].call(self, command)
 	last_results.append({"command": command, "ok": reason.is_empty(), "reason": reason})

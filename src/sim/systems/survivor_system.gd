@@ -7,6 +7,8 @@ extends RefCounted
 ## target cell. Far away the field barely changes; up close enemies chase the Survivor
 ## directly (EnemyManager.PURSUIT_RANGE, which must stay above this distance).
 const RETARGET_CELLS := 2
+## Co-op Survivors start within this many cells of the map start.
+const START_SPREAD := 6
 
 var _by_player: Dictionary[int, SurvivorState] = {}
 var _paths_version := -1
@@ -35,6 +37,26 @@ func spawn(world: World, player_id: int, cell: Vector2i) -> SurvivorState:
 	if DebugLog.on(&"units"):
 		DebugLog.event(&"units", {"survivor_spawned": survivor.id, "player": player_id, "cell": cell})
 	return survivor
+
+
+## Where player number `index` (0, 1, ...) starts: the map start for the first, then free
+## walkable cells spaced 2 apart around it, nearest first, so co-op Survivors don't overlap.
+static func start_cell(world: World, index: int) -> Vector2i:
+	var offsets: Array[Vector2i] = []
+	for dz in range(-START_SPREAD, START_SPREAD + 1, 2):
+		for dx in range(-START_SPREAD, START_SPREAD + 1, 2):
+			offsets.append(Vector2i(dx, dz))
+	offsets.sort_custom(func(a: Vector2i, b: Vector2i) -> bool:
+		return a.length_squared() < b.length_squared() if a.length_squared() != b.length_squared() \
+			else (a.y < b.y if a.y != b.y else a.x < b.x))
+	var found := 0
+	for offset in offsets:
+		var cell := world.map.start + offset
+		if world.map.in_bounds(cell) and world.grid.blocked[cell.y * world.map.size.x + cell.x] == 0:
+			if found == index:
+				return cell
+			found += 1
+	return world.map.start
 
 
 func survivor_of(player_id: int) -> SurvivorState:

@@ -207,3 +207,28 @@ func test_enemy_hits_the_survivor_at_its_attack_rate() -> void:
 	assert_eq(hits.call(), 1 + 6, "one hit per 0.5 s after the first")
 	assert_eq(survivor.hp, survivor.def.max_hp - 70.0)
 	assert_gt(world.tick, first)
+
+
+func test_defeated_player_spectates_and_cannot_act() -> void:
+	world.add_player(1)
+	var second := world.survivors.spawn(world, 1, Vector2i(25, 25))
+	world.survivors.damage(world, survivor, 10000.0)
+	assert_false(world.players[0].alive)
+	assert_eq(_submit(Commands.move_survivor(0, Vector2i(9, 9)))["reason"], "defeated")
+	assert_eq(_submit(Commands.place_building(0, &"wall", Vector2i(9, 9)))["reason"], "defeated")
+	assert_true(_submit(Commands.move_survivor(1, Vector2i(20, 20)))["ok"], "the other player plays on")
+	assert_true(second.alive)
+
+
+func test_coop_survivors_start_on_separate_free_cells_near_the_start() -> void:
+	var map := SimFixtures.open_map(30, 30)
+	var w := SimFixtures.world(map)
+	SimFixtures.build_now(w, &"wall", Vector2i(2, 0))  # takes one candidate spot
+	var cells := []
+	for index in 4:
+		var cell := SurvivorSystem.start_cell(w, index)
+		assert_false(cell in cells, "player %d gets its own cell" % index)
+		assert_eq(w.grid.occupant(cell), BuildGrid.NONE)
+		assert_lte(maxi(absi(cell.x - map.start.x), absi(cell.y - map.start.y)), SurvivorSystem.START_SPREAD)
+		cells.append(cell)
+	assert_eq(cells[0], map.start, "the first player starts on the map start")

@@ -203,7 +203,7 @@ What we know about the original (sources at the bottom; much of it is old/unveri
 - [x] Camera: centre on / follow the Survivor
 - [x] Selection (click, box), move / attack-move / stop / hold
 - [x] Survivor (builder hero): free movement, build orders, Repair (free), Blink (over walls), Haste; death = defeat
-- [ ] Spectate after defeat; co-op Survivors spawn spread around the start
+- [x] Spectate after defeat (commands rejected, free camera); co-op Survivors spawn spread around the start
 - [x] Grid placement with footprints + validity checks; construction time; sell (partial refund)
 - [x] Survivor walks to the site before construction starts (queued orders with Shift)
 - [x] Upgrade-tree system: root buildings with branching in-place upgrades (data-driven)
