@@ -3,11 +3,13 @@ extends Node3D
 ## Entry scene: runs a World in real time and wires up views, camera, input and HUD.
 ##
 ## User args (after `--`): --map=<id> (default test_map), --screenshot=<png path> saves one
-## frame and quits, --demo places a few sample buildings and spawns a wave.
+## frame and quits, --demo places a few sample buildings and spawns a wave, --no-waves skips
+## the match schedule (sandbox).
 ##
 ## The local player's Survivor starts at the map start; enemies hunt random living Survivors.
 ## Debug keys: G 50 grunts, B 5 brutes, R 30 runners, each from a random spawn.
 ## Camera: Space centres on the Survivor, L toggles following it.
+## Debug speed: ] doubles, [ halves the simulation speed (1x-16x).
 
 const LOCAL_PLAYER := 0
 const DEFAULT_MAP := "test_map"
@@ -25,6 +27,7 @@ var hud: Hud
 var survivor_views: SurvivorViews
 var survivor: SurvivorState
 var follow_survivor := false
+var speed := 1.0
 
 var _args := {}
 var _frames := 0
@@ -63,6 +66,8 @@ func _ready() -> void:
 	add_child(survivor_views)
 	survivor_views.attach(world)
 	survivor = world.survivors.spawn(world, LOCAL_PLAYER, layout.start)
+	if not _args.has("no-waves") and not _args.has("demo"):
+		world.match_system.start(world, world.defs.schedule)
 
 	camera = RtsCamera.new()
 	camera.name = "Camera"
@@ -85,7 +90,7 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
-	for i in clock.consume(delta):
+	for i in clock.consume(delta * speed):
 		step()
 	if follow_survivor:
 		camera.focus(_survivor_point())
@@ -114,6 +119,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		camera.focus(_survivor_point())
 	elif key.physical_keycode == KEY_L:
 		follow_survivor = not follow_survivor
+	elif OS.is_debug_build() and key.physical_keycode == KEY_BRACKETRIGHT:
+		speed = minf(speed * 2.0, 16.0)
+	elif OS.is_debug_build() and key.physical_keycode == KEY_BRACKETLEFT:
+		speed = maxf(speed / 2.0, 1.0)
 	elif OS.is_debug_build() and DEBUG_SPAWNS.has(key.physical_keycode):
 		var entry: Array = DEBUG_SPAWNS[key.physical_keycode]
 		var spawn: MapLayout.Spawn = world.map.spawns.pick_random()

@@ -46,10 +46,19 @@ func _process(_delta: float) -> void:
 	if world == null:
 		return
 	var player := world.players[player_id]
-	var seconds := world.tick / SimConstants.TICK_RATE
 	var lines := PackedStringArray()
-	lines.append("%s: %d    Time %02d:%02d    Map: %s" % [world.defs.rules.primary_resource_name.capitalize(),
-		player.resource, seconds / 60, seconds % 60, world.map.display_name])
+	var clock := ""
+	var match_system := world.match_system
+	if match_system.active:
+		var left := ceili(match_system.remaining(world))
+		clock = "Survive %02d:%02d" % [left / 60, left % 60]
+	else:
+		var seconds := world.tick / SimConstants.TICK_RATE
+		clock = "Time %02d:%02d (no waves)" % [seconds / 60, seconds % 60]
+	var game := get_parent() as Game
+	var speed := "   x%d" % game.speed if game and game.speed > 1.0 else ""
+	lines.append("%s: %d (+%d/min)    %s%s    Map: %s" % [world.defs.rules.primary_resource_name.capitalize(),
+		player.resource, roundi(world.economy.income_per_minute(world, player_id)), clock, speed, world.map.display_name])
 	var keys := PackedStringArray()
 	for key: Key in BuildController.HOTKEYS:
 		var def := world.defs.building(BuildController.HOTKEYS[key])
@@ -64,7 +73,7 @@ func _process(_delta: float) -> void:
 		var haste := maxi(0, survivor.haste_ready_tick - world.tick) / SimConstants.TICK_RATE
 		lines.append("Survivor HP %d/%d    Blink %s    Haste %s    Orders %d" % [survivor.hp, survivor.def.max_hp,
 			"ready" if blink == 0 else "%ds" % blink, "ready" if haste == 0 else "%ds" % haste, survivor.orders.size()])
-	lines.append("Enemies: %d (sim %.1f ms)    debug: G grunts  B brutes  R runners" % [world.enemies.count(),
+	lines.append("Enemies: %d (sim %.1f ms)    debug: G grunts  B brutes  R runners  [ ] speed" % [world.enemies.count(),
 		world.enemies.update_usec / 1000.0])
 	_top.text = "\n".join(lines)
 	var bottom := PackedStringArray()
@@ -92,10 +101,20 @@ func _process(_delta: float) -> void:
 	if world.tick < _message_until:
 		bottom.append(_message)
 	_bottom.text = "\n".join(bottom)
-	if not player.alive:
-		_banner.text = "DEFEAT - your Survivor died"
-		_banner.add_theme_color_override("font_color", Color(0.95, 0.25, 0.2))
-		_banner.visible = true
+	if match_system.result == MatchSystem.Result.WON and player.alive:
+		_show_banner("VICTORY - you survived!", Color(0.4, 0.95, 0.4))
+	elif not player.alive:
+		_show_banner("DEFEAT - your Survivor died", Color(0.95, 0.25, 0.2))
+	elif match_system.announcement_tick >= 0 and world.tick - match_system.announcement_tick < 4 * SimConstants.TICK_RATE:
+		_show_banner(match_system.announcement, Color(1.0, 0.8, 0.3))
+	else:
+		_banner.visible = false
+
+
+func _show_banner(text: String, colour: Color) -> void:
+	_banner.text = text
+	_banner.add_theme_color_override("font_color", colour)
+	_banner.visible = true
 
 
 func _label(preset: Control.LayoutPreset) -> Label:

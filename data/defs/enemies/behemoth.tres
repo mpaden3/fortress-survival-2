@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="EnemyDef" format=3]
+
+[ext_resource type="Script" path="res://src/sim/defs/enemy_def.gd" id="1_def"]
+
+[resource]
+script = ExtResource("1_def")
+id = &"behemoth"
+display_name = "Behemoth"
+max_hp = 8000.0
+speed = 1.6
+radius = 1.1
+damage = 90.0
+attack_cooldown = 2.0
+building_damage_multiplier = 4.0

@@ -16,6 +16,7 @@ static func open_map(width: int, height: int, blocked: Array[Vector2i] = []) -> 
 static func rules(starting_resource := 100) -> GameRules:
 	var game_rules := GameRules.new()
 	game_rules.starting_resource = starting_resource
+	game_rules.passive_income_per_minute = 0.0
 	game_rules.sell_refund_ratio = 0.5
 	game_rules.construction_start_hp_ratio = 0.1
 	game_rules.path_cost_per_building_hp = 0.5

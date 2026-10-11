@@ -58,6 +58,9 @@ godot --path .                                   # play the test map
 godot --path . -- --map=mvp_map                  # full-size map
 godot --path . -- --demo --screenshot=/tmp/s.png # place sample buildings, save a frame, quit
 ```
+- `godot --headless -s tools/sim_match.gd -- [--map=mvp_map] [--minutes=20] [--immortal]`
+  runs a whole match headless and prints per-minute load (enemies alive, tick ms). Use it for
+  balance and performance checks.
 - Use `--screenshot` to check visual changes yourself: it opens a window briefly, then read
   the PNG. Gameplay must still be verified by headless tests, not screenshots.
 - `src/view/game.gd` (`Game`) wires the World to the views, camera, build input and HUD. Input
@@ -151,6 +154,13 @@ tools/           dev scripts: run_tests.sh, maps/ (map builders, Python 3, stdli
   `end_batch()`, so kills are removed at the end and enemy slot indices stay valid.
 - **Upgrades** are in place: `upgrade_building` sets `upgrading_to`. On completion `def` is
   swapped, HP keeps its damage, and `world.entity_changed` fires (pathing and views refresh).
+- **Match** (`src/sim/match/match_system.gd`): `world.match_system.start(world, schedule)`
+  runs a `WaveSchedule` (`data/defs/waves/`): a grace period, then continuous `SpawnStream`s
+  whose rate ramps linearly, plus timed `SpawnEvent`s (bosses, with announcements). It's won
+  when the timer runs out with a Survivor alive, and lost when all are dead
+  (`world.match_ended`). Tests that don't call `start()` have no waves.
+- **Economy** (`src/sim/systems/economy_system.gd`): passive income per living player plus
+  `BuildingDef.income_per_minute`, accumulated exactly per tick.
 - **Definitions** (`src/sim/defs/`, data in `data/defs/`) are `Resource` classes loaded by
   `DefRegistry.load_default()`. Tests build small registries in code with
   `tests/helpers/sim_fixtures.gd`.

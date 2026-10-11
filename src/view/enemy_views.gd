@@ -7,6 +7,8 @@ const COLOURS := {
 	"grunt": Color(0.62, 0.22, 0.16),
 	"brute": Color(0.35, 0.08, 0.10),
 	"runner": Color(0.90, 0.70, 0.15),
+	"warlord": Color(0.55, 0.10, 0.55),
+	"behemoth": Color(0.12, 0.05, 0.05),
 }
 
 var _world: World

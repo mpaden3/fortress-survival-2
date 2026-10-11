@@ -209,7 +209,8 @@ What we know about the original (sources at the bottom; much of it is old/unveri
 - [ ] Resource "wood" (placeholder name): passive income + mill line
 - [x] Upgrade-tree system: root buildings with branching in-place upgrades (data-driven)
 - [x] Buildings: wall line; Basic Tower → arrow / cannon (splash) / frost (slow) lines (placeholder stats)
-- [ ] Mill income, barracks training
+- [x] Mill income + passive income
+- [ ] Barracks training
 - [ ] Barracks units: repairman (auto-repair), fighter
 - [x] Flowfield per hunt target (wall HP as cost) + continuous steering/separation; never inside terrain (tested)
 - [x] Horde benchmark: 2000 enemies on the MVP map ≈ 7 ms/tick (budget 8), field build ≈ 30 ms
@@ -217,11 +218,11 @@ What we know about the original (sources at the bottom; much of it is old/unveri
 - [x] Enemies break the building blocking their path (cheapest wall), buildings take damage and get destroyed
 - [x] Enemy groups hunt a random living Survivor, chase it when close, attack it; retarget when it dies
 - [ ] Enemies attack visible buildings/units when their Survivor is not in sight; attack-move along the way
-- [ ] Enemies: grunt, brute/siege, runner, mini-boss; continuous timed spawner with ramp + boss timings
+- [x] Enemies: grunt, brute/siege, runner, mini-boss (Warlord), final boss (Behemoth); continuous timed spawner with ramp + boss timings (`data/defs/waves/default.tres`)
 - [x] Combat: targeting, homing projectiles, splash, slow, death (benchmark: 32 towers + 2000 enemies ≈ 5 ms/tick)
 - [ ] Armor / damage types
-- [ ] Win = survive ~20 min timer; lose = your Survivor dies
-- [ ] Minimal HUD: wood, timer, selection info, build/upgrade/sell menu, ability buttons
+- [x] Win = survive 20 min timer; lose = your Survivor dies (victory/defeat banners)
+- [x] Minimal HUD (text): wood + income, timer, selection info, build/upgrade/sell keys, ability cooldowns, announcements
 - [ ] Placeholder art (primitives), basic SFX hooks
 
 ### M2 — Depth

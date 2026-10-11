@@ -11,6 +11,8 @@ signal entity_removed(entity: SimEntity)
 signal entity_changed(entity: SimEntity)
 ## A player's Survivor died: that player is out.
 signal player_defeated(player_id: int)
+## The match is over (MatchSystem.Result.WON or LOST).
+signal match_ended(result: int)
 
 var tick := 0
 var map: MapLayout
@@ -27,6 +29,8 @@ var survivors: SurvivorSystem
 var pathing: PathingSystem
 var enemies: EnemyManager
 var combat: CombatSystem
+var economy: EconomySystem
+var match_system: MatchSystem
 
 var _next_id := 1
 var _pending: Array[Dictionary] = []
@@ -47,6 +51,8 @@ func _init(map_layout: MapLayout, definitions: DefRegistry, seed_value: int = 0)
 	enemies = EnemyManager.new()
 	enemies.register(self)
 	combat = CombatSystem.new()
+	economy = EconomySystem.new()
+	match_system = MatchSystem.new()
 
 
 func add_player(player_id: int) -> PlayerState:
@@ -74,6 +80,8 @@ func step() -> void:
 	_pending = []
 	for command in commands:
 		_execute(command)
+	match_system.update(self)
+	economy.update(self)
 	buildings.update(self)
 	survivors.update(self)
 	pathing.update(self)

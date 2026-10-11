@@ -1,0 +1,95 @@
+[gd_resource type="Resource" script_class="WaveSchedule" format=3]
+
+[ext_resource type="Script" path="res://src/sim/defs/wave_schedule.gd" id="1_schedule"]
+[ext_resource type="Script" path="res://src/sim/defs/spawn_stream.gd" id="2_stream"]
+[ext_resource type="Script" path="res://src/sim/defs/spawn_event.gd" id="3_event"]
+
+[sub_resource type="Resource" id="stream_grunt"]
+script = ExtResource("2_stream")
+enemy = &"grunt"
+start_time = 20.0
+end_time = 1200.0
+rate_start = 6.0
+rate_end = 60.0
+group_size = 6
+
+[sub_resource type="Resource" id="stream_runner"]
+script = ExtResource("2_stream")
+enemy = &"runner"
+start_time = 180.0
+end_time = 1200.0
+rate_start = 4.0
+rate_end = 30.0
+group_size = 5
+
+[sub_resource type="Resource" id="stream_brute"]
+script = ExtResource("2_stream")
+enemy = &"brute"
+start_time = 360.0
+end_time = 1200.0
+rate_start = 1.0
+rate_end = 10.0
+group_size = 2
+
+[sub_resource type="Resource" id="event_0"]
+script = ExtResource("3_event")
+time = 300.0
+enemy = &"warlord"
+count = 1
+spawn = ""
+announcement = "A Warlord approaches!"
+
+[sub_resource type="Resource" id="event_1"]
+script = ExtResource("3_event")
+time = 300.0
+enemy = &"grunt"
+count = 12
+spawn = ""
+announcement = ""
+
+[sub_resource type="Resource" id="event_2"]
+script = ExtResource("3_event")
+time = 600.0
+enemy = &"warlord"
+count = 2
+spawn = ""
+announcement = "Two Warlords approach!"
+
+[sub_resource type="Resource" id="event_3"]
+script = ExtResource("3_event")
+time = 600.0
+enemy = &"brute"
+count = 6
+spawn = ""
+announcement = ""
+
+[sub_resource type="Resource" id="event_4"]
+script = ExtResource("3_event")
+time = 900.0
+enemy = &"warlord"
+count = 3
+spawn = ""
+announcement = "The Warlords gather their warbands!"
+
+[sub_resource type="Resource" id="event_5"]
+script = ExtResource("3_event")
+time = 900.0
+enemy = &"runner"
+count = 20
+spawn = ""
+announcement = ""
+
+[sub_resource type="Resource" id="event_6"]
+script = ExtResource("3_event")
+time = 1080.0
+enemy = &"behemoth"
+count = 1
+spawn = "centre"
+announcement = "The Behemoth has awoken! Survive two more minutes!"
+
+[resource]
+script = ExtResource("1_schedule")
+duration = 1200.0
+grace_period = 20.0
+streams = Array[ExtResource("2_stream")]([SubResource("stream_grunt"), SubResource("stream_runner"), SubResource("stream_brute")])
+events = Array[ExtResource("3_event")]([SubResource("event_0"), SubResource("event_1"), SubResource("event_2"), SubResource("event_3"), SubResource("event_4"), SubResource("event_5"), SubResource("event_6")])

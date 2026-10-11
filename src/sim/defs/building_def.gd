@@ -15,6 +15,9 @@ extends Resource
 ## Buildings this one can be upgraded into, in place. More than one = a branch.
 @export var upgrades: Array[StringName] = []
 
+## Resource per minute this building earns its owner once built (mills).
+@export var income_per_minute := 0.0
+
 @export_group("Attack")
 ## Attack range in cells (from the footprint centre); 0 = doesn't attack.
 @export var attack_range := 0.0

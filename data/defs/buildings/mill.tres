@@ -12,3 +12,4 @@ cost = 30
 build_time = 8.0
 max_hp = 400
 upgrades = Array[StringName]([&"mill_2"])
+income_per_minute = 20.0
