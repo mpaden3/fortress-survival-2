@@ -122,6 +122,23 @@ func spawn(world: World, def_id: StringName, area: Rect2i, amount: int, target: 
 	return spawned
 
 
+## Removes every enemy at once (sandbox).
+func clear() -> void:
+	ids.clear()
+	types.clear()
+	positions.clear()
+	previous_positions.clear()
+	hp.clear()
+	cooldowns.clear()
+	targets.clear()
+	attacking.clear()
+	slow_multiplier.clear()
+	slow_until.clear()
+	_slot.clear()
+	_dead.clear()
+	_bucket_width = 0
+
+
 func index_of(entity_id: int) -> int:
 	return _slot.get(entity_id, -1)
 

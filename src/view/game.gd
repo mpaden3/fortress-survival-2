@@ -7,9 +7,9 @@ extends Node3D
 ## buildings and spawns a wave, --no-waves skips the match schedule (sandbox).
 ##
 ## The local player's Survivor starts at the map start; enemies hunt random living Survivors.
-## Debug keys: G 50 grunts, B 5 brutes, R 30 runners, each from a random spawn.
-## Camera: Space centres on the Survivor, L toggles following it.
-## Debug speed: ] doubles, [ halves the simulation speed (1x-16x).
+## The HUD (src/ui/) has buttons for everything below; development builds add sandbox panels
+## (F1 toggles them). Keys: Space centres on the Survivor, L follows it, P plots, M mute.
+## Debug keys: G 50 grunts, B 5 brutes, R 30 runners (random spawn); ] / [ speed x2 / x0.5.
 
 const LOCAL_PLAYER := 0
 const DEFAULT_MAP := "test_map"
@@ -106,7 +106,7 @@ func _ready() -> void:
 			follow_survivor = false)
 
 	hud = Hud.new()
-	hud.setup(world, builder, LOCAL_PLAYER)
+	hud.setup(self)
 	add_child(hud)
 
 	if _args.has("demo"):
@@ -143,21 +143,44 @@ func _unhandled_input(event: InputEvent) -> void:
 	if key == null or not key.pressed or key.echo:
 		return
 	if key.physical_keycode == KEY_P:
-		map_view.show_plots = not map_view.show_plots
+		toggle_plots()
 	elif key.physical_keycode == KEY_SPACE:
 		camera.focus(_survivor_point())
 	elif key.physical_keycode == KEY_L:
 		follow_survivor = not follow_survivor
 	elif key.physical_keycode == KEY_M:
-		AudioServer.set_bus_mute(0, not AudioServer.is_bus_mute(0))
+		set_muted(not is_muted())
+	elif key.physical_keycode == KEY_F1:
+		hud.toggle_sandbox()
 	elif OS.is_debug_build() and key.physical_keycode == KEY_BRACKETRIGHT:
-		speed = minf(speed * 2.0, 16.0)
+		speed = minf(maxf(speed, 0.5) * 2.0, 16.0)
 	elif OS.is_debug_build() and key.physical_keycode == KEY_BRACKETLEFT:
 		speed = maxf(speed / 2.0, 1.0)
 	elif OS.is_debug_build() and DEBUG_SPAWNS.has(key.physical_keycode):
 		var entry: Array = DEBUG_SPAWNS[key.physical_keycode]
 		var spawn: MapLayout.Spawn = world.map.spawns.pick_random()
 		world.submit(Commands.debug_spawn(LOCAL_PLAYER, entry[0], spawn.id, entry[1], &""))
+
+
+func toggle_plots() -> void:
+	map_view.show_plots = not map_view.show_plots
+
+
+func is_muted() -> bool:
+	return AudioServer.is_bus_mute(0)
+
+
+func set_muted(muted: bool) -> void:
+	AudioServer.set_bus_mute(0, muted)
+
+
+## Reloads the scene: a fresh match with the same command-line options.
+func restart() -> void:
+	get_tree().reload_current_scene()
+
+
+func survivor_point() -> Vector3:
+	return _survivor_point()
 
 
 func _setup_environment() -> void:

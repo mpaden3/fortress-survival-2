@@ -36,6 +36,7 @@ var enemies: EnemyManager
 var combat: CombatSystem
 var economy: EconomySystem
 var match_system: MatchSystem
+var debug: DebugSystem
 
 var _next_id := 1
 var _pending: Array[Dictionary] = []
@@ -60,6 +61,8 @@ func _init(map_layout: MapLayout, definitions: DefRegistry, seed_value: int = 0)
 	combat = CombatSystem.new()
 	economy = EconomySystem.new()
 	match_system = MatchSystem.new()
+	debug = DebugSystem.new()
+	debug.register(self)
 
 
 func add_player(player_id: int) -> PlayerState:

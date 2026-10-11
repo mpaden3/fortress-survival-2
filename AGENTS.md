@@ -197,6 +197,11 @@ tools/           dev scripts: run_tests.sh, maps/ (map builders, Python 3, stdli
 - **SFX** (`src/view/sfx_views.gd`): plays a sound per event from a pool of positional
   players, at most `PER_TICK` per sound per tick. Sounds are synthesized placeholders
   (`src/view/sfx/sfx_synth.gd`) until real audio exists.
+- **HUD** (`src/ui/`): `Hud` lays out a top bar, a bottom bar (`Minimap`, `SelectionPanel`,
+  `CommandCard`) and, in debug builds, the sandbox panels (`SandboxSpawnPanel` on the left,
+  `SandboxPanel` on the right; F1 hides them). Buttons call the same `BuildController` / `Game`
+  requests as the hotkeys. Sandbox actions that change the game are `debug_*` commands
+  (`DebugSystem`). `CommandCard.entries()` / `press(id)` let tests drive it like a player.
 - **Economy** (`src/sim/systems/economy_system.gd`): passive income per living player plus
   `BuildingDef.income_per_minute`, accumulated exactly per tick.
 - **Definitions** (`src/sim/defs/`, data in `data/defs/`) are `Resource` classes loaded by

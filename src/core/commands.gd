@@ -12,8 +12,15 @@ const BLINK := &"blink"
 const HASTE := &"haste"
 const TRAIN_UNIT := &"train_unit"
 const ORDER_UNITS := &"order_units"
-## Development only: spawn enemies at a map spawn point. Removed from player input in release.
+## Development only (sandbox panels, debug keys); never bound to player input in release.
+## Spawn enemies at a map spawn point.
 const DEBUG_SPAWN := &"debug_spawn"
+## Add (or with a negative amount, remove) resource.
+const DEBUG_ADD_RESOURCE := &"debug_add_resource"
+## Remove every enemy.
+const DEBUG_CLEAR_ENEMIES := &"debug_clear_enemies"
+## Make the player's Survivor take no damage (or take it again).
+const DEBUG_GOD := &"debug_god"
 
 
 ## Build `def_id` with its footprint's top-left corner on `cell`. With a Survivor this is a
@@ -36,6 +43,18 @@ static func debug_spawn(player: int, def_id: StringName, spawn_id: String, amoun
 
 
 ## Walk to `cell`; `point` (cell units, inside that cell) is the exact spot, default its centre.
+static func debug_add_resource(player: int, amount: int) -> Dictionary:
+	return {"type": DEBUG_ADD_RESOURCE, "player": player, "amount": amount}
+
+
+static func debug_clear_enemies(player: int) -> Dictionary:
+	return {"type": DEBUG_CLEAR_ENEMIES, "player": player}
+
+
+static func debug_god(player: int, on: bool) -> Dictionary:
+	return {"type": DEBUG_GOD, "player": player, "on": on}
+
+
 static func move_survivor(player: int, cell: Vector2i, queue := false, point := Vector2(-1, -1)) -> Dictionary:
 	return {"type": MOVE_SURVIVOR, "player": player, "cell": cell, "queue": queue, "point": point}
 

@@ -32,6 +32,8 @@ var hover_point := Vector2(-1, -1)
 var selected_units: Array[int] = []
 ## Waiting for the LMB target of an attack-move.
 var attack_move_armed := false
+## Waiting for the LMB target of a Blink (from the command card; the F key casts at once).
+var blink_armed := false
 ## Screen rect of the selection box being dragged (size 0 if none).
 var drag_rect := Rect2()
 
@@ -121,6 +123,36 @@ func request_action_selected(option: int) -> void:
 		world.submit(Commands.train_unit(player_id, building.id, actions[option]))
 
 
+## Leaves build mode and any targeting mode. Returns true if there was one to leave.
+func cancel_modes() -> bool:
+	var had := selected_def != &"" or attack_move_armed or blink_armed
+	select_def(&"")
+	attack_move_armed = false
+	blink_armed = false
+	return had
+
+
+func arm_attack_move() -> void:
+	attack_move_armed = not selected_units.is_empty()
+
+
+func arm_blink() -> void:
+	blink_armed = true
+
+
+func request_blink(cell: Vector2i) -> void:
+	world.submit(Commands.blink(player_id, cell))
+
+
+func request_haste() -> void:
+	world.submit(Commands.haste(player_id))
+
+
+func clear_selection() -> void:
+	select_units([] as Array[int])
+	_select_entity(0)
+
+
 ## Orders the selected units (`order`: move, attack_move, stop, hold).
 func request_unit_order(order: String, cell := Vector2i.ZERO, queue := false, point := Vector2(-1, -1)) -> void:
 	_prune_selection()
@@ -170,35 +202,30 @@ func _unhandled_input(event: InputEvent) -> void:
 		if HOTKEYS.has(key.physical_keycode):
 			select_def(HOTKEYS[key.physical_keycode])
 		elif key.physical_keycode == KEY_ESCAPE:
-			if selected_def or attack_move_armed:
-				select_def(&"")
-				attack_move_armed = false
-			else:
-				select_units([] as Array[int])
-				_select_entity(0)
+			if not cancel_modes():
+				clear_selection()
 		elif key.physical_keycode == KEY_X:
 			request_sell_selected()
 		elif key.physical_keycode in ACTION_KEYS:
 			request_action_selected(ACTION_KEYS.find(key.physical_keycode))
 		elif key.physical_keycode == KEY_T:
-			attack_move_armed = not selected_units.is_empty()
+			arm_attack_move()
 		elif key.physical_keycode == KEY_Z:
 			request_unit_order("stop")
 		elif key.physical_keycode == KEY_V:
 			request_unit_order("hold")
 		elif key.physical_keycode == KEY_F:
-			world.submit(Commands.blink(player_id, hover_cell))
+			request_blink(hover_cell)
 		elif key.physical_keycode == KEY_H:
-			world.submit(Commands.haste(player_id))
+			request_haste()
 		return
 	var button := event as InputEventMouseButton
 	if button == null:
 		return
 	if button.button_index == MOUSE_BUTTON_RIGHT and button.pressed:
 		_prune_selection()
-		if selected_def or attack_move_armed:
-			select_def(&"")
-			attack_move_armed = false
+		if cancel_modes():
+			pass
 		elif not selected_units.is_empty():
 			request_unit_order("move", hover_cell, button.shift_pressed, hover_point)
 		else:
@@ -213,6 +240,9 @@ func _unhandled_input(event: InputEvent) -> void:
 			elif attack_move_armed:
 				request_unit_order("attack_move", hover_cell, button.shift_pressed, hover_point)
 				attack_move_armed = false
+			elif blink_armed:
+				request_blink(hover_cell)
+				blink_armed = false
 			else:
 				_box_selecting = true
 				_drag_start = button.position
@@ -225,6 +255,11 @@ func _unhandled_input(event: InputEvent) -> void:
 func _process(_delta: float) -> void:
 	if world == null or camera == null:
 		return
+	if _box_selecting and not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and DisplayServer.get_name() != "headless":
+		# Released over the HUD: the release never reached _unhandled_input.
+		_box_selecting = false
+		drag_rect = Rect2()
+		_finish_selection(get_viewport().get_mouse_position())
 	if _box_selecting:
 		var mouse := get_viewport().get_mouse_position()
 		drag_rect = Rect2(_drag_start, mouse - _drag_start).abs() \

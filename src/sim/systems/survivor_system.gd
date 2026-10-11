@@ -91,7 +91,7 @@ func order_build(survivor: SurvivorState, def_id: StringName, origin: Vector2i, 
 
 ## Damages a Survivor; returns true if that killed it (its player is defeated).
 func damage(world: World, survivor: SurvivorState, amount: float) -> bool:
-	if not survivor.alive:
+	if not survivor.alive or survivor.invulnerable:
 		return false
 	survivor.hp -= amount
 	if survivor.hp > 0.0:

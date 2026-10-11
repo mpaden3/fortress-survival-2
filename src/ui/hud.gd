@@ -1,35 +1,62 @@
 class_name Hud
 extends CanvasLayer
-## Minimal text HUD: resource, time, build hotkeys, selection and the last rejection.
+## Classic RTS HUD: a top bar (resource, income, timer, enemies, speed), a bottom bar
+## (minimap, selection, command card) and, in development builds, sandbox panels on the left
+## (spawning) and right (speed, resource, god mode, view, performance). Plus the announcement
+## banner, the last rejected command and the unit selection box.
 
-var world: World
-var builder: BuildController
-var player_id := 0
+var game: Game
+var top_bar: HBoxContainer
+var resource_label: Label
+var clock_label: Label
+var enemies_label: Label
+var speed_label: Label
+var minimap: Minimap
+var selection: SelectionPanel
+var command_card: CommandCard
+var sandbox_spawn: SandboxSpawnPanel
+var sandbox: SandboxPanel
 
-var _top: Label
-var _bottom: Label
-var _message := ""
+const TOP_HEIGHT := 40.0
+const BOTTOM_HEIGHT := 214.0
+const SIDE_WIDTH := 196.0
+const SIDE_MARGIN := 6.0
+
+var _root: Control
+var _left_scroll: ScrollContainer
+var _right_scroll: ScrollContainer
+var _banner: Label
+var _message: Label
+var _hint: Label
+var _box: Panel
 var _message_until := 0
 
 
-func setup(target_world: World, build_controller: BuildController, local_player: int) -> void:
-	world = target_world
-	builder = build_controller
-	player_id = local_player
-
-
-var _banner: Label
-var _box: Panel
+func setup(target: Game) -> void:
+	game = target
 
 
 func _ready() -> void:
-	_banner = Label.new()
-	_banner.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
-	_banner.add_theme_font_size_override("font_size", 64)
+	_root = Control.new()
+	_root.name = "Root"
+	_root.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(_root)
+	_build_top_bar()
+	_build_bottom_bar()
+	if OS.is_debug_build():
+		_build_sandbox()
+
+	_banner = HudStyle.label("", 52)
+	_banner.set_anchors_and_offsets_preset(Control.PRESET_CENTER_TOP, Control.PRESET_MODE_MINSIZE, 70)
 	_banner.add_theme_color_override("font_outline_color", Color.BLACK)
 	_banner.add_theme_constant_override("outline_size", 12)
 	_banner.visible = false
-	add_child(_banner)
+	_root.add_child(_banner)
+	_message = _floating_label(-232)
+	_hint = _floating_label(-256)
+	_hint.add_theme_color_override("font_color", HudStyle.TEXT_DIM)
+
 	_box = Panel.new()
 	var box_style := StyleBoxFlat.new()
 	box_style.bg_color = Color(0.3, 1.0, 0.4, 0.12)
@@ -38,138 +65,161 @@ func _ready() -> void:
 	_box.add_theme_stylebox_override("panel", box_style)
 	_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_box.visible = false
-	add_child(_box)
-	_top = _label(Control.PRESET_TOP_LEFT)
-	_bottom = _label(Control.PRESET_BOTTOM_LEFT)
-	_bottom.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	_root.add_child(_box)
+
+
+func toggle_sandbox() -> void:
+	if sandbox:
+		_left_scroll.visible = not _left_scroll.visible
+		_right_scroll.visible = _left_scroll.visible
 
 
 ## Called after each simulation step with that step's command results.
 func show_results(results: Array[Dictionary]) -> void:
 	for result in results:
-		if not result["ok"] and result["command"].get("player") == player_id:
-			_message = "Can't %s: %s" % [String(result["command"]["type"]).replace("_", " "), result["reason"]]
-			_message_until = world.tick + 2 * SimConstants.TICK_RATE
+		if not result["ok"] and result["command"].get("player") == game.builder.player_id:
+			_message.text = "Can't %s: %s" % [String(result["command"]["type"]).replace("_", " "),
+				String(result["reason"]).replace("_", " ")]
+			_message_until = game.world.tick + 2 * SimConstants.TICK_RATE
 
 
 func _process(_delta: float) -> void:
-	if world == null:
+	if game == null or game.world == null:
 		return
-	var player := world.players[player_id]
-	var lines := PackedStringArray()
-	var clock := ""
+	var world := game.world
+	var player := world.players[game.builder.player_id]
+	var rules := world.defs.rules
+	resource_label.text = "%s  %d   (+%d / min)" % [rules.primary_resource_name.capitalize(), player.resource,
+		roundi(world.economy.income_per_minute(world, player.id))]
+	if sandbox:
+		_fit_side(_left_scroll, sandbox_spawn)
+		_fit_side(_right_scroll, sandbox)
 	var match_system := world.match_system
 	if match_system.active:
 		var left := ceili(match_system.remaining(world))
-		clock = "Survive %02d:%02d" % [left / 60, left % 60]
+		clock_label.text = "Survive  %02d:%02d" % [left / 60, left % 60]
 	else:
 		var seconds := world.tick / SimConstants.TICK_RATE
-		clock = "Time %02d:%02d (no waves)" % [seconds / 60, seconds % 60]
-	var game := get_parent() as Game
-	var speed := "   x%d" % game.speed if game and game.speed > 1.0 else ""
-	lines.append("%s: %d (+%d/min)    %s%s    Map: %s" % [world.defs.rules.primary_resource_name.capitalize(),
-		player.resource, roundi(world.economy.income_per_minute(world, player_id)), clock, speed, world.map.display_name])
-	var keys := PackedStringArray()
-	for key: Key in BuildController.HOTKEYS:
-		var def := world.defs.building(BuildController.HOTKEYS[key])
-		var mark := ">" if def.id == builder.selected_def else " "
-		keys.append("%s[%s] %s (%d)" % [mark, OS.get_keycode_string(key), def.display_name, def.cost])
-	lines.append("  ".join(keys))
-	lines.append("LMB place/select   drag: walls / select units   Esc cancel   X sell   RMB move/repair   F blink   H haste   Shift queue")
-	lines.append("WASD/edge pan   wheel zoom   Q/E rotate   Space centre   L follow   P plots   M mute")
-	var survivor := world.survivors.survivor_of(player_id)
-	if survivor:
-		var blink := maxi(0, survivor.blink_ready_tick - world.tick) / SimConstants.TICK_RATE
-		var haste := maxi(0, survivor.haste_ready_tick - world.tick) / SimConstants.TICK_RATE
-		lines.append("Survivor HP %d/%d    Blink %s    Haste %s    Orders %d" % [survivor.hp, survivor.def.max_hp,
-			"ready" if blink == 0 else "%ds" % blink, "ready" if haste == 0 else "%ds" % haste, survivor.orders.size()])
-	lines.append("Enemies: %d (sim %.1f ms)    debug: G grunts  B brutes  R runners  [ ] speed" % [world.enemies.count(),
-		world.enemies.update_usec / 1000.0])
-	_top.text = "\n".join(lines)
-	var bottom := PackedStringArray()
-	var building := world.entities.get(builder.selected_entity) as BuildingState
-	if building:
-		var state := "building %d%%" % (100 * building.build_progress / building.def.build_ticks()) \
-			if building.constructing else "ready"
-		if building.upgrading_to:
-			state = "upgrading to %s %d%%" % [building.upgrading_to.display_name,
-				100 * building.upgrade_progress / building.upgrading_to.build_ticks()]
-		bottom.append("Selected: %s #%d  HP %d/%d  %s" % [building.def.display_name, building.id, building.hp,
-			building.def.max_hp, state])
-		if building.def.is_armed():
-			bottom.append("Attack: %.0f %s dmg every %.1fs, range %.1f%s%s" % [building.def.attack_damage,
-				building.def.damage_type, building.def.attack_cooldown, building.def.attack_range,
-				", splash %.1f" % building.def.splash_radius if building.def.splash_radius > 0 else "",
-				", slows to %d%%" % (building.def.slow_multiplier * 100) if building.def.slow_multiplier < 1 else ""])
-		var options := PackedStringArray()
-		var actions := BuildController.building_actions(building)
-		for k in mini(actions.size(), BuildController.ACTION_KEYS.size()):
-			var key := OS.get_keycode_string(BuildController.ACTION_KEYS[k])
-			if k < building.def.upgrades.size():
-				var target := world.defs.building(actions[k])
-				options.append("[%s] upgrade: %s (%d)" % [key, target.display_name, target.cost])
-			else:
-				var unit_def := world.defs.unit(actions[k])
-				options.append("[%s] train: %s (%d)" % [key, unit_def.display_name, unit_def.cost])
-		if not options.is_empty():
-			bottom.append("  ".join(options))
-		if not building.train_queue.is_empty():
-			var training := world.defs.unit(building.train_queue[0])
-			bottom.append("Training: %s %d%%%s" % [training.display_name,
-				100 * building.train_progress / training.train_ticks(),
-				"  (+%d queued)" % (building.train_queue.size() - 1) if building.train_queue.size() > 1 else ""])
-	var units := _selected_units()
-	if not units.is_empty():
-		var counts := {}
-		for unit in units:
-			counts[unit.def.display_name] = counts.get(unit.def.display_name, 0) + 1
-		var parts := PackedStringArray()
-		for unit_name: String in counts:
-			parts.append("%d %s" % [counts[unit_name], unit_name])
-		var line := "Selected: " + ", ".join(parts)
-		if units.size() == 1:
-			line += "  HP %d/%d%s" % [units[0].hp, units[0].def.max_hp, "  holding" if units[0].holding else ""]
-		bottom.append(line)
-		bottom.append("RMB move   [T] attack-move%s   [Z] stop   [V] hold   Esc deselect"
-			% (" (click target)" if builder.attack_move_armed else ""))
-	bottom.append("Cell %s" % builder.hover_cell)
-	_box.visible = builder.drag_rect.has_area()
-	_box.position = builder.drag_rect.position
-	_box.size = builder.drag_rect.size
-	if world.tick < _message_until:
-		bottom.append(_message)
-	_bottom.text = "\n".join(bottom)
+		clock_label.text = "%02d:%02d  (no waves)" % [seconds / 60, seconds % 60]
+	enemies_label.text = "Enemies  %d" % world.enemies.count()
+	speed_label.text = "PAUSED" if game.speed == 0.0 else ("x%d" % game.speed if game.speed != 1.0 else "")
+	_message.visible = world.tick < _message_until
+	_hint.text = _mode_hint()
+	_box.visible = game.builder.drag_rect.has_area()
+	_box.position = game.builder.drag_rect.position
+	_box.size = game.builder.drag_rect.size
 	if match_system.result == MatchSystem.Result.WON and player.alive:
 		_show_banner("VICTORY - you survived!", Color(0.4, 0.95, 0.4))
 	elif not player.alive and match_system.result == MatchSystem.Result.RUNNING:
-		_show_banner("Your Survivor died - spectating", Color(0.95, 0.25, 0.2))
+		_show_banner("Your Survivor died - spectating", HudStyle.HP_LOW)
 	elif not player.alive:
-		_show_banner("DEFEAT - your Survivor died", Color(0.95, 0.25, 0.2))
+		_show_banner("DEFEAT - your Survivor died", HudStyle.HP_LOW)
 	elif match_system.announcement_tick >= 0 and world.tick - match_system.announcement_tick < 4 * SimConstants.TICK_RATE:
-		_show_banner(match_system.announcement, Color(1.0, 0.8, 0.3))
+		_show_banner(match_system.announcement, HudStyle.GOLD)
 	else:
 		_banner.visible = false
 
 
-func _selected_units() -> Array[UnitState]:
-	var out: Array[UnitState] = []
-	for unit_id in builder.selected_units:
-		var unit := world.entities.get(unit_id) as UnitState
-		if unit:
-			out.append(unit)
-	return out
+func _mode_hint() -> String:
+	var builder := game.builder
+	if builder.selected_def:
+		return "Placing %s: LMB place (drag paints walls, Shift queues), RMB / Esc cancel" \
+			% game.world.defs.building(builder.selected_def).display_name
+	if builder.attack_move_armed:
+		return "Attack-move: click the target spot"
+	if builder.blink_armed:
+		return "Blink: click a free spot in range"
+	return ""
+
+
+func _build_top_bar() -> void:
+	var bar := HudStyle.panel("TopBar")
+	bar.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
+	var box := bar.get_theme_stylebox("panel") as StyleBoxFlat
+	box.set_content_margin_all(5)
+	_root.add_child(bar)
+	top_bar = HBoxContainer.new()
+	top_bar.add_theme_constant_override("separation", 28)
+	bar.add_child(top_bar)
+	resource_label = HudStyle.label("", 16, HudStyle.GOLD)
+	clock_label = HudStyle.label("", 16)
+	enemies_label = HudStyle.label("", 16, Color(0.95, 0.5, 0.45))
+	speed_label = HudStyle.label("", 16, HudStyle.GOLD)
+	var spacer := Control.new()
+	spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var map_label := HudStyle.label(game.world.map.display_name, 14, HudStyle.TEXT_DIM)
+	for control: Control in [resource_label, clock_label, enemies_label, speed_label, spacer, map_label]:
+		top_bar.add_child(control)
+	if OS.is_debug_build():
+		top_bar.add_child(HudStyle.label("F1 sandbox", 12, HudStyle.TEXT_DIM))
+
+
+func _build_bottom_bar() -> void:
+	var bar := HBoxContainer.new()
+	bar.name = "BottomBar"
+	bar.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
+	bar.offset_top = -BOTTOM_HEIGHT
+	bar.add_theme_constant_override("separation", 4)
+	bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_root.add_child(bar)
+	minimap = Minimap.new()
+	minimap.setup(game)
+	bar.add_child(minimap)
+	selection = SelectionPanel.new()
+	selection.setup(game)
+	selection.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	bar.add_child(selection)
+	command_card = CommandCard.new()
+	command_card.setup(game)
+	bar.add_child(command_card)
+
+
+func _build_sandbox() -> void:
+	sandbox_spawn = SandboxSpawnPanel.new()
+	sandbox_spawn.setup(game)
+	_left_scroll = _side_scroll("SandboxLeft", sandbox_spawn, false)
+	sandbox = SandboxPanel.new()
+	sandbox.setup(game)
+	_right_scroll = _side_scroll("SandboxRight", sandbox, true)
+
+
+## A scroll area between the top and bottom bars at one side of the screen, holding `panel`.
+func _side_scroll(scroll_name: String, panel: Control, right: bool) -> ScrollContainer:
+	var scroll := ScrollContainer.new()
+	scroll.name = scroll_name
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	scroll.anchor_left = 1.0 if right else 0.0
+	scroll.anchor_right = scroll.anchor_left
+	scroll.offset_left = -SIDE_WIDTH - SIDE_MARGIN if right else SIDE_MARGIN
+	scroll.offset_right = -SIDE_MARGIN if right else SIDE_MARGIN + SIDE_WIDTH
+	scroll.offset_top = TOP_HEIGHT
+	panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroll.add_child(panel)
+	_root.add_child(scroll)
+	return scroll
+
+
+## Side panels end where their content does (so they don't cover the map below them), or
+## scroll if the screen is too short.
+func _fit_side(scroll: ScrollContainer, panel: Control) -> void:
+	var room := get_viewport().get_visible_rect().size.y - TOP_HEIGHT - BOTTOM_HEIGHT - SIDE_MARGIN
+	scroll.offset_bottom = scroll.offset_top + minf(panel.get_combined_minimum_size().y, room)
+
+
+func _floating_label(from_bottom: float) -> Label:
+	var lbl := HudStyle.label("", 15)
+	lbl.add_theme_color_override("font_outline_color", Color.BLACK)
+	lbl.add_theme_constant_override("outline_size", 6)
+	lbl.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM, Control.PRESET_MODE_MINSIZE)
+	lbl.offset_top = from_bottom
+	lbl.offset_bottom = from_bottom + 22
+	lbl.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_root.add_child(lbl)
+	return lbl
 
 
 func _show_banner(text: String, colour: Color) -> void:
 	_banner.text = text
 	_banner.add_theme_color_override("font_color", colour)
 	_banner.visible = true
-
-
-func _label(preset: Control.LayoutPreset) -> Label:
-	var label := Label.new()
-	label.set_anchors_and_offsets_preset(preset, Control.PRESET_MODE_MINSIZE, 12)
-	label.add_theme_color_override("font_outline_color", Color.BLACK)
-	label.add_theme_constant_override("outline_size", 6)
-	add_child(label)
-	return label

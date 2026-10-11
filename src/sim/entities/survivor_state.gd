@@ -17,6 +17,8 @@ var path := PackedVector2Array()
 var blink_ready_tick := 0
 var haste_until_tick := 0
 var haste_ready_tick := 0
+## Sandbox god mode: takes no damage.
+var invulnerable := false
 
 
 ## Where to draw it `alpha` (0..1) of the way from the previous tick to this one.
