@@ -14,6 +14,8 @@ extends Resource
 ## Path cost of breaking through a building, per HP, in "cells walked" (10 = one cell).
 ## Higher = enemies prefer longer detours over smashing walls.
 @export var path_cost_per_building_hp := 0.5
+## Most units a building can have queued for training.
+@export var max_train_queue := 5
 ## Damage type -> {armor type -> multiplier}. Missing entries count as 1.
 @export var damage_multipliers: Dictionary = {}
 

@@ -12,3 +12,4 @@ cost = 40
 build_time = 10.0
 max_hp = 600
 upgrades = Array[StringName]([])
+trains = Array[StringName]([&"fighter", &"repairman"])

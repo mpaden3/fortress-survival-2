@@ -96,3 +96,13 @@ func test_destroyed_building_explodes_and_fire_goes_out() -> void:
 	world.stepped.emit()
 	assert_null(fx.fire_of(wall.id))
 	assert_eq(fx.playing_count(FxViews.EXPLOSION), 1)
+
+
+func test_unit_hits_spark_and_unit_deaths_burst() -> void:
+	var unit := world.units.spawn(world, 0, &"fighter", Vector2(11.5, 11.5))
+	world.enemies.spawn(world, &"grunt", Rect2i(13, 11, 1, 1), 1, &"stay")
+	world.step()
+	assert_eq(fx.playing_count(FxViews.HIT_SPARK), 1, "fighter's hit")
+	world.units.damage(world, unit, 1000.0)
+	world.stepped.emit()
+	assert_eq(fx.playing_count(FxViews.ENEMY_DEATH), 1, "unit death")

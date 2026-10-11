@@ -138,6 +138,14 @@ tools/           dev scripts: run_tests.sh, maps/ (map builders, Python 3, stdli
   a living Survivor becomes a build order (it walks there first). Without one, placement is
   instant, which tests rely on: `SimFixtures.build_now()` builds instantly. When a Survivor
   dies, its player is defeated (`world.player_defeated`).
+- **Units** (`src/sim/systems/unit_system.gd`): trained player units (`UnitState`, defs in
+  `data/defs/units/`) are plain entities. `train_unit` queues one at a building whose
+  `BuildingDef.trains` lists it; `order_units` gives move / attack_move / stop / hold.
+  Idle fighters guard their spot (chase within `leash_range`, then walk back); idle repairmen
+  repair damaged own buildings they see. Survivors and units path with A* through
+  `world.pathing.paths` (`GridPaths`). Unit attacks run inside the enemy batch, like combat.
+  Enemies whose Survivor is out of sight attack the nearest unit they see (a coarse enemy grid
+  finds them), before buildings.
 - **Pathing** (`src/sim/pathing/`): `PathingSystem` keeps one `FlowField` per hunt target
   (`set_target(key, cells)`). It rebuilds the field when buildings appear or disappear, or
   when the target changes cell; a Survivor moves its field only after going

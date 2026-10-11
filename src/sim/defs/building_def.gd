@@ -17,6 +17,8 @@ extends Resource
 
 ## Resource per minute this building earns its owner once built (mills).
 @export var income_per_minute := 0.0
+## Units this building can train (barracks), by UnitDef id.
+@export var trains: Array[StringName] = []
 
 @export_group("Attack")
 ## Attack range in cells (from the footprint centre); 0 = doesn't attack.

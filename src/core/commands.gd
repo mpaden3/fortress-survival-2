@@ -10,6 +10,8 @@ const MOVE_SURVIVOR := &"move_survivor"
 const REPAIR := &"repair"
 const BLINK := &"blink"
 const HASTE := &"haste"
+const TRAIN_UNIT := &"train_unit"
+const ORDER_UNITS := &"order_units"
 ## Development only: spawn enemies at a map spawn point. Removed from player input in release.
 const DEBUG_SPAWN := &"debug_spawn"
 
@@ -44,6 +46,18 @@ static func repair(player: int, building_id: int, queue := false) -> Dictionary:
 ## Teleport the Survivor to `cell` (within range, onto free ground). Clears its orders.
 static func blink(player: int, cell: Vector2i) -> Dictionary:
 	return {"type": BLINK, "player": player, "cell": cell}
+
+
+## Queue a `unit_def` at a building that trains it (paid when queued).
+static func train_unit(player: int, building_id: int, unit_def: StringName) -> Dictionary:
+	return {"type": TRAIN_UNIT, "player": player, "building": building_id, "def": unit_def}
+
+
+## Order units: "move" (ignore enemies), "attack_move" (fight on the way), "stop" (stand and
+## guard here) or "hold" (never move, attack only in range). `cell` is used by moves.
+static func order_units(player: int, unit_ids: Array[int], order: String, cell := Vector2i.ZERO,
+		queue := false) -> Dictionary:
+	return {"type": ORDER_UNITS, "player": player, "units": unit_ids, "order": order, "cell": cell, "queue": queue}
 
 
 static func haste(player: int) -> Dictionary:

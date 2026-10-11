@@ -8,8 +8,8 @@ extends RefCounted
 ## from neighbours, can't enter blocked terrain or building cells, and attacks the building
 ## blocking its way. Hunting a Survivor, it chases it directly once close and attacks it on
 ## contact; a static target (tests) is just walked to. While its Survivor is out of sight
-## (EnemyDef.sight_range), an enemy goes for the nearest building it sees instead
-## (PathingSystem.sight) and attacks it.
+## (EnemyDef.sight_range), an enemy goes for the nearest player unit it sees (trained units,
+## other Survivors), else the nearest building it sees (PathingSystem.sight), and attacks it.
 
 ## How far ahead (cells, beyond the body) an enemy looks for a building to attack.
 const ATTACK_REACH := 0.35
@@ -22,6 +22,8 @@ const ARRIVED_COST := 15
 ## wall), an enemy stops following the field and runs straight at it.
 const PURSUIT_RANGE := 3.0
 const PURSUIT_COST := 50
+## Cell size of the coarse enemy grid used to find which enemies see a player unit.
+const COARSE := 4
 
 var ids := PackedInt32Array()
 var types := PackedInt32Array()
@@ -57,6 +59,12 @@ var _type_radius := PackedFloat32Array()
 ## Per enemy type: sight range in cells, and as a BuildingSightField cost.
 var _type_sight := PackedFloat32Array()
 var _type_sight_cost := PackedInt32Array()
+## Per enemy, this tick: 1 + index of the nearest player unit it sees (0 = none), and the
+## squared distance to it. Plus the coarse grid that finds them.
+var _near_body := PackedInt32Array()
+var _near_dist := PackedFloat32Array()
+var _coarse_head := PackedInt32Array()
+var _coarse_next := PackedInt32Array()
 
 
 func register(world: World) -> void:
@@ -266,6 +274,23 @@ func update(world: World) -> void:
 		hunted.append(survivor if survivor and survivor.alive else null)
 		hunt_pos.append(survivor.position if survivor else Vector2.ZERO)
 		hunt_radius.append(survivor.def.radius / SimConstants.CELL_SIZE if survivor else 0.0)
+	# Player units (trained units and Survivors) and which enemies see one.
+	var bodies: Array[SimEntity] = []
+	var body_pos := PackedVector2Array()
+	var body_radius := PackedFloat32Array()
+	for unit in world.units.living():
+		bodies.append(unit)
+		body_pos.append(unit.position)
+		body_radius.append(unit.def.radius / SimConstants.CELL_SIZE)
+	for survivor in world.survivors.living():
+		bodies.append(survivor)
+		body_pos.append(survivor.position)
+		body_radius.append(survivor.def.radius / SimConstants.CELL_SIZE)
+	var body_alive := PackedByteArray()
+	body_alive.resize(bodies.size())
+	body_alive.fill(1)
+	_assign_bodies(old, width, height, body_pos)
+	var near_body := _near_body
 	# Separation runs for half the enemies each tick (alternating), at double strength.
 	var parity := world.tick & 1
 	var log_collision := DebugLog.on(&"collision")
@@ -308,9 +333,33 @@ func update(world: World) -> void:
 				follow_field = false
 				dir = to_prey.normalized()
 
-		# Survivor out of sight: go for the nearest building in sight instead.
+		# Survivor out of sight: go for the nearest player unit in sight, else building.
 		var sight := sight_of[t]
-		if has_sight and not engaged and sight > 0.0 and prey_dist_sq > sight * sight:
+		var prey_unseen := not engaged and sight > 0.0 and prey_dist_sq > sight * sight
+		var body := near_body[i] - 1
+		if prey_unseen and body >= 0 and body_alive[body] == 1:
+			prey_unseen = false
+			follow_field = false
+			var to_body := body_pos[body] - pos
+			var body_reach := radius + body_radius[body] + ATTACK_REACH
+			if to_body.length_squared() <= body_reach * body_reach:
+				engaged = true
+				attacking[i] = bodies[body].id
+				if cooldowns[i] > 0:
+					cooldowns[i] -= 1
+				else:
+					var def := world.defs.enemy_list[t]
+					cooldowns[i] = def.cooldown_ticks() - 1
+					if log_combat:
+						DebugLog.event(&"combat", {"enemy": ids[i], "hits_unit": bodies[body].id, "damage": def.damage})
+					var victim := bodies[body]
+					var killed := world.units.damage(world, victim, def.damage) if victim is UnitState \
+						else world.survivors.damage(world, victim, def.damage)
+					if killed:
+						body_alive[body] = 0
+			else:
+				dir = to_body.normalized()
+		if has_sight and prey_unseen:
 			var seen := seen_cost[cz * width + cx]
 			if seen > 0 and seen <= sight_cost_of[t]:
 				follow_field = false
@@ -396,6 +445,47 @@ func update(world: World) -> void:
 		elif log_collision:
 			DebugLog.event(&"collision", {"enemy": ids[i], "blocked_at": moved})
 	update_usec = Time.get_ticks_usec() - started
+
+
+## Fills _near_body: for each enemy, the nearest of `body_pos` within its sight range.
+func _assign_bodies(old: PackedVector2Array, width: int, height: int, body_pos: PackedVector2Array) -> void:
+	var n := old.size()
+	_near_body.resize(n)
+	_near_body.fill(0)
+	if body_pos.is_empty():
+		return
+	_near_dist.resize(n)
+	_near_dist.fill(INF)
+	var cw := ceili(width / float(COARSE))
+	var ch := ceili(height / float(COARSE))
+	_coarse_head.resize(cw * ch)
+	_coarse_head.fill(-1)
+	_coarse_next.resize(n)
+	for i in n:
+		var bucket := (floori(old[i].y) / COARSE) * cw + floori(old[i].x) / COARSE
+		_coarse_next[i] = _coarse_head[bucket]
+		_coarse_head[bucket] = i
+	var max_sight := 0.0
+	for sight in _type_sight:
+		max_sight = maxf(max_sight, sight)
+	if max_sight <= 0.0:
+		return
+	for b in body_pos.size():
+		var p := body_pos[b]
+		var x0 := maxi(floori((p.x - max_sight) / COARSE), 0)
+		var x1 := mini(floori((p.x + max_sight) / COARSE), cw - 1)
+		var z0 := maxi(floori((p.y - max_sight) / COARSE), 0)
+		var z1 := mini(floori((p.y + max_sight) / COARSE), ch - 1)
+		for z in range(z0, z1 + 1):
+			for x in range(x0, x1 + 1):
+				var j := _coarse_head[z * cw + x]
+				while j >= 0:
+					var sight := _type_sight[types[j]]
+					var d := old[j].distance_squared_to(p)
+					if d <= sight * sight and d < _near_dist[j]:
+						_near_dist[j] = d
+						_near_body[j] = b + 1
+					j = _coarse_next[j]
 
 
 func snapshot() -> Array:

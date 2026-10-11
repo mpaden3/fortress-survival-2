@@ -201,7 +201,7 @@ What we know about the original (sources at the bottom; much of it is old/unveri
 - [x] Command layer: all player actions as serializable commands with stable entity IDs
 - [x] RTS camera (pan, zoom, rotate)
 - [x] Camera: centre on / follow the Survivor
-- [ ] Selection (click, box), move / attack-move / stop / hold
+- [x] Selection (click, box), move / attack-move / stop / hold
 - [x] Survivor (builder hero): free movement, build orders, Repair (free), Blink (over walls), Haste; death = defeat
 - [ ] Spectate after defeat; co-op Survivors spawn spread around the start
 - [x] Grid placement with footprints + validity checks; construction time; sell (partial refund)
@@ -209,15 +209,15 @@ What we know about the original (sources at the bottom; much of it is old/unveri
 - [x] Upgrade-tree system: root buildings with branching in-place upgrades (data-driven)
 - [x] Buildings: wall line; Basic Tower → arrow / cannon (splash) / frost (slow) lines (placeholder stats)
 - [x] Resource "wood" (placeholder name): passive income + mill line
-- [ ] Barracks training
-- [ ] Barracks units: repairman (auto-repair), fighter
+- [x] Barracks training (queue, paid on queue)
+- [x] Barracks units: repairman (auto-repairs damaged buildings in sight), fighter (guards its spot with a leash)
 - [x] Flowfield per hunt target (wall HP as cost) + continuous steering/separation; never inside terrain (tested)
 - [x] Horde benchmark: 2000 enemies on the MVP map ≈ 7 ms/tick (budget 8), field build ≈ 13 ms, sliced into ≤ 2.5 ms per tick on rebuilds
 - [x] Render interpolation between ticks for enemies, projectiles and Survivors (30 Hz sim, 60+ FPS render)
 - [x] Enemies break the building blocking their path (cheapest wall), buildings take damage and get destroyed
 - [x] Enemy groups hunt a random living Survivor, chase it when close, attack it; retarget when it dies
 - [x] Enemies attack the buildings they see (walking distance, outer layer only) while their Survivor is out of sight (`EnemyDef.sight_range`)
-- [ ] Enemies attack player units they see (with barracks units; other Survivors in co-op)
+- [x] Enemies attack player units they see (trained units, other Survivors in co-op)
 - [x] Enemies: grunt, brute/siege, runner, mini-boss (Warlord), final boss (Behemoth); continuous timed spawner with ramp + boss timings (`data/defs/waves/default.tres`)
 - [x] Combat: targeting, homing projectiles, splash, slow, death (benchmark: 32 towers + 2000 enemies ≈ 5 ms/tick)
 - [x] Armor / damage types: normal / pierce / siege / magic vs light / medium / heavy / boss (`GameRules.damage_multipliers`)

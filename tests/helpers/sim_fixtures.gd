@@ -49,7 +49,27 @@ static func enemy(id: StringName, max_hp := 50.0, speed := 4.0, damage := 10.0, 
 	return def
 
 
-## Registry with a 1x1 `wall`, a 2x2 `tower`, a non-placeable `tower_2`, and a `grunt` enemy.
+## Fighter by default; pass repair_rate > 0 and attack_damage 0 for a repairman.
+static func unit(id: StringName, max_hp := 100.0, speed := 4.0, attack_range := 3.0, damage := 10.0,
+		cooldown := 0.5, sight := 5.0, leash := 6.0, repair_rate := 0.0) -> UnitDef:
+	var def := UnitDef.new()
+	def.id = id
+	def.display_name = String(id)
+	def.cost = 10
+	def.train_time = 1.0
+	def.max_hp = max_hp
+	def.speed = speed
+	def.attack_range = attack_range
+	def.attack_damage = damage
+	def.attack_cooldown = cooldown
+	def.sight_range = sight
+	def.leash_range = leash
+	def.repair_rate = repair_rate
+	return def
+
+
+## Registry with a 1x1 `wall`, a 2x2 `tower`, a non-placeable `tower_2`, a 2x2 `barracks`
+## training a `fighter` and a `repairman`, and a `grunt` enemy.
 static func defs(starting_resource := 100) -> DefRegistry:
 	var registry := DefRegistry.new()
 	registry.rules = rules(starting_resource)
@@ -57,6 +77,11 @@ static func defs(starting_resource := 100) -> DefRegistry:
 	registry.add_building(building(&"wall", Vector2i.ONE, 5, 1.0, 100))
 	registry.add_building(building(&"tower", Vector2i(2, 2), 20, 2.0, 300, true, [&"tower_2"] as Array[StringName]))
 	registry.add_building(building(&"tower_2", Vector2i(2, 2), 30, 2.0, 500, false))
+	var barracks := building(&"barracks", Vector2i(2, 2), 20, 1.0, 400)
+	barracks.trains = [&"fighter", &"repairman"] as Array[StringName]
+	registry.add_building(barracks)
+	registry.add_unit(unit(&"fighter"))
+	registry.add_unit(unit(&"repairman", 60.0, 4.0, 0.0, 0.0, 1.0, 8.0, 6.0, 10.0))
 	registry.add_enemy(enemy(&"grunt"))
 	return registry
 

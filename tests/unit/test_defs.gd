@@ -65,3 +65,12 @@ func test_damage_and_armor_types() -> void:
 			assert_true(armors.has(armor), "%s vs %s: armor type in use" % [damage_type, armor])
 	assert_gt(rules.damage_multiplier(&"pierce", &"light"), rules.damage_multiplier(&"siege", &"light"))
 	assert_gt(rules.damage_multiplier(&"siege", &"heavy"), rules.damage_multiplier(&"pierce", &"heavy"))
+
+
+func test_units_and_what_trains_them() -> void:
+	assert_true(registry.unit(&"fighter").is_fighter())
+	assert_true(registry.unit(&"repairman").is_repairer())
+	for def: BuildingDef in registry.buildings.values():
+		for unit_id in def.trains:
+			assert_not_null(registry.unit(unit_id), "%s trains %s, which exists" % [def.id, unit_id])
+	assert_eq(registry.building(&"barracks").trains, [&"fighter", &"repairman"] as Array[StringName])

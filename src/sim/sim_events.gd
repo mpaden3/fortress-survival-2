@@ -4,12 +4,14 @@ extends RefCounted
 ## Cleared at the start of every step; game logic never reads it. Flat arrays so a busy
 ## horde tick doesn't allocate a dictionary per hit.
 
-enum Kind { FIRED, IMPACT, ENEMY_KILLED, BUILDING_DESTROYED }
+## UNIT_ATTACK: a unit hit an enemy (at the enemy). UNIT_KILLED: a player unit died.
+enum Kind { FIRED, IMPACT, ENEMY_KILLED, BUILDING_DESTROYED, UNIT_ATTACK, UNIT_KILLED }
 
 var kinds := PackedInt32Array()
 ## Cell units.
 var positions := PackedVector2Array()
-## Def id of the tower (FIRED, IMPACT), enemy (ENEMY_KILLED) or building (BUILDING_DESTROYED).
+## Def id of the tower (FIRED, IMPACT), enemy (ENEMY_KILLED), building (BUILDING_DESTROYED)
+## or unit (UNIT_ATTACK, UNIT_KILLED).
 var defs: Array[StringName] = []
 ## Entity id of the tower or building; the enemy's id for ENEMY_KILLED.
 var ids := PackedInt32Array()

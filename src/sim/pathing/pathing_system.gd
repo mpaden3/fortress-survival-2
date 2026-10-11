@@ -11,6 +11,8 @@ const CELLS_PER_TICK := 2048
 
 var fields: Dictionary[StringName, FlowField] = {}
 var sight := BuildingSightField.new()
+## A* for the player's movers (Survivors, units).
+var paths := GridPaths.new()
 var _target_cells: Dictionary[StringName, Array] = {}
 var _dirty: Dictionary[StringName, bool] = {}
 var _extra := PackedInt32Array()
@@ -23,6 +25,7 @@ func register(world: World) -> void:
 	world.entity_added.connect(_on_building_changed)
 	world.entity_removed.connect(_on_building_changed)
 	world.entity_changed.connect(_on_building_changed)
+	paths.register(world)
 
 
 ## Sets (or moves) a target. Rebuilds next update only if its cells changed.

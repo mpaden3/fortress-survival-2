@@ -9,9 +9,7 @@ extends RefCounted
 const RETARGET_CELLS := 2
 
 var _by_player: Dictionary[int, SurvivorState] = {}
-var _astar := AStarGrid2D.new()
-var _astar_ready := false
-var _dirty_rects: Array[Rect2i] = []
+var _paths_version := -1
 var _field_cell: Dictionary[int, Vector2i] = {}
 var _repair_carry: Dictionary[int, float] = {}
 
@@ -21,8 +19,6 @@ func register(world: World) -> void:
 	world.register_command(Commands.REPAIR, _repair)
 	world.register_command(Commands.BLINK, _blink)
 	world.register_command(Commands.HASTE, _haste)
-	world.entity_added.connect(_on_entity_changed)
-	world.entity_removed.connect(_on_entity_changed)
 
 
 func spawn(world: World, player_id: int, cell: Vector2i) -> SurvivorState:
@@ -92,7 +88,7 @@ func damage(world: World, survivor: SurvivorState, amount: float) -> bool:
 
 
 func update(world: World) -> void:
-	_sync_astar(world)
+	_repath_if_grid_changed(world)
 	for survivor: SurvivorState in _by_player.values():
 		survivor.previous_position = survivor.position
 	for survivor in living():
@@ -111,7 +107,7 @@ func _work(world: World, survivor: SurvivorState) -> void:
 		"build":
 			var def := world.defs.building(order["def"])
 			var rect := Rect2i(order["cell"], def.footprint)
-			if _distance_to_rect(survivor.position, rect) <= survivor.def.work_reach:
+			if GridPaths.distance_to_rect(survivor.position, rect) <= survivor.def.work_reach:
 				world.buildings.start_construction(world, survivor.owner, order["def"], order["cell"])
 				_finish(survivor)
 			elif not _approach(world, survivor, order, rect):
@@ -121,7 +117,7 @@ func _work(world: World, survivor: SurvivorState) -> void:
 			var building := world.entities.get(order["building"]) as BuildingState
 			if building == null or (not building.constructing and building.hp >= building.def.max_hp):
 				_finish(survivor)
-			elif _distance_to_rect(survivor.position, building.rect) <= survivor.def.work_reach:
+			elif GridPaths.distance_to_rect(survivor.position, building.rect) <= survivor.def.work_reach:
 				# HP is whole numbers; carry the fractional repair over to the next tick.
 				var carry: float = _repair_carry.get(survivor.id, 0.0) + survivor.def.repair_rate / SimConstants.TICK_RATE
 				var whole := floorf(carry)
@@ -139,18 +135,7 @@ func _work(world: World, survivor: SurvivorState) -> void:
 ## Walks toward a free cell next to `rect`. Returns false if none is reachable.
 func _approach(world: World, survivor: SurvivorState, order: Dictionary, rect: Rect2i) -> bool:
 	if not order.has("goal"):
-		var best := Vector2i(-1, -1)
-		var best_distance := INF
-		var ring := rect.grow(1)
-		for z in range(ring.position.y, ring.end.y):
-			for x in range(ring.position.x, ring.end.x):
-				var cell := Vector2i(x, z)
-				if rect.has_point(cell) or not _free(world, cell):
-					continue
-				var distance := survivor.position.distance_squared_to(Vector2(cell) + Vector2(0.5, 0.5))
-				if distance < best_distance:
-					best_distance = distance
-					best = cell
+		var best := GridPaths.free_cell_around(world, rect, survivor.position)
 		if best.x < 0:
 			return false
 		order["goal"] = best
@@ -162,27 +147,11 @@ func _approach(world: World, survivor: SurvivorState, order: Dictionary, rect: R
 func _walk(world: World, survivor: SurvivorState, order: Dictionary, goal: Vector2i) -> bool:
 	if not order.get("pathed", false):
 		order["pathed"] = true
-		survivor.path.clear()
-		var from := survivor.cell()
-		var to := goal.clamp(Vector2i.ZERO, world.map.size - Vector2i.ONE)
-		for cell in _astar.get_id_path(from, to, true):
-			if cell != from:
-				survivor.path.append(Vector2(cell) + Vector2(0.5, 0.5))
+		survivor.path = world.pathing.paths.find_path(world, survivor.cell(), goal)
 	var speed := survivor.def.speed
 	if world.tick < survivor.haste_until_tick:
 		speed *= survivor.def.haste_multiplier
-	var step := speed / SimConstants.CELL_SIZE / SimConstants.TICK_RATE
-	while step > 0.0 and not survivor.path.is_empty():
-		var offset := survivor.path[0] - survivor.position
-		var length := offset.length()
-		if length <= step:
-			survivor.position = survivor.path[0]
-			survivor.path.remove_at(0)
-			step -= length
-		else:
-			survivor.position += offset / length * step
-			step = 0.0
-	return survivor.path.is_empty()
+	return GridPaths.walk(survivor, speed / SimConstants.CELL_SIZE / SimConstants.TICK_RATE)
 
 
 ## Moves this Survivor's hunt field to its current cell once it's RETARGET_CELLS away.
@@ -276,37 +245,15 @@ func _free(world: World, cell: Vector2i) -> bool:
 	return world.map.in_bounds(cell) and world.grid.blocked[cell.y * world.map.size.x + cell.x] == 0
 
 
-static func _distance_to_rect(position: Vector2, rect: Rect2i) -> float:
-	var closest := Vector2(clampf(position.x, rect.position.x, rect.end.x), clampf(position.y, rect.position.y, rect.end.y))
-	return position.distance_to(closest)
-
-
-## A* grid mirrors grid.blocked; buildings change it, so changed rects are re-synced.
-func _sync_astar(world: World) -> void:
-	if not _astar_ready:
-		_astar.region = Rect2i(Vector2i.ZERO, world.map.size)
-		_astar.cell_size = Vector2.ONE
-		_astar.diagonal_mode = AStarGrid2D.DIAGONAL_MODE_ONLY_IF_NO_OBSTACLES
-		_astar.default_compute_heuristic = AStarGrid2D.HEURISTIC_OCTILE
-		_astar.default_estimate_heuristic = AStarGrid2D.HEURISTIC_OCTILE
-		_astar.update()
-		_dirty_rects = [Rect2i(Vector2i.ZERO, world.map.size)]
-		_astar_ready = true
-	if _dirty_rects.is_empty():
+## Buildings appeared or disappeared: paths may now cross one or miss a shortcut, so active
+## orders re-path (and re-pick their approach cell).
+func _repath_if_grid_changed(world: World) -> void:
+	var paths := world.pathing.paths
+	paths.sync(world)
+	if paths.version == _paths_version:
 		return
-	for rect in _dirty_rects:
-		for z in range(rect.position.y, rect.end.y):
-			for x in range(rect.position.x, rect.end.x):
-				_astar.set_point_solid(Vector2i(x, z), world.grid.blocked[z * world.map.size.x + x] != 0)
-	_dirty_rects.clear()
-	# Paths may now cross a new building or miss a shortcut: recompute them.
+	_paths_version = paths.version
 	for survivor in _by_player.values():
 		if not survivor.orders.is_empty():
 			survivor.orders[0].erase("pathed")
 			survivor.orders[0].erase("goal")
-
-
-func _on_entity_changed(entity: SimEntity) -> void:
-	var building := entity as BuildingState
-	if building:
-		_dirty_rects.append(building.rect)

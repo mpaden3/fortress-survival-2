@@ -4,6 +4,7 @@ extends RefCounted
 
 const BUILDINGS_DIR := "res://data/defs/buildings"
 const ENEMIES_DIR := "res://data/defs/enemies"
+const UNITS_DIR := "res://data/defs/units"
 const RULES_PATH := "res://data/defs/game_rules.tres"
 const SURVIVOR_PATH := "res://data/defs/survivor.tres"
 const DEFAULT_SCHEDULE_PATH := "res://data/defs/waves/default.tres"
@@ -14,6 +15,7 @@ var survivor: SurvivorDef
 var schedule: WaveSchedule
 var buildings: Dictionary[StringName, BuildingDef] = {}
 var enemies: Dictionary[StringName, EnemyDef] = {}
+var units: Dictionary[StringName, UnitDef] = {}
 ## Enemy defs by dense index, for the EnemyManager's per-enemy type array.
 var enemy_list: Array[EnemyDef] = []
 ## Damage type -> multiplier per enemy_list index (cache for combat).
@@ -31,6 +33,9 @@ static func load_default() -> DefRegistry:
 	for file in ResourceLoader.list_directory(ENEMIES_DIR):
 		if file.ends_with(".tres"):
 			registry.add_enemy(load(ENEMIES_DIR.path_join(file)))
+	for file in ResourceLoader.list_directory(UNITS_DIR):
+		if file.ends_with(".tres"):
+			registry.add_unit(load(UNITS_DIR.path_join(file)))
 	return registry
 
 
@@ -51,6 +56,15 @@ func add_enemy(def: EnemyDef) -> void:
 
 func enemy(def_id: StringName) -> EnemyDef:
 	return enemies.get(def_id)
+
+
+func add_unit(def: UnitDef) -> void:
+	assert(not units.has(def.id), "duplicate unit id %s" % def.id)
+	units[def.id] = def
+
+
+func unit(def_id: StringName) -> UnitDef:
+	return units.get(def_id)
 
 
 func enemy_index(def_id: StringName) -> int:

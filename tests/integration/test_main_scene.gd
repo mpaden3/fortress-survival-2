@@ -48,3 +48,29 @@ func test_sell_selected_removes_view() -> void:
 	await wait_process_frames(1)
 	assert_eq(game.building_views.view_count(), 0)
 	assert_eq(game.world.grid.occupant(cell), BuildGrid.NONE)
+
+
+func test_barracks_trains_and_units_take_orders() -> void:
+	var world := game.world
+	world.players[Game.LOCAL_PLAYER].resource = 1000
+	var barracks := SimFixtures.build_now(world, &"barracks", world.map.start + Vector2i(4, 4))
+	game.builder._select_entity(barracks.id)
+	var actions := BuildController.building_actions(barracks)
+	assert_eq(actions, [&"fighter", &"repairman"] as Array[StringName], "barracks actions: units to train")
+	game.builder.request_action_selected(0)
+	for i in roundi(world.defs.unit(&"fighter").train_time * SimConstants.TICK_RATE) + 2:
+		game.step()
+	assert_eq(world.units.living().size(), 1, "fighter trained")
+	await wait_process_frames(1)
+	assert_eq(game.unit_views.view_count(), 1)
+	var fighter := world.units.living()[0]
+	assert_eq(game.builder.unit_near(fighter.position + Vector2(0.3, 0.0)), fighter.id, "click picks it")
+	game.builder.select_units([fighter.id] as Array[int])
+	var goal := fighter.cell() + Vector2i(-3, 0)  # open ground (terrain to the east)
+	game.builder.request_unit_order("move", goal)
+	for i in 3 * SimConstants.TICK_RATE:
+		game.step()
+	assert_eq(fighter.cell(), goal, "moved where ordered")
+	world.units.damage(world, fighter, 10000.0)
+	await wait_process_frames(1)
+	assert_eq(game.unit_views.view_count(), 0, "view removed with the unit")

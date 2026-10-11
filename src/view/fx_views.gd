@@ -94,6 +94,11 @@ func _on_stepped() -> void:
 				var building := _world.defs.building(events.defs[i])
 				var footprint := maxi(building.footprint.x, building.footprint.y) if building else 1
 				play(EXPLOSION, at, 0.6 + 0.4 * footprint)
+			SimEvents.Kind.UNIT_ATTACK:
+				at.y = IMPACT_HEIGHT
+				play(HIT_SPARK, at)
+			SimEvents.Kind.UNIT_KILLED:
+				play(ENEMY_DEATH, at)
 
 
 func _play_impact(def: BuildingDef, at: Vector3) -> void:

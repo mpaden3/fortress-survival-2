@@ -26,6 +26,7 @@ var camera: RtsCamera
 var builder: BuildController
 var hud: Hud
 var survivor_views: SurvivorViews
+var unit_views: UnitViews
 var survivor: SurvivorState
 var follow_survivor := false
 var speed := 1.0
@@ -67,6 +68,11 @@ func _ready() -> void:
 	add_child(fx_views)
 	fx_views.attach(world)
 
+	unit_views = UnitViews.new()
+	unit_views.name = "Units"
+	add_child(unit_views)
+	unit_views.attach(world)
+
 	survivor_views = SurvivorViews.new()
 	survivor_views.name = "Survivors"
 	add_child(survivor_views)
@@ -87,6 +93,7 @@ func _ready() -> void:
 	builder.setup(world, camera, LOCAL_PLAYER)
 	add_child(builder)
 	builder.selection_changed.connect(building_views.set_selected)
+	builder.units_selected.connect(unit_views.set_selected)
 
 	hud = Hud.new()
 	hud.setup(world, builder, LOCAL_PLAYER)
@@ -104,6 +111,7 @@ func _process(delta: float) -> void:
 	enemy_views.alpha = alpha
 	projectile_views.alpha = alpha
 	survivor_views.alpha = alpha
+	unit_views.alpha = alpha
 	if follow_survivor:
 		camera.focus(_survivor_point())
 	_frames += 1
@@ -177,6 +185,11 @@ func _place_demo() -> void:
 		if tower and tower.def.id == &"basic_tower":
 			var branch: StringName = tower.def.upgrades[tower.id % tower.def.upgrades.size()]
 			world.submit(Commands.upgrade_building(LOCAL_PLAYER, tower.id, branch))
+	# A garrison: fighters around the start, a repairman by the walls.
+	for i in 5:
+		world.units.spawn(world, LOCAL_PLAYER, &"fighter", Vector2(start) + Vector2(-2.5 + i * 1.2, -2.0))
+	world.units.spawn(world, LOCAL_PLAYER, &"repairman", Vector2(start) + Vector2(0.5, -2.5))
+	world.buildings.start_construction(world, LOCAL_PLAYER, &"barracks", start + Vector2i(-8, 4))
 	for spawn in world.map.spawns.slice(1):
 		world.submit(Commands.debug_spawn(LOCAL_PLAYER, &"grunt", spawn.id, 60, &""))
 	world.submit(Commands.debug_spawn(LOCAL_PLAYER, &"brute", world.map.spawns[1].id, 6, &""))

@@ -30,6 +30,7 @@ var events := SimEvents.new()
 
 var buildings: BuildingSystem
 var survivors: SurvivorSystem
+var units: UnitSystem
 var pathing: PathingSystem
 var enemies: EnemyManager
 var combat: CombatSystem
@@ -50,6 +51,8 @@ func _init(map_layout: MapLayout, definitions: DefRegistry, seed_value: int = 0)
 	buildings.register(self)
 	survivors = SurvivorSystem.new()
 	survivors.register(self)
+	units = UnitSystem.new()
+	units.register(self)
 	pathing = PathingSystem.new()
 	pathing.register(self)
 	enemies = EnemyManager.new()
@@ -92,6 +95,7 @@ func step() -> void:
 	pathing.update(self)
 	enemies.update(self)
 	combat.update(self)
+	units.update(self)
 	tick += 1
 	stepped.emit()
 

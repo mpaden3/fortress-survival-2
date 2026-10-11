@@ -19,6 +19,7 @@ func setup(target_world: World, build_controller: BuildController, local_player:
 
 
 var _banner: Label
+var _box: Panel
 
 
 func _ready() -> void:
@@ -29,6 +30,15 @@ func _ready() -> void:
 	_banner.add_theme_constant_override("outline_size", 12)
 	_banner.visible = false
 	add_child(_banner)
+	_box = Panel.new()
+	var box_style := StyleBoxFlat.new()
+	box_style.bg_color = Color(0.3, 1.0, 0.4, 0.12)
+	box_style.border_color = Color(0.3, 1.0, 0.4, 0.9)
+	box_style.set_border_width_all(1)
+	_box.add_theme_stylebox_override("panel", box_style)
+	_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_box.visible = false
+	add_child(_box)
 	_top = _label(Control.PRESET_TOP_LEFT)
 	_bottom = _label(Control.PRESET_BOTTOM_LEFT)
 	_bottom.grow_vertical = Control.GROW_DIRECTION_BEGIN
@@ -65,7 +75,7 @@ func _process(_delta: float) -> void:
 		var mark := ">" if def.id == builder.selected_def else " "
 		keys.append("%s[%s] %s (%d)" % [mark, OS.get_keycode_string(key), def.display_name, def.cost])
 	lines.append("  ".join(keys))
-	lines.append("LMB place/select   drag: walls   Esc cancel   X sell   RMB move/repair   F blink   H haste   Shift queue")
+	lines.append("LMB place/select   drag: walls / select units   Esc cancel   X sell   RMB move/repair   F blink   H haste   Shift queue")
 	lines.append("WASD/edge pan   wheel zoom   Q/E rotate   Space centre   L follow   P plots")
 	var survivor := world.survivors.survivor_of(player_id)
 	if survivor:
@@ -92,12 +102,40 @@ func _process(_delta: float) -> void:
 				", splash %.1f" % building.def.splash_radius if building.def.splash_radius > 0 else "",
 				", slows to %d%%" % (building.def.slow_multiplier * 100) if building.def.slow_multiplier < 1 else ""])
 		var options := PackedStringArray()
-		for k in building.def.upgrades.size():
-			var target := world.defs.building(building.def.upgrades[k])
-			options.append("[%s] %s (%d)" % [OS.get_keycode_string(BuildController.UPGRADE_KEYS[k]), target.display_name, target.cost])
+		var actions := BuildController.building_actions(building)
+		for k in mini(actions.size(), BuildController.ACTION_KEYS.size()):
+			var key := OS.get_keycode_string(BuildController.ACTION_KEYS[k])
+			if k < building.def.upgrades.size():
+				var target := world.defs.building(actions[k])
+				options.append("[%s] upgrade: %s (%d)" % [key, target.display_name, target.cost])
+			else:
+				var unit_def := world.defs.unit(actions[k])
+				options.append("[%s] train: %s (%d)" % [key, unit_def.display_name, unit_def.cost])
 		if not options.is_empty():
-			bottom.append("Upgrade: " + "  ".join(options))
+			bottom.append("  ".join(options))
+		if not building.train_queue.is_empty():
+			var training := world.defs.unit(building.train_queue[0])
+			bottom.append("Training: %s %d%%%s" % [training.display_name,
+				100 * building.train_progress / training.train_ticks(),
+				"  (+%d queued)" % (building.train_queue.size() - 1) if building.train_queue.size() > 1 else ""])
+	var units := _selected_units()
+	if not units.is_empty():
+		var counts := {}
+		for unit in units:
+			counts[unit.def.display_name] = counts.get(unit.def.display_name, 0) + 1
+		var parts := PackedStringArray()
+		for unit_name: String in counts:
+			parts.append("%d %s" % [counts[unit_name], unit_name])
+		var line := "Selected: " + ", ".join(parts)
+		if units.size() == 1:
+			line += "  HP %d/%d%s" % [units[0].hp, units[0].def.max_hp, "  holding" if units[0].holding else ""]
+		bottom.append(line)
+		bottom.append("RMB move   [T] attack-move%s   [Z] stop   [V] hold   Esc deselect"
+			% (" (click target)" if builder.attack_move_armed else ""))
 	bottom.append("Cell %s" % builder.hover_cell)
+	_box.visible = builder.drag_rect.has_area()
+	_box.position = builder.drag_rect.position
+	_box.size = builder.drag_rect.size
 	if world.tick < _message_until:
 		bottom.append(_message)
 	_bottom.text = "\n".join(bottom)
@@ -109,6 +147,15 @@ func _process(_delta: float) -> void:
 		_show_banner(match_system.announcement, Color(1.0, 0.8, 0.3))
 	else:
 		_banner.visible = false
+
+
+func _selected_units() -> Array[UnitState]:
+	var out: Array[UnitState] = []
+	for unit_id in builder.selected_units:
+		var unit := world.entities.get(unit_id) as UnitState
+		if unit:
+			out.append(unit)
+	return out
 
 
 func _show_banner(text: String, colour: Color) -> void:

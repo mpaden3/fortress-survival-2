@@ -16,6 +16,9 @@ var upgrading_to: BuildingDef
 var upgrade_progress := 0
 ## Ticks until the tower may fire again.
 var attack_cooldown := 0
+## Units queued for training (UnitDef ids); the first one is in progress.
+var train_queue: Array[StringName] = []
+var train_progress := 0
 
 
 func is_complete() -> bool:
@@ -36,6 +39,6 @@ func snapshot() -> Dictionary:
 	data.merge({
 		"kind": "building", "def": String(def.id), "cell": [rect.position.x, rect.position.y],
 		"hp": hp, "max_hp": def.max_hp, "constructing": constructing, "build_progress": build_progress,
-		"upgrading_to": String(upgrading_to.id) if upgrading_to else "",
+		"upgrading_to": String(upgrading_to.id) if upgrading_to else "", "train_queue": train_queue.duplicate(),
 	})
 	return data

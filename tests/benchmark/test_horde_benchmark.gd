@@ -102,3 +102,43 @@ func test_2000_enemies_with_32_towers() -> void:
 	assert_eq(towers, 32)
 	assert_lt(sight_ms, SIGHT_BUDGET_MS, "building sight field rebuild within budget")
 	assert_lt(enemy_ms + combat_ms, TICK_BUDGET_MS, "enemies + combat within budget")
+
+
+## The horde against a garrison of 60 fighters around the start (units + enemies seeing them).
+func test_2000_enemies_with_60_fighters() -> void:
+	DebugLog.active = false
+	var layout := MapLayout.load_file("res://data/maps/mvp_map.json")
+	var world := World.new(layout, DefRegistry.load_default(), 7)
+	world.add_player(0)
+	world.pathing.set_target(&"survivor", [layout.start] as Array[Vector2i])
+	var fighters := 0
+	for dz in range(-14, 15, 2):
+		for dx in range(-14, 15, 2):
+			var cell := layout.start + Vector2i(dx, dz)
+			if fighters < 60 and world.grid.check(Rect2i(cell, Vector2i.ONE)).is_empty():
+				world.units.spawn(world, 0, &"fighter", Vector2(cell) + Vector2(0.5, 0.5))
+				fighters += 1
+	for spawn in layout.spawns:
+		world.enemies.spawn(world, &"grunt", spawn.rect, ENEMIES / layout.spawns.size(), &"survivor")
+	# Measure the whole fight, on ticks where fighters are still standing.
+	var total_usec := 0
+	var worst_usec := 0
+	var ticks := 0
+	var contact_tick := -1
+	for i in 30 * SimConstants.TICK_RATE:
+		world.step()
+		if world.units.living().is_empty():
+			break
+		var usec := world.enemies.update_usec + world.units.update_usec
+		total_usec += usec
+		worst_usec = maxi(worst_usec, usec)
+		ticks += 1
+		if contact_tick < 0 and world.units.living().size() < fighters:
+			contact_tick = world.tick
+	DebugLog.active = true
+	var avg_ms := total_usec / 1000.0 / ticks
+	gut.p("garrison benchmark: %d fighters, first loss at tick %d, %d ticks with fighters, enemies + units avg %.2f ms, worst %.2f ms"
+		% [fighters, contact_tick, ticks, avg_ms, worst_usec / 1000.0])
+	assert_eq(fighters, 60)
+	assert_gt(contact_tick, 0, "the horde reached the garrison")
+	assert_lt(avg_ms, TICK_BUDGET_MS, "enemies + units within budget")

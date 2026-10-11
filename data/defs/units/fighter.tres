@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="UnitDef" format=3]
+
+[ext_resource type="Script" path="res://src/sim/defs/unit_def.gd" id="1_def"]
+
+[resource]
+script = ExtResource("1_def")
+id = &"fighter"
+display_name = "Fighter"
+cost = 15
+train_time = 6.0
+max_hp = 160.0
+speed = 4.0
+radius = 0.35
+armor_type = &"medium"
+sight_range = 6.0
+leash_range = 8.0
+attack_range = 3.5
+attack_damage = 9.0
+damage_type = &"pierce"
+attack_cooldown = 0.9

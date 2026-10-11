@@ -83,7 +83,7 @@ func start_construction(world: World, player_id: int, def_id: StringName, origin
 		var rect := Rect2i(origin, def.footprint)
 		if world.enemies.any_in_rect(rect):
 			reason = "blocked_by_enemies"
-		elif world.survivors.any_in_rect(rect):
+		elif world.survivors.any_in_rect(rect) or world.units.any_in_rect(rect):
 			reason = "blocked_by_unit"
 	if not reason.is_empty():
 		return _reject({"type": Commands.PLACE_BUILDING, "player": player_id, "def": def_id, "cell": origin}, reason)
