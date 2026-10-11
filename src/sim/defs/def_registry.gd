@@ -16,6 +16,8 @@ var buildings: Dictionary[StringName, BuildingDef] = {}
 var enemies: Dictionary[StringName, EnemyDef] = {}
 ## Enemy defs by dense index, for the EnemyManager's per-enemy type array.
 var enemy_list: Array[EnemyDef] = []
+## Damage type -> multiplier per enemy_list index (cache for combat).
+var _vs_enemies: Dictionary[StringName, PackedFloat32Array] = {}
 
 
 static func load_default() -> DefRegistry:
@@ -53,3 +55,15 @@ func enemy(def_id: StringName) -> EnemyDef:
 
 func enemy_index(def_id: StringName) -> int:
 	return enemy_list.find(enemies.get(def_id))
+
+
+## Multiplier of `damage_type` against each enemy type, indexed like enemy_list.
+func damage_vs_enemies(damage_type: StringName) -> PackedFloat32Array:
+	var cached: PackedFloat32Array = _vs_enemies.get(damage_type, PackedFloat32Array())
+	if cached.size() == enemy_list.size() and not cached.is_empty():
+		return cached
+	cached = PackedFloat32Array()
+	for def in enemy_list:
+		cached.append(rules.damage_multiplier(damage_type, def.armor_type))
+	_vs_enemies[damage_type] = cached
+	return cached

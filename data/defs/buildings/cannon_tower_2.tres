@@ -14,6 +14,7 @@ max_hp = 650
 upgrades = Array[StringName]([])
 attack_range = 6.5
 attack_damage = 55.0
+damage_type = &"siege"
 attack_cooldown = 1.8
 projectile_speed = 16.0
 splash_radius = 2.0

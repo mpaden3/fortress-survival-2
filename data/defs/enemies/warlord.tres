@@ -13,3 +13,4 @@ damage = 40.0
 attack_cooldown = 1.5
 building_damage_multiplier = 2.0
 sight_range = 14.0
+armor_type = &"heavy"

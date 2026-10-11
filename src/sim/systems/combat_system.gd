@@ -86,11 +86,12 @@ func _impact(world: World, def: BuildingDef, source: int, point: Vector2, target
 		if enemies.is_alive(index):
 			hit.append(index)
 	var slow_until := world.tick + roundi(def.slow_duration * SimConstants.TICK_RATE)
+	var vs_armor := world.defs.damage_vs_enemies(def.damage_type)
 	for index in hit:
 		if def.slow_multiplier < 1.0:
 			enemies.apply_slow(index, def.slow_multiplier, world.tick, slow_until)
 		var position := enemies.positions[index]
-		if enemies.damage(index, def.attack_damage):
+		if enemies.damage(index, def.attack_damage * vs_armor[enemies.types[index]]):
 			world.events.add(SimEvents.Kind.ENEMY_KILLED, position, world.defs.enemy_list[enemies.types[index]].id,
 				enemies.ids[index])
 	world.events.add(SimEvents.Kind.IMPACT, point, def.id, source)

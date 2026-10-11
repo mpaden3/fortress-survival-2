@@ -47,3 +47,21 @@ func test_upgrade_graph_is_a_forest() -> void:
 	for def: BuildingDef in registry.buildings.values():
 		if not def.placeable:
 			assert_eq(parents.get(def.id, 0), 1, "%s has exactly one parent" % def.id)
+
+
+## Every damage and armor type used is in the multiplier table, and the tower branches have
+## distinct jobs (arrows for light enemies, cannons for heavy ones).
+func test_damage_and_armor_types() -> void:
+	var rules := registry.rules
+	var armors := {}
+	for def in registry.enemy_list:
+		armors[def.armor_type] = true
+	for def: BuildingDef in registry.buildings.values():
+		if def.is_armed():
+			assert_true(def.damage_type == &"normal" or rules.damage_multipliers.has(def.damage_type),
+				"%s damage type %s in the table" % [def.id, def.damage_type])
+	for damage_type: StringName in rules.damage_multipliers:
+		for armor: StringName in rules.damage_multipliers[damage_type]:
+			assert_true(armors.has(armor), "%s vs %s: armor type in use" % [damage_type, armor])
+	assert_gt(rules.damage_multiplier(&"pierce", &"light"), rules.damage_multiplier(&"siege", &"light"))
+	assert_gt(rules.damage_multiplier(&"siege", &"heavy"), rules.damage_multiplier(&"pierce", &"heavy"))

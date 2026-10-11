@@ -14,5 +14,6 @@ max_hp = 300
 upgrades = Array[StringName]([&"arrow_tower", &"cannon_tower", &"frost_tower"])
 attack_range = 5.0
 attack_damage = 8.0
+damage_type = &"normal"
 attack_cooldown = 1.0
 projectile_speed = 20.0

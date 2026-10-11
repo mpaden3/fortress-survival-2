@@ -13,6 +13,8 @@ extends Resource
 @export var damage := 5.0
 ## Seconds between hits.
 @export var attack_cooldown := 1.0
+## Armor type: incoming damage is scaled by GameRules.damage_multipliers.
+@export var armor_type := &"medium"
 ## Damage multiplier against buildings (siege units > 1).
 @export var building_damage_multiplier := 1.0
 ## Meters. While its Survivor is farther than this, the enemy goes for the nearest building

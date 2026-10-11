@@ -47,6 +47,29 @@ func test_kills_enemy_in_range_at_its_rate_of_fire() -> void:
 	assert_string_contains("\\n".join(DebugLog.captured_in(&"combat")), "enemy_killed=%d" % enemy)
 
 
+func test_damage_scales_with_armor_type() -> void:
+	world.defs.rules.damage_multipliers = {&"pierce": {&"light": 1.5, &"heavy": 0.5}}
+	world.defs.add_enemy(SimFixtures.enemy(&"light_one"))
+	world.defs.add_enemy(SimFixtures.enemy(&"heavy_one"))
+	world.defs.enemy(&"light_one").armor_type = &"light"
+	world.defs.enemy(&"heavy_one").armor_type = &"heavy"
+	tower_def.damage_type = &"pierce"
+	world.pathing.set_target(&"stay", [Vector2i(13, 11)] as Array[Vector2i])
+	SimFixtures.build_now(world, &"tower", Vector2i(10, 10))
+	var light := world.enemies.spawn(world, &"light_one", Rect2i(13, 11, 1, 1), 1, &"stay")[0]
+	world.step()
+	assert_eq(_hp_of(light), 35.0, "10 x 1.5 against light armor")
+	world.enemies.damage(world.enemies.index_of(light), 1000.0)
+	var heavy := world.enemies.spawn(world, &"heavy_one", Rect2i(13, 11, 1, 1), 1, &"stay")[0]
+	world.run(SimConstants.TICK_RATE)
+	assert_eq(_hp_of(heavy), 45.0, "10 x 0.5 against heavy armor")
+	var grunt := _spawn(&"grunt", Vector2i(13, 11))[0]
+	assert_eq(world.defs.enemy(&"grunt").armor_type, &"medium")
+	world.enemies.damage(world.enemies.index_of(heavy), 1000.0)
+	world.run(SimConstants.TICK_RATE)
+	assert_eq(_hp_of(grunt), 40.0, "no table entry: full damage")
+
+
 func test_projectile_takes_time_to_arrive() -> void:
 	SimFixtures.armed(tower_def, 8.0, 10.0, 5.0, 4.0)  # 4 m/s = 2 cells/s
 	world.pathing.set_target(&"stay", [Vector2i(16, 11)] as Array[Vector2i])

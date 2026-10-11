@@ -22,6 +22,8 @@ extends Resource
 ## Attack range in cells (from the footprint centre); 0 = doesn't attack.
 @export var attack_range := 0.0
 @export var attack_damage := 0.0
+## Scaled per enemy armor type by GameRules.damage_multipliers.
+@export var damage_type := &"normal"
 ## Seconds between shots.
 @export var attack_cooldown := 1.0
 ## Projectile speed in m/s; 0 = hits instantly.

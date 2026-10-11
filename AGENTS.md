@@ -163,7 +163,8 @@ tools/           dev scripts: run_tests.sh, maps/ (map builders, Python 3, stdli
 - **Combat** (`src/sim/systems/combat_system.gd`): armed buildings (`BuildingDef`
   attack fields) pick the nearest enemy via `EnemyManager.nearest_in_range()`, which uses the
   spatial buckets from that tick's enemy update. They fire homing projectiles (flat arrays)
-  that apply damage, splash and slow. Combat runs inside `enemies.begin_batch()` /
+  that apply damage, splash and slow. Damage is scaled by the tower's `damage_type` against
+  the enemy's `armor_type` (`GameRules.damage_multipliers`, cached per type in `DefRegistry`). Combat runs inside `enemies.begin_batch()` /
   `end_batch()`, so kills are removed at the end and enemy slot indices stay valid.
 - **Upgrades** are in place: `upgrade_building` sets `upgrading_to`. On completion `def` is
   swapped, HP keeps its damage, and `world.entity_changed` fires (pathing and views refresh).

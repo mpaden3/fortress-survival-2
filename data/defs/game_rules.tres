@@ -10,3 +10,19 @@ sell_refund_ratio = 0.5
 construction_start_hp_ratio = 0.1
 path_cost_per_building_hp = 0.5
 passive_income_per_minute = 30.0
+damage_multipliers = {
+&"magic": {
+&"boss": 0.75,
+&"heavy": 1.25,
+&"medium": 1.25
+},
+&"pierce": {
+&"boss": 0.75,
+&"heavy": 0.6,
+&"light": 1.5
+},
+&"siege": {
+&"heavy": 1.5,
+&"light": 0.75
+}
+}

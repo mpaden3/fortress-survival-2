@@ -14,3 +14,10 @@ extends Resource
 ## Path cost of breaking through a building, per HP, in "cells walked" (10 = one cell).
 ## Higher = enemies prefer longer detours over smashing walls.
 @export var path_cost_per_building_hp := 0.5
+## Damage type -> {armor type -> multiplier}. Missing entries count as 1.
+@export var damage_multipliers: Dictionary = {}
+
+
+func damage_multiplier(damage_type: StringName, armor_type: StringName) -> float:
+	var row: Dictionary = damage_multipliers.get(damage_type, {})
+	return row.get(armor_type, 1.0)

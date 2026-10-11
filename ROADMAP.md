@@ -220,7 +220,7 @@ What we know about the original (sources at the bottom; much of it is old/unveri
 - [ ] Enemies attack player units they see (with barracks units; other Survivors in co-op)
 - [x] Enemies: grunt, brute/siege, runner, mini-boss (Warlord), final boss (Behemoth); continuous timed spawner with ramp + boss timings (`data/defs/waves/default.tres`)
 - [x] Combat: targeting, homing projectiles, splash, slow, death (benchmark: 32 towers + 2000 enemies ≈ 5 ms/tick)
-- [ ] Armor / damage types
+- [x] Armor / damage types: normal / pierce / siege / magic vs light / medium / heavy / boss (`GameRules.damage_multipliers`)
 - [x] Win = survive 20 min timer; lose = your Survivor dies (victory/defeat banners)
 - [x] Minimal HUD (text): wood + income, timer, selection info, build/upgrade/sell keys, ability cooldowns, announcements
 - [x] Placeholder art (primitives)

@@ -87,8 +87,8 @@ func _process(_delta: float) -> void:
 		bottom.append("Selected: %s #%d  HP %d/%d  %s" % [building.def.display_name, building.id, building.hp,
 			building.def.max_hp, state])
 		if building.def.is_armed():
-			bottom.append("Attack: %.0f dmg every %.1fs, range %.1f%s%s" % [building.def.attack_damage,
-				building.def.attack_cooldown, building.def.attack_range,
+			bottom.append("Attack: %.0f %s dmg every %.1fs, range %.1f%s%s" % [building.def.attack_damage,
+				building.def.damage_type, building.def.attack_cooldown, building.def.attack_range,
 				", splash %.1f" % building.def.splash_radius if building.def.splash_radius > 0 else "",
 				", slows to %d%%" % (building.def.slow_multiplier * 100) if building.def.slow_multiplier < 1 else ""])
 		var options := PackedStringArray()
