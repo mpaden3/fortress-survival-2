@@ -3,8 +3,8 @@ extends Node3D
 ## Entry scene: runs a World in real time and wires up views, camera, input and HUD.
 ##
 ## User args (after `--`): --map=<id> (default test_map), --screenshot=<png path> saves one
-## frame and quits, --demo places a few sample buildings and spawns a wave, --no-waves skips
-## the match schedule (sandbox).
+## frame and quits (--screenshot_frame=<n> picks it, default 30), --demo places a few sample
+## buildings and spawns a wave, --no-waves skips the match schedule (sandbox).
 ##
 ## The local player's Survivor starts at the map start; enemies hunt random living Survivors.
 ## Debug keys: G 50 grunts, B 5 brutes, R 30 runners, each from a random spawn.
@@ -21,6 +21,7 @@ var map_view: MapView
 var building_views: BuildingViews
 var enemy_views: EnemyViews
 var projectile_views: ProjectileViews
+var fx_views: FxViews
 var camera: RtsCamera
 var builder: BuildController
 var hud: Hud
@@ -61,6 +62,11 @@ func _ready() -> void:
 	add_child(projectile_views)
 	projectile_views.attach(world)
 
+	fx_views = FxViews.new()
+	fx_views.name = "Fx"
+	add_child(fx_views)
+	fx_views.attach(world)
+
 	survivor_views = SurvivorViews.new()
 	survivor_views.name = "Survivors"
 	add_child(survivor_views)
@@ -95,7 +101,7 @@ func _process(delta: float) -> void:
 	if follow_survivor:
 		camera.focus(_survivor_point())
 	_frames += 1
-	if _args.has("screenshot") and _frames == 30:
+	if _args.has("screenshot") and _frames == int(_args.get("screenshot_frame", "30")):
 		camera.edge_pan = false
 		var image := get_viewport().get_texture().get_image()
 		image.save_png(_args["screenshot"])
@@ -140,6 +146,11 @@ func _setup_environment() -> void:
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	env.ambient_light_color = Color(0.75, 0.78, 0.85)
 	env.ambient_light_energy = 0.6
+	# Only over-bright pixels bloom: additive flashes and fire, not the scene itself.
+	env.glow_enabled = true
+	env.glow_intensity = 0.6
+	env.glow_bloom = 0.0
+	env.glow_hdr_threshold = 1.0
 	var world_env := WorldEnvironment.new()
 	world_env.environment = env
 	add_child(world_env)

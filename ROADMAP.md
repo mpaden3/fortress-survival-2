@@ -61,14 +61,14 @@ What we know about the original (sources at the bottom; much of it is old/unveri
   are:
   - **Repair**
   - **Blink**: a short teleport *over* walls to a free ground spot. Survivors can't stand on
-	walls (no wall-top height layer).
+    walls (no wall-top height layer).
   - **Haste**: a speed burst to escape
 
   **One life: if the Survivor dies, you lose.** In co-op, a dead player is out and can only
   spectate while the team keeps going. **Only Survivors still alive when the timer ends win.**
 - **Hordes hunt Survivors.**
   - Each spawned enemy group picks a **random living Survivor** as its target. This spreads
-	pressure randomly in co-op; in single player every group hunts you.
+    pressure randomly in co-op; in single player every group hunts you.
   - If a group can see its target but the path is blocked, it breaks buildings to clear the way.
   - If its target isn't in sight, it attacks the buildings and units it does see.
 - **Waves:** a continuous, timed stream that ramps up in intensity over the match. Named
@@ -83,7 +83,7 @@ What we know about the original (sources at the bottom; much of it is old/unveri
 ### Map
 - **Handcrafted maps**; layouts may change later, but they stay handcrafted.
   - **Test map:** small, about 64×64 cells, with 4–6 plots and centre + 4 edge spawns. It's for
-	development and headless tests.
+    development and headless tests.
   - **MVP map:** full size, comparable to the original's 160×160 cells.
 - **Fixed plots, replicating the original's plot design.** Players fortify hand-placed plots
   (districts) that differ in:
@@ -167,12 +167,12 @@ What we know about the original (sources at the bottom; much of it is old/unveri
 - **Buildings** snap to a **strict grid** with footprints (1x1, 2x2, 3x3), like WC3.
 - **Pathfinding:**
   - A **grid flowfield** toward each living Survivor; there are only a few, so we keep one
-	field per Survivor. Each cell's cost includes the HP of any wall on it, so enemies choose
-	to break the cheapest wall when they're fully blocked.
+    field per Survivor. Each cell's cost includes the HP of any wall on it, so enemies choose
+    to break the cheapest wall when they're fully blocked.
   - The grid is only for *pathing data*. **Movement is continuous and free:** units sample the
     flowfield direction at their exact position (interpolated) and steer with
-	separation/avoidance. They don't hop from cell center to cell center. This is not a tower
-	defense game.
+    separation/avoidance. They don't hop from cell center to cell center. This is not a tower
+    defense game.
 - **Fog of war comes later, so plan for it now.** Keep a per-player visibility query in the
   simulation (for now everything is visible). Renderers and UI ask it instead of assuming full
   vision. AI "sight" is separate and already in the MVP.
@@ -180,7 +180,7 @@ What we know about the original (sources at the bottom; much of it is old/unveri
   - The host runs the simulation. Clients send commands and receive state snapshots.
   - Single player is the same thing with the host running locally.
   - So all game actions are serializable commands, entities have stable IDs, and state can be
-	snapshotted.
+    snapshotted.
 
 ## Milestones
 
@@ -206,10 +206,9 @@ What we know about the original (sources at the bottom; much of it is old/unveri
 - [ ] Spectate after defeat; co-op Survivors spawn spread around the start
 - [x] Grid placement with footprints + validity checks; construction time; sell (partial refund)
 - [x] Survivor walks to the site before construction starts (queued orders with Shift)
-- [ ] Resource "wood" (placeholder name): passive income + mill line
 - [x] Upgrade-tree system: root buildings with branching in-place upgrades (data-driven)
 - [x] Buildings: wall line; Basic Tower → arrow / cannon (splash) / frost (slow) lines (placeholder stats)
-- [x] Mill income + passive income
+- [x] Resource "wood" (placeholder name): passive income + mill line
 - [ ] Barracks training
 - [ ] Barracks units: repairman (auto-repair), fighter
 - [x] Flowfield per hunt target (wall HP as cost) + continuous steering/separation; never inside terrain (tested)
@@ -223,7 +222,9 @@ What we know about the original (sources at the bottom; much of it is old/unveri
 - [ ] Armor / damage types
 - [x] Win = survive 20 min timer; lose = your Survivor dies (victory/defeat banners)
 - [x] Minimal HUD (text): wood + income, timer, selection info, build/upgrade/sell keys, ability cooldowns, announcements
-- [ ] Placeholder art (primitives), basic SFX hooks
+- [x] Placeholder art (primitives)
+- [x] Sim events for presentation (shots, impacts, kills, destroyed buildings) + placeholder VFX: muzzle flash, hit spark, explosion, frost burst, enemy death, building fire; glow
+- [ ] Basic SFX on the same events
 
 ### M2 — Depth
 - [ ] Research building + research tree; more tower branches (crit/anti-boss, long-range, bash, anti-air)
@@ -238,13 +239,13 @@ What we know about the original (sources at the bottom; much of it is old/unveri
 ### M3 — Identity & polish
 - [ ] Choose art direction; replace placeholders
 - [ ] Audio: SFX set, music, adaptive intensity
-- [ ] VFX: hits, deaths, construction, auras, boss
+- [ ] VFX: final art for hits/deaths (placeholders in M1); construction, auras, boss
 - [ ] Performance: 1000+ enemies on screen (MultiMesh / batching, sim LOD)
 - [ ] Main menu, settings, pause, game-over/victory screens
 
 ### M4 — Beyond
 - [ ] Co-op multiplayer, host-authoritative (2–4 players, resource sharing); can be pulled
-	  earlier once MVP is stable
+  earlier once MVP is stable
 - [ ] Multiple maps, multiple builder "races" / factions
 - [ ] Meta progression, achievements, Steam
 

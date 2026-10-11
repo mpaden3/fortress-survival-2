@@ -13,6 +13,8 @@ signal entity_changed(entity: SimEntity)
 signal player_defeated(player_id: int)
 ## The match is over (MatchSystem.Result.WON or LOST).
 signal match_ended(result: int)
+## A tick finished; `events` holds what happened during it (views react to them).
+signal stepped
 
 var tick := 0
 var map: MapLayout
@@ -23,6 +25,8 @@ var players: Dictionary[int, PlayerState] = {}
 var entities: Dictionary[int, SimEntity] = {}
 ## Outcome of each command executed in the last step, in order: {command, ok, reason}.
 var last_results: Array[Dictionary] = []
+## Presentation events of the last step (shots, impacts, kills, destroyed buildings).
+var events := SimEvents.new()
 
 var buildings: BuildingSystem
 var survivors: SurvivorSystem
@@ -76,6 +80,7 @@ func submit(command: Dictionary) -> void:
 func step() -> void:
 	DebugLog.tick = tick
 	last_results.clear()
+	events.clear()
 	var commands := _pending
 	_pending = []
 	for command in commands:
@@ -88,6 +93,7 @@ func step() -> void:
 	enemies.update(self)
 	combat.update(self)
 	tick += 1
+	stepped.emit()
 
 
 func run(ticks: int) -> void:

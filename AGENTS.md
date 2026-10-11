@@ -159,6 +159,15 @@ tools/           dev scripts: run_tests.sh, maps/ (map builders, Python 3, stdli
   whose rate ramps linearly, plus timed `SpawnEvent`s (bosses, with announcements). It's won
   when the timer runs out with a Survivor alive, and lost when all are dead
   (`world.match_ended`). Tests that don't call `start()` have no waves.
+- **Events** (`src/sim/sim_events.gd`): `world.events` holds what happened during the last
+  tick (shots, impacts, kills, destroyed buildings) as flat arrays, cleared at the start of each
+  step. `world.stepped` fires after each tick. They exist for presentation only; game logic
+  never reads them.
+- **VFX** (`src/view/fx_views.gd`, scenes in `scenes/vfx/`, shaders in `scenes/vfx/shaders/`):
+  `FxViews` plays pooled one-shot `VfxBurst` scenes for events and puts a `VfxLoop` fire on
+  buildings below 60% HP. Effects are `@tool`, so they loop in the editor while you tune them.
+  `scenes/vfx/vfx_gallery.tscn` shows them all; run it with `-- --screenshot=/tmp/v.png
+  --at=0.1,0.5` to capture frames at those seconds after a replay.
 - **Economy** (`src/sim/systems/economy_system.gd`): passive income per living player plus
   `BuildingDef.income_per_minute`, accumulated exactly per tick.
 - **Definitions** (`src/sim/defs/`, data in `data/defs/`) are `Resource` classes loaded by

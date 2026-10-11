@@ -46,6 +46,7 @@ func _fire(world: World) -> void:
 		if log_combat:
 			DebugLog.event(&"combat", {"tower": tower.id, "def": tower.def.id, "fires_at": enemies.ids[target],
 				"distance": origin.distance_to(enemies.positions[target])})
+		world.events.add(SimEvents.Kind.FIRED, origin, tower.def.id, tower.id)
 		if tower.def.projectile_speed <= 0.0:
 			_impact(world, tower.def, tower.id, enemies.positions[target], enemies.ids[target])
 		else:
@@ -85,7 +86,11 @@ func _impact(world: World, def: BuildingDef, source: int, point: Vector2, target
 	for index in hit:
 		if def.slow_multiplier < 1.0:
 			enemies.apply_slow(index, def.slow_multiplier, world.tick, slow_until)
-		enemies.damage(index, def.attack_damage)
+		var position := enemies.positions[index]
+		if enemies.damage(index, def.attack_damage):
+			world.events.add(SimEvents.Kind.ENEMY_KILLED, position, world.defs.enemy_list[enemies.types[index]].id,
+				enemies.ids[index])
+	world.events.add(SimEvents.Kind.IMPACT, point, def.id, source)
 	if DebugLog.on(&"combat"):
 		DebugLog.event(&"combat", {"impact_from": source, "at": point, "hits": hit.size(), "damage": def.attack_damage})
 

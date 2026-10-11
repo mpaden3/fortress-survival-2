@@ -53,6 +53,7 @@ func damage(world: World, building_id: int, amount: float) -> bool:
 		return false
 	if DebugLog.on(&"combat"):
 		DebugLog.event(&"combat", {"building_destroyed": building.id, "def": building.def.id, "cell": building.rect.position})
+	world.events.add(SimEvents.Kind.BUILDING_DESTROYED, building.centre(), building.def.id, building.id)
 	_remove(world, building)
 	return true
 
