@@ -12,7 +12,18 @@ Rules for any AI agent (and human) working on this repo. Read [ROADMAP.md](ROADM
 ## Core rule: everything is testable headlessly
 Every gameplay mechanic must be verifiable with **no window, no GPU, no human**:
 
-Tests use **GUT** (vendored in `addons/gut`). Exact command is documented here once the runner exists.
+Tests use **GUT 9.7** (vendored in `addons/gut`), config in `.gutconfig.json`:
+
+```sh
+tools/run_tests.sh                              # full suite, headless; exit code 0 = all passed
+tools/run_tests.sh -gselect=test_map_layout     # one test script
+tools/run_tests.sh -gunit_test_name=entrances   # tests whose name contains the text
+FS_LOG_ECHO=1 tools/run_tests.sh                # also print the debug log to stdout
+```
+
+- Tests live in `tests/unit/` (pure logic), `tests/integration/` (scenarios that run the
+  simulation for N ticks) and `tests/benchmark/` (performance budgets). Files are named
+  `test_*.gd` and extend `GutTest`.
 
 - **Separate simulation from presentation.** Game logic (economy, building, placement,
   pathfinding, movement, combat, waves, win/lose) lives in plain scripts and nodes that run
@@ -42,7 +53,18 @@ Tests use **GUT** (vendored in `addons/gut`). Exact command is documented here o
   without running the suite.
 
 ## Debug logging (tests + debug builds only)
-A central logging autoload is the agent's "eyes" on the game.
+A central logging autoload, `DebugLog` (`src/debug/debug_log.gd`), is the agent's "eyes" on the
+game.
+
+- **API:**
+  - Write: `DebugLog.on(&"units")` (guard), `DebugLog.event(&"units", {...})`,
+    `DebugLog.message(cat, text)`, `DebugLog.snapshot(label, state)`.
+  - In tests: `DebugLog.captured()`, `captured_in(cat)`, `clear_captured()`,
+    `dump_captured()`.
+  - The simulation sets `DebugLog.tick` each tick.
+- **Activation:** always on under GUT. Elsewhere it needs `--debug-log`, `FS_DEBUG_LOG=1` or the
+  project setting `debug/fortress/log_enabled`. `FS_LOG_ECHO=1/0` controls printing to stdout
+  (off in tests by default; lines are still captured).
 
 - **Active only when** running tests, or in a debug build (`OS.is_debug_build()`) with logging
   enabled. In release/export builds it's a complete no-op with no cost on the hot path.
@@ -63,6 +85,27 @@ A central logging autoload is the agent's "eyes" on the game.
 - Use it: when you implement or debug a mechanic, run it headlessly, read the log, and verify
   the behavior (positions change, collisions happen, units don't get stuck) instead of guessing.
 
+## Project structure
+```
+addons/gut/      vendored test framework (don't edit)
+data/maps/       map JSON files (format: data/maps/README.md)
+docs/            generated previews and tables (Godot-ignored)
+reference/       original WC3 map data, inspiration only (Godot-ignored)
+scenes/          Godot scenes (presentation); main.tscn is the entry scene
+src/core/        simulation basics: constants, fixed-tick clock, ids, commands, rng
+src/debug/       DebugLog autoload
+src/sim/         simulation (no rendering/input): map/, and later pathing/, buildings/,
+                 units/, enemies/, combat/, economy/, waves/
+src/view/        presentation that observes the simulation (renderers, camera) - later
+src/ui/          HUD and menus - later
+tests/           GUT tests (unit/, integration/, benchmark/)
+tools/           dev scripts: run_tests.sh, maps/ (map builders, Python 3, stdlib only)
+```
+- Simulation code goes in `src/sim/` or `src/core/` and must never depend on `src/view/`,
+  `src/ui/`, scenes, input or rendering.
+- Shared value types and constants use `class_name`. Autoloads are kept to a minimum
+  (currently only `DebugLog`).
+
 ## Code conventions
 - Follow the surrounding code; static typing in GDScript (`var hp: int`, typed function
   signatures).
@@ -79,6 +122,9 @@ A central logging autoload is the agent's "eyes" on the game.
 - Use it for **inspiration only**. Don't copy names, numbers or content one-to-one. Our design
   is in ROADMAP.md.
 - `reference/` has a `.gdignore`, so Godot doesn't import it. Never load it from game code.
+- **One deliberate exception:** `data/maps/mvp_map.json` replicates the original map's layout
+  (terrain and the 39 fixed plots), converted by `tools/maps/convert_original.py`. Plot names
+  are placeholders until our own lore exists.
 
 ## Workflow
 - Small, focused commits **directly on `master`**. No PRs or CI yet; tests run locally.

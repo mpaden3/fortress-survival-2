@@ -61,14 +61,14 @@ What we know about the original (sources at the bottom; much of it is old/unveri
   are:
   - **Repair**
   - **Blink**: a short teleport *over* walls to a free ground spot. Survivors can't stand on
-    walls (no wall-top height layer).
+	walls (no wall-top height layer).
   - **Haste**: a speed burst to escape
 
   **One life: if the Survivor dies, you lose.** In co-op, a dead player is out and can only
   spectate while the team keeps going. **Only Survivors still alive when the timer ends win.**
 - **Hordes hunt Survivors.**
   - Each spawned enemy group picks a **random living Survivor** as its target. This spreads
-    pressure randomly in co-op; in single player every group hunts you.
+	pressure randomly in co-op; in single player every group hunts you.
   - If a group can see its target but the path is blocked, it breaks buildings to clear the way.
   - If its target isn't in sight, it attacks the buildings and units it does see.
 - **Waves:** a continuous, timed stream that ramps up in intensity over the match. Named
@@ -83,7 +83,7 @@ What we know about the original (sources at the bottom; much of it is old/unveri
 ### Map
 - **Handcrafted maps**; layouts may change later, but they stay handcrafted.
   - **Test map:** small, about 64×64 cells, with 4–6 plots and centre + 4 edge spawns. It's for
-    development and headless tests.
+	development and headless tests.
   - **MVP map:** full size, comparable to the original's 160×160 cells.
 - **Fixed plots, replicating the original's plot design.** Players fortify hand-placed plots
   (districts) that differ in:
@@ -165,12 +165,12 @@ What we know about the original (sources at the bottom; much of it is old/unveri
 - **Buildings** snap to a **strict grid** with footprints (1x1, 2x2, 3x3), like WC3.
 - **Pathfinding:**
   - A **grid flowfield** toward each living Survivor; there are only a few, so we keep one
-    field per Survivor. Each cell's cost includes the HP of any wall on it, so enemies choose
-    to break the cheapest wall when they're fully blocked.
+	field per Survivor. Each cell's cost includes the HP of any wall on it, so enemies choose
+	to break the cheapest wall when they're fully blocked.
   - The grid is only for *pathing data*. **Movement is continuous and free:** units sample the
     flowfield direction at their exact position (interpolated) and steer with
-    separation/avoidance. They don't hop from cell center to cell center. This is not a tower
-    defense game.
+	separation/avoidance. They don't hop from cell center to cell center. This is not a tower
+	defense game.
 - **Fog of war comes later, so plan for it now.** Keep a per-player visibility query in the
   simulation (for now everything is visible). Renderers and UI ask it instead of assuming full
   vision. AI "sight" is separate and already in the MVP.
@@ -178,22 +178,23 @@ What we know about the original (sources at the bottom; much of it is old/unveri
   - The host runs the simulation. Clients send commands and receive state snapshots.
   - Single player is the same thing with the host running locally.
   - So all game actions are serializable commands, entities have stable IDs, and state can be
-    snapshotted.
+	snapshotted.
 
 ## Milestones
 
 ### M0 — Foundation
 - [x] Git repo, Godot 4.7 project
 - [x] Roadmap, agent rules (AGENTS.md / CLAUDE.md)
-- [ ] Project folder structure and conventions
-- [ ] Headless test runner (`godot --headless`), first passing test
-- [ ] Debug/test-only logging autoload (state, positions, collisions)
+- [x] Project folder structure and conventions
+- [x] Headless test runner (`tools/run_tests.sh`, GUT 9.7), first passing tests
+- [x] Debug/test-only logging autoload (`DebugLog`); entity/collision events come with those systems
 - [ ] Deterministic fixed-tick simulation loop, decoupled from rendering
 - [ ] Data-driven definitions (buildings, units, enemies, waves) as resources
 
 ### M1 — Playable MVP (single player on host-authoritative architecture)
-- [ ] Small handcrafted test map (~64×64): plots, centre start, centre + 4 edge spawns, build grid
-- [ ] Full-size handcrafted MVP map (~160×160) with distinct plots
+- [x] Small handcrafted test map (64×64): 6 plots, centre start, centre + 4 edge spawns (data + tests)
+- [x] Full-size MVP map data (142×145): original layout, 39 fixed plots (data + tests)
+- [ ] Map loading into the running game (terrain mesh/visuals, build grid)
 - [ ] Command layer: all player actions as serializable commands with stable entity IDs
 - [ ] RTS camera (pan, zoom, rotate) + lock-on-Survivor hotkey
 - [ ] Selection (click, box), move / attack-move / stop / hold
@@ -230,7 +231,7 @@ What we know about the original (sources at the bottom; much of it is old/unveri
 
 ### M4 — Beyond
 - [ ] Co-op multiplayer, host-authoritative (2–4 players, resource sharing); can be pulled
-      earlier once MVP is stable
+	  earlier once MVP is stable
 - [ ] Multiple maps, multiple builder "races" / factions
 - [ ] Meta progression, achievements, Steam
 
@@ -252,7 +253,6 @@ What we know about the original (sources at the bottom; much of it is old/unveri
 - Art style direction (stylized low-poly? painterly? realistic?)
 - Final match length (MVP ~20 min; original was 45)
 - Primary resource name & lore (placeholder "wood")
-- Exact MVP map layout (plot profile follows the original)
 
 ## Sources
 - [Fortress Survival — Hive Workshop thread](https://www.hiveworkshop.com/threads/fortress-survival.50919/)
