@@ -27,3 +27,12 @@ func update(world: World) -> void:
 			world.players[player_id].resource += whole
 			carry -= whole
 		_carry[player_id] = carry
+
+
+## Save/load (WorldState).
+func save_state() -> Dictionary:
+	return {"carry": _carry.duplicate()}
+
+
+func load_state(data: Dictionary) -> void:
+	_carry.assign(data["carry"])

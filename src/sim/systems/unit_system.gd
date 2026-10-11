@@ -351,3 +351,21 @@ func _on_entity_removed(entity: SimEntity) -> void:
 		_units.erase(entity)
 	elif entity is BuildingState:
 		_training.erase(entity)
+
+
+## Save/load (WorldState): units follow from the entities; the training order is saved.
+func save_state() -> Dictionary:
+	return {"training": _training.map(func(b: BuildingState) -> int: return b.id)}
+
+
+func load_state(world: World, data: Dictionary) -> void:
+	_units.clear()
+	var ids := world.entities.keys()
+	ids.sort()
+	for entity_id: int in ids:
+		var unit := world.entities[entity_id] as UnitState
+		if unit:
+			_units.append(unit)
+	_training.clear()
+	for building_id: int in data["training"]:
+		_training.append(world.entities[building_id])

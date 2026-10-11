@@ -110,3 +110,33 @@ func _rebuild_sight(world: World) -> void:
 func _on_building_changed(entity: SimEntity) -> void:
 	if entity is BuildingState:
 		_extra_dirty = true
+
+
+## Save/load (WorldState): targets, per-cell costs and every field exactly as it is, even
+## halfway through a sliced rebuild, so a restored world continues identically.
+func save_state() -> Dictionary:
+	var saved_fields := {}
+	for key in fields:
+		saved_fields[key] = ObjectState.dump(fields[key])
+	return {"fields": saved_fields, "target_cells": ObjectState.encode(_target_cells), "dirty": _dirty.duplicate(),
+		"extra": _extra.duplicate(), "max_extra": _max_extra, "extra_dirty": _extra_dirty,
+		"paths_version": paths.version}
+
+
+func load_state(world: World, data: Dictionary) -> void:
+	fields.clear()
+	for key: StringName in data["fields"]:
+		var flow := FlowField.new()
+		ObjectState.load_into(flow, data["fields"][key], world.defs)
+		fields[key] = flow
+	_target_cells.clear()
+	for key: StringName in data["target_cells"]:
+		_target_cells[key] = data["target_cells"][key]
+	_dirty.assign(data["dirty"])
+	_extra = data["extra"].duplicate()
+	_max_extra = data["max_extra"]
+	_extra_dirty = data["extra_dirty"]
+	if not _extra.is_empty():
+		_rebuild_sight(world)
+	paths.sync(world)
+	paths.version = data["paths_version"]

@@ -108,6 +108,8 @@ func test_takes_open_detour_instead_of_breaking_strong_wall() -> void:
 		"#########",
 	] as Array[String])
 	var world := _world(map, Vector2i(1, 1))
+	# Strong: breaking it (100 hp x 2 = 200) beats no detour, even from the cell next to it.
+	world.defs.rules.path_cost_per_building_hp = 2.0
 	var wall := SimFixtures.build_now(world, &"wall", Vector2i(4, 1))
 	world.enemies.spawn(world, &"grunt", Rect2i(7, 1, 1, 1), 3, &"t")
 	world.run_seconds(10.0)
@@ -147,3 +149,18 @@ func test_hits_a_blocking_building_at_its_attack_rate() -> void:
 	assert_gt(first, 0, "started hitting")
 	world.run(3 * SimConstants.TICK_RATE - (world.tick - first))
 	assert_eq(wall.def.max_hp - wall.hp, 10 * (1 + 6), "a hit every 0.5 s after the first")
+
+
+func test_a_packed_spawn_spreads_out_smoothly() -> void:
+	# 40 grunts dropped into one cell must not burst apart: no enemy jumps more than a few
+	# walking steps in a tick.
+	var world := _world(SimFixtures.open_map(30, 30), Vector2i(25, 25))
+	world.enemies.spawn(world, &"grunt", Rect2i(10, 10, 1, 1), 40, &"t")
+	var step := world.defs.enemy(&"grunt").speed / SimConstants.CELL_SIZE / SimConstants.TICK_RATE
+	var worst := 0.0
+	for i in 45:
+		var before := world.enemies.positions.duplicate()
+		world.step()
+		for k in before.size():
+			worst = maxf(worst, before[k].distance_to(world.enemies.positions[k]))
+	assert_lt(worst, EnemyManager.MAX_PUSH_STEPS * step + step + 0.001, "largest jump %.3f cells" % worst)

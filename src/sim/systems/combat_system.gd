@@ -116,3 +116,12 @@ func _remove_projectile(i: int) -> void:
 	proj_speed.resize(last)
 	proj_def.resize(last)
 	proj_source.resize(last)
+
+
+## Save/load (WorldState).
+func save_state() -> Dictionary:
+	return ObjectState.dump(self, ["update_usec"] as Array[String])
+
+
+func load_state(world: World, data: Dictionary) -> void:
+	ObjectState.load_into(self, data, world.defs)

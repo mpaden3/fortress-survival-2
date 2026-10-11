@@ -181,3 +181,25 @@ func _reject(command: Dictionary, reason: String) -> String:
 		DebugLog.event(&"build", {"rejected": command["type"], "player": command["player"], "reason": reason,
 			"def": command.get("def", ""), "cell": command.get("cell", ""), "building": command.get("building", "")})
 	return reason
+
+
+## Save/load (WorldState): the construction and upgrade lists follow from the buildings.
+func load_state(world: World) -> void:
+	_constructing.clear()
+	_upgrading.clear()
+	for building in _buildings_by_id(world):
+		if building.constructing:
+			_constructing.append(building)
+		if building.upgrading_to != null:
+			_upgrading.append(building)
+
+
+static func _buildings_by_id(world: World) -> Array[BuildingState]:
+	var out: Array[BuildingState] = []
+	var ids := world.entities.keys()
+	ids.sort()
+	for entity_id: int in ids:
+		var building := world.entities[entity_id] as BuildingState
+		if building:
+			out.append(building)
+	return out

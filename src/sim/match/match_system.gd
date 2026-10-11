@@ -86,3 +86,21 @@ func _end(world: World, how: Result) -> void:
 	if DebugLog.on(&"state"):
 		DebugLog.event(&"state", {"match_over": Result.keys()[how], "elapsed": elapsed(world)})
 	world.match_ended.emit(how)
+
+
+## Save/load (WorldState). The schedule is saved by path (the default one if it has none).
+func save_state() -> Dictionary:
+	var data := ObjectState.dump(self, ["schedule", "_events"] as Array[String])
+	data["schedule_path"] = schedule.resource_path if schedule else ""
+	return data
+
+
+func load_state(world: World, data: Dictionary) -> void:
+	ObjectState.load_into(self, data, world.defs)
+	schedule = null
+	_events.clear()
+	if data.has("schedule_path") and (active or data["schedule_path"] != ""):
+		var path: String = data["schedule_path"]
+		schedule = load(path) if path != "" else world.defs.schedule
+		_events = schedule.events.duplicate()
+		_events.sort_custom(func(a: SpawnEvent, b: SpawnEvent) -> bool: return a.time < b.time)

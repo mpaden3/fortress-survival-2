@@ -13,8 +13,10 @@ extends RefCounted
 
 ## How far ahead (cells, beyond the body) an enemy looks for a building to attack.
 const ATTACK_REACH := 0.35
-## Most neighbours considered for separation per enemy per tick (caps worst-case cost).
+## Most overlapping neighbours pushed against, and most neighbours looked at, per enemy per
+## tick (caps the cost in dense crowds).
 const MAX_NEIGHBOURS := 10
+const MAX_CANDIDATES := 24
 ## Flow cost under which an enemy counts as arrived and stops pressing forward
 ## (just over one diagonal step), so crowds at the target don't compress.
 const ARRIVED_COST := 15
@@ -24,6 +26,12 @@ const PURSUIT_RANGE := 3.0
 const PURSUIT_COST := 50
 ## Cell size of the coarse enemy grid used to find which enemies see a player unit.
 const COARSE := 4
+## Separation pushes an enemy at most this many walking steps per tick, so packed crowds
+## (a spawn) spread out smoothly instead of bursting apart.
+const MAX_PUSH_STEPS := 6.0
+const GOLDEN_ANGLE := PI * (3.0 - sqrt(5.0))
+## Enemies this close (cells) to a player unit or Survivor always know it, to keep out of it.
+const BODY_CONTACT := 1.5
 
 var ids := PackedInt32Array()
 var types := PackedInt32Array()
@@ -102,12 +110,22 @@ func spawn(world: World, def_id: StringName, area: Rect2i, amount: int, target: 
 	if cells.is_empty():
 		return spawned
 	var target_index := _target_index(target)
+	# A sunflower spiral around a random cell spaces the group out; points off the area's free
+	# cells fall back to a random spot in it.
+	var centre: Vector2i = world.rng.pick(cells)
+	var free := {}
+	for cell: Vector2i in cells:
+		free[cell] = true
+	var spacing := def.radius / SimConstants.CELL_SIZE * 2.1
 	for i in amount:
-		var cell: Vector2i = world.rng.pick(cells)
+		var point := Vector2(centre) + Vector2(0.5, 0.5) + Vector2.from_angle(i * GOLDEN_ANGLE) * spacing * sqrt(i)
+		if not free.has(Vector2i(floori(point.x), floori(point.y))):
+			var cell: Vector2i = world.rng.pick(cells)
+			point = Vector2(cell.x + 0.2 + world.rng.randf() * 0.6, cell.y + 0.2 + world.rng.randf() * 0.6)
 		var entity_id := world.new_id()
 		ids.append(entity_id)
 		types.append(type_index)
-		positions.append(Vector2(cell.x + 0.2 + world.rng.randf() * 0.6, cell.y + 0.2 + world.rng.randf() * 0.6))
+		positions.append(point)
 		previous_positions.append(positions[positions.size() - 1])
 		hp.append(def.max_hp)
 		cooldowns.append(0)
@@ -432,12 +450,14 @@ func update(world: World) -> void:
 		# Separation from neighbours in the 3x3 surrounding buckets.
 		var push := Vector2.ZERO
 		var checked := 0 if (i & 1) == parity else MAX_NEIGHBOURS
+		var looked := 0
 		for bz in range(maxi(cz - 1, 0), mini(cz + 2, height)):
-			if checked >= MAX_NEIGHBOURS:
+			if checked >= MAX_NEIGHBOURS or looked >= MAX_CANDIDATES:
 				break
 			for bx in range(maxi(cx - 1, 0), mini(cx + 2, width)):
 				var j := heads[bz * width + bx]
-				while j >= 0 and checked < MAX_NEIGHBOURS:
+				while j >= 0 and checked < MAX_NEIGHBOURS and looked < MAX_CANDIDATES:
+					looked += 1
 					if j != i:
 						var offset := pos - old[j]
 						var min_dist := radius + radius_of[types[j]]
@@ -452,7 +472,20 @@ func update(world: World) -> void:
 					j = nexts[j]
 
 		# Move without ending in a blocked cell; slide along walls one axis at a time.
+		var push_limit := MAX_PUSH_STEPS * step_of[t]
+		if push.length_squared() > push_limit * push_limit:
+			push = push.normalized() * push_limit
 		var moved := pos + desired + push
+		# Player units and Survivors are solid: never end up inside the nearest one.
+		if body >= 0 and body_alive[body] == 1:
+			var away := moved - body_pos[body]
+			var min_gap := radius + body_radius[body]
+			var gap_sq := away.length_squared()
+			if gap_sq < min_gap * min_gap:
+				var out := away / sqrt(gap_sq) if gap_sq > 0.000001 else Vector2.RIGHT
+				# Slide round it (each enemy always the same way) so it doesn't stall head-on.
+				var side := out.orthogonal() * float((ids[i] & 1) * 2 - 1)
+				moved = body_pos[body] + out * min_gap + side * step_of[t] * 0.5
 		if _open(blocked, width, height, moved):
 			positions[i] = moved
 		elif _open(blocked, width, height, Vector2(moved.x, pos.y)):
@@ -464,7 +497,8 @@ func update(world: World) -> void:
 	update_usec = Time.get_ticks_usec() - started
 
 
-## Fills _near_body: for each enemy, the nearest of `body_pos` within its sight range.
+## Fills _near_body: for each enemy, the nearest of `body_pos` within its sight range (or
+## BODY_CONTACT, so every enemy knows a body it could bump into).
 func _assign_bodies(old: PackedVector2Array, width: int, height: int, body_pos: PackedVector2Array) -> void:
 	var n := old.size()
 	_near_body.resize(n)
@@ -482,11 +516,9 @@ func _assign_bodies(old: PackedVector2Array, width: int, height: int, body_pos: 
 		var bucket := (floori(old[i].y) / COARSE) * cw + floori(old[i].x) / COARSE
 		_coarse_next[i] = _coarse_head[bucket]
 		_coarse_head[bucket] = i
-	var max_sight := 0.0
+	var max_sight := BODY_CONTACT
 	for sight in _type_sight:
 		max_sight = maxf(max_sight, sight)
-	if max_sight <= 0.0:
-		return
 	for b in body_pos.size():
 		var p := body_pos[b]
 		var x0 := maxi(floori((p.x - max_sight) / COARSE), 0)
@@ -497,7 +529,7 @@ func _assign_bodies(old: PackedVector2Array, width: int, height: int, body_pos: 
 			for x in range(x0, x1 + 1):
 				var j := _coarse_head[z * cw + x]
 				while j >= 0:
-					var sight := _type_sight[types[j]]
+					var sight := maxf(_type_sight[types[j]], BODY_CONTACT)
 					var d := old[j].distance_squared_to(p)
 					if d <= sight * sight and d < _near_dist[j]:
 						_near_dist[j] = d
@@ -574,4 +606,20 @@ func _remove(index: int) -> void:
 	slow_multiplier.resize(last)
 	slow_until.resize(last)
 	# Slots moved: buckets are stale until the next update.
+	_bucket_width = 0
+
+
+## Save/load (WorldState): the SoA arrays and hunt targets; indexes are rebuilt.
+func save_state() -> Dictionary:
+	return ObjectState.dump(self, ["update_usec", "_slot", "_batching", "_dead", "_bucket_head", "_bucket_next",
+		"_bucket_width", "_bucket_height", "_type_step", "_type_radius", "_type_sight", "_type_sight_cost",
+		"_near_body", "_near_dist", "_coarse_head", "_coarse_next"] as Array[String])
+
+
+func load_state(world: World, data: Dictionary) -> void:
+	ObjectState.load_into(self, data, world.defs)
+	_slot.clear()
+	for i in ids.size():
+		_slot[ids[i]] = i
+	_dead.clear()
 	_bucket_width = 0

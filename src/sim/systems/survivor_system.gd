@@ -285,3 +285,20 @@ func _repath_if_grid_changed(world: World) -> void:
 		if not survivor.orders.is_empty():
 			survivor.orders[0].erase("pathed")
 			survivor.orders[0].erase("goal")
+
+
+## Save/load (WorldState).
+func save_state() -> Dictionary:
+	return {"field_cell": _field_cell.duplicate(), "repair_carry": _repair_carry.duplicate(),
+		"paths_version": _paths_version}
+
+
+func load_state(world: World, data: Dictionary) -> void:
+	_by_player.clear()
+	for entity: SimEntity in world.entities.values():
+		var survivor := entity as SurvivorState
+		if survivor:
+			_by_player[survivor.owner] = survivor
+	_field_cell.assign(data["field_cell"])
+	_repair_carry.assign(data["repair_carry"])
+	_paths_version = data["paths_version"]
