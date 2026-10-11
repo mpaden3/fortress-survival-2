@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="BuildingDef" format=3]
+
+[ext_resource type="Script" path="res://src/sim/defs/building_def.gd" id="1_def"]
+
+[resource]
+script = ExtResource("1_def")
+id = &"frost_tower_2"
+display_name = "Frost Tower II"
+placeable = false
+footprint = Vector2i(2, 2)
+cost = 60
+build_time = 8.0
+max_hp = 600
+upgrades = Array[StringName]([])

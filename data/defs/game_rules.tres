@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="GameRules" format=3]
+
+[ext_resource type="Script" path="res://src/sim/defs/game_rules.gd" id="1_rules"]
+
+[resource]
+script = ExtResource("1_rules")
+primary_resource_name = "wood"
+starting_resource = 100
+sell_refund_ratio = 0.5
+construction_start_hp_ratio = 0.1

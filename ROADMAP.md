@@ -159,7 +159,9 @@ What we know about the original (sources at the bottom; much of it is old/unveri
 ### Tech
 - **Engine:** Godot 4.7 (GDScript). Tests use **GUT**, run headless.
 - **Simulation architecture (hybrid):**
-  - Buildings, Survivors and player units are Nodes.
+  - **The simulation is plain data, not Nodes.** A `World` holds the entities (buildings,
+    Survivors, units) as plain objects and advances in fixed ticks. Nodes in the scene only
+    *draw* the world. This keeps it headless-testable and easy to snapshot for co-op.
   - **Enemies are simulated in a central manager** (data arrays) and drawn with MultiMesh,
     so the game can scale to thousands of enemies.
 - **Buildings** snap to a **strict grid** with footprints (1x1, 2x2, 3x3), like WC3.
@@ -188,18 +190,19 @@ What we know about the original (sources at the bottom; much of it is old/unveri
 - [x] Project folder structure and conventions
 - [x] Headless test runner (`tools/run_tests.sh`, GUT 9.7), first passing tests
 - [x] Debug/test-only logging autoload (`DebugLog`); entity/collision events come with those systems
-- [ ] Deterministic fixed-tick simulation loop, decoupled from rendering
-- [ ] Data-driven definitions (buildings, units, enemies, waves) as resources
+- [x] Deterministic fixed-tick simulation loop, decoupled from rendering (`World`, `SimClock`, `SimRng`)
+- [x] Data-driven definitions as resources: buildings + game rules (`data/defs/`); units, enemies and waves follow with their systems
 
 ### M1 — Playable MVP (single player on host-authoritative architecture)
 - [x] Small handcrafted test map (64×64): 6 plots, centre start, centre + 4 edge spawns (data + tests)
 - [x] Full-size MVP map data (142×145): original layout, 39 fixed plots (data + tests)
 - [ ] Map loading into the running game (terrain mesh/visuals, build grid)
-- [ ] Command layer: all player actions as serializable commands with stable entity IDs
+- [x] Command layer: all player actions as serializable commands with stable entity IDs
 - [ ] RTS camera (pan, zoom, rotate) + lock-on-Survivor hotkey
 - [ ] Selection (click, box), move / attack-move / stop / hold
 - [ ] Survivor (builder hero): free movement, build orders, Repair (free), Blink (over walls), Haste; death = defeat (spectate)
-- [ ] Grid placement with footprints + validity checks; construction time; sell (partial refund)
+- [x] Grid placement with footprints + validity checks; construction time; sell (partial refund)
+- [ ] Survivor walks to the site before construction starts (placement is instant for now)
 - [ ] Resource "wood" (placeholder name): passive income + mill line
 - [ ] Upgrade-tree system: root buildings with branching in-place upgrades (data-driven)
 - [ ] Buildings: wall line; Basic Tower → arrow / cannon (splash) / frost (slow) lines; mill line; barracks

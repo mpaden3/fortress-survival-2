@@ -106,6 +106,22 @@ tools/           dev scripts: run_tests.sh, maps/ (map builders, Python 3, stdli
 - Shared value types and constants use `class_name`. Autoloads are kept to a minimum
   (currently only `DebugLog`).
 
+### Simulation architecture
+- `World` (`src/sim/world.gd`) owns everything: map, build grid, players, entities and
+  systems. `world.step()` runs one tick: the queued commands in order, then each system's
+  `update(world)`. Tests use `step()`, `run(n)` and `run_seconds(s)`.
+- **Entities** (`src/sim/entities/`) are plain `RefCounted` data with a stable `id` and an
+  `owner`. They are created through `world.add_entity()` and have `snapshot()`.
+- **Systems** (`src/sim/systems/`) hold logic and their own indexes. They **never store a
+  reference to the World**; it's passed into `update(world)` and the command handlers. This
+  avoids RefCounted cycles, which leak.
+- **Commands** (`src/core/commands.gd`) are dictionaries built by static helpers. A system
+  registers a handler with `world.register_command()`. The handler returns `""` or a
+  rejection reason, which ends up in `world.last_results` and the `build`/`state` log.
+- **Definitions** (`src/sim/defs/`, data in `data/defs/`) are `Resource` classes loaded by
+  `DefRegistry.load_default()`. Tests build small registries in code with
+  `tests/helpers/sim_fixtures.gd`.
+
 ## Code conventions
 - Follow the surrounding code; static typing in GDScript (`var hp: int`, typed function
   signatures).

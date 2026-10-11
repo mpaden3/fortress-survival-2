@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="BuildingDef" format=3]
+
+[ext_resource type="Script" path="res://src/sim/defs/building_def.gd" id="1_def"]
+
+[resource]
+script = ExtResource("1_def")
+id = &"arrow_tower"
+display_name = "Arrow Tower"
+placeable = false
+footprint = Vector2i(2, 2)
+cost = 20
+build_time = 5.0
+max_hp = 400
+upgrades = Array[StringName]([&"arrow_tower_2"])
