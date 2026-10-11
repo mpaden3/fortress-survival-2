@@ -10,9 +10,9 @@ const DIAGONAL := 14
 const UNREACHABLE := 1 << 40
 ## Per-cell extra cost marker for impassable terrain.
 const IMPASSABLE := -1
-const _INDEX_BITS := 21
-const _INDEX_MASK := (1 << _INDEX_BITS) - 1
-const _OFFSETS: Array[Vector2i] = [
+const INDEX_BITS := 21
+const INDEX_MASK := (1 << INDEX_BITS) - 1
+const OFFSETS: Array[Vector2i] = [
 	Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1),
 	Vector2i(1, 1), Vector2i(-1, 1), Vector2i(1, -1), Vector2i(-1, -1),
 ]
@@ -41,18 +41,18 @@ func build(grid_size: Vector2i, extra: PackedInt32Array, target_cells: Array[Vec
 	for cell in target_cells:
 		if _inside(cell) and extra[_index(cell)] != IMPASSABLE:
 			cost[_index(cell)] = 0
-			_push(heap, 0, _index(cell))
+			heap_push(heap, 0, _index(cell))
 	while not heap.is_empty():
-		var top := _pop(heap)
-		var index := top & _INDEX_MASK
-		var current := top >> _INDEX_BITS
+		var top := heap_pop(heap)
+		var index := top & INDEX_MASK
+		var current := top >> INDEX_BITS
 		if current > cost[index]:
 			continue
 		var cell := Vector2i(index % size.x, index / size.x)
 		# Moving from a neighbour into `cell` means breaking `cell` if it's a building.
 		var enter := extra[index]
 		for k in 8:
-			var offset := _OFFSETS[k]
+			var offset := OFFSETS[k]
 			var next := cell + offset
 			if not _inside(next):
 				continue
@@ -69,7 +69,7 @@ func build(grid_size: Vector2i, extra: PackedInt32Array, target_cells: Array[Vec
 			if candidate < cost[next_index]:
 				cost[next_index] = candidate
 				direction[next_index] = Vector2(-offset).normalized()
-				_push(heap, candidate, next_index)
+				heap_push(heap, candidate, next_index)
 	build_usec = Time.get_ticks_usec() - started
 
 
@@ -116,8 +116,9 @@ func _index(cell: Vector2i) -> int:
 	return cell.y * size.x + cell.x
 
 
-static func _push(heap: PackedInt64Array, key: int, index: int) -> void:
-	heap.append((key << _INDEX_BITS) | index)
+## Binary min-heap of (key << INDEX_BITS | index) entries, shared with other grid searches.
+static func heap_push(heap: PackedInt64Array, key: int, index: int) -> void:
+	heap.append((key << INDEX_BITS) | index)
 	var i := heap.size() - 1
 	while i > 0:
 		var parent := (i - 1) >> 1
@@ -129,7 +130,7 @@ static func _push(heap: PackedInt64Array, key: int, index: int) -> void:
 		i = parent
 
 
-static func _pop(heap: PackedInt64Array) -> int:
+static func heap_pop(heap: PackedInt64Array) -> int:
 	var top := heap[0]
 	var last := heap[heap.size() - 1]
 	heap.resize(heap.size() - 1)

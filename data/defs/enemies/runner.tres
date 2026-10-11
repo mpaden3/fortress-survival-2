@@ -12,3 +12,4 @@ radius = 0.35
 damage = 4.0
 attack_cooldown = 0.8
 building_damage_multiplier = 0.5
+sight_range = 8.0

@@ -146,6 +146,7 @@ func test_towers_defend_against_a_wave() -> void:
 	# Real defs: a grunt wave walks into a kill zone covered by three arrow towers.
 	# (Whether towers stop a wave *in transit* is balance, not mechanics; numbers are placeholders.)
 	world = SimFixtures.world(SimFixtures.open_map(40, 20), DefRegistry.load_default())
+	world.defs.enemy(&"grunt").sight_range = 0.0  # walk the lane; besieging towers is tested elsewhere
 	world.pathing.set_target(&"t", [Vector2i(16, 10)] as Array[Vector2i])
 	for x in [10, 16, 22]:
 		var tower := SimFixtures.build_now(world, &"basic_tower", Vector2i(x, 7))

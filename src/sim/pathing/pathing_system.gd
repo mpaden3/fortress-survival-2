@@ -1,9 +1,11 @@
 class_name PathingSystem
 extends RefCounted
 ## Owns one FlowField per hunt target (e.g. each living Survivor) and rebuilds them when
-## buildings appear or disappear, or when a target moves to another cell.
+## buildings appear or disappear, or when a target moves to another cell. Also keeps the
+## BuildingSightField that enemies use to go for the buildings they see.
 
 var fields: Dictionary[StringName, FlowField] = {}
+var sight := BuildingSightField.new()
 var _target_cells: Dictionary[StringName, Array] = {}
 var _dirty: Dictionary[StringName, bool] = {}
 var _extra := PackedInt32Array()
@@ -39,6 +41,7 @@ func field(key: StringName) -> FlowField:
 func update(world: World) -> void:
 	if _extra_dirty:
 		_rebuild_extra(world)
+		_rebuild_sight(world)
 		for key in fields:
 			_dirty[key] = true
 	for key in _dirty:
@@ -68,6 +71,17 @@ func _rebuild_extra(world: World) -> void:
 			for x in range(building.rect.position.x, building.rect.end.x):
 				_extra[z * map.size.x + x] = break_cost
 	_extra_dirty = false
+
+
+## Spreads as far as the farthest-seeing enemy type.
+func _rebuild_sight(world: World) -> void:
+	var max_sight := 0.0
+	for def in world.defs.enemy_list:
+		max_sight = maxf(max_sight, def.sight_range)
+	var max_cost := ceili(max_sight / SimConstants.CELL_SIZE * FlowField.STRAIGHT)
+	sight.build(world.map.size, _extra, world.grid.occupants(), max_cost)
+	if DebugLog.on(&"pathing"):
+		DebugLog.event(&"pathing", {"sight_field_ms": sight.build_usec / 1000.0, "max_cost": max_cost})
 
 
 func _on_building_changed(entity: SimEntity) -> void:

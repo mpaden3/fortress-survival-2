@@ -147,6 +147,11 @@ tools/           dev scripts: run_tests.sh, maps/ (map builders, Python 3, stdli
   the hottest code in the game: keep it free of per-enemy function calls and allocations,
   read the grid through `grid.blocked` / `grid.occupants()`, and re-run the benchmark
   (`tests/benchmark/`) after any change to it.
+- **Enemy sight:** while an enemy's Survivor is farther than `EnemyDef.sight_range`, it goes
+  for the nearest building within that walking distance and attacks it, using
+  `PathingSystem.sight` (`BuildingSightField`). That field is rebuilt on building changes and
+  spreads over open ground only, so from outside a fortification only its outer layer is seen.
+  With the Survivor in sight, the enemy hunts it and breaks only what blocks its path.
 - **Combat** (`src/sim/systems/combat_system.gd`): armed buildings (`BuildingDef`
   attack fields) pick the nearest enemy via `EnemyManager.nearest_in_range()`, which uses the
   spatial buckets from that tick's enemy update. They fire homing projectiles (flat arrays)

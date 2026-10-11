@@ -7,7 +7,9 @@ extends RefCounted
 ## Per tick each enemy: follows its target's FlowField (blended, continuous), keeps apart
 ## from neighbours, can't enter blocked terrain or building cells, and attacks the building
 ## blocking its way. Hunting a Survivor, it chases it directly once close and attacks it on
-## contact; a static target (tests) is just walked to.
+## contact; a static target (tests) is just walked to. While its Survivor is out of sight
+## (EnemyDef.sight_range), an enemy goes for the nearest building it sees instead
+## (PathingSystem.sight) and attacks it.
 
 ## How far ahead (cells, beyond the body) an enemy looks for a building to attack.
 const ATTACK_REACH := 0.35
@@ -50,6 +52,9 @@ var _bucket_height := 0
 ## Per enemy type: cells moved per tick, body radius in cells.
 var _type_step := PackedFloat32Array()
 var _type_radius := PackedFloat32Array()
+## Per enemy type: sight range in cells, and as a BuildingSightField cost.
+var _type_sight := PackedFloat32Array()
+var _type_sight_cost := PackedInt32Array()
 
 
 func register(world: World) -> void:
@@ -233,6 +238,11 @@ func update(world: World) -> void:
 	_cache_types(world)
 	var step_of := _type_step
 	var radius_of := _type_radius
+	var sight_of := _type_sight
+	var sight_cost_of := _type_sight_cost
+	var seen_cost := world.pathing.sight.cost
+	var seen_dir := world.pathing.sight.direction
+	var has_sight := seen_cost.size() == width * height
 	_fill_buckets(width, height)
 	var heads := _bucket_head
 	var nexts := _bucket_next
@@ -271,11 +281,13 @@ func update(world: World) -> void:
 		var engaged := false
 		var follow_field := here_cost > ARRIVED_COST
 		var prey := hunted[ti]
+		var to_prey := Vector2.ZERO
+		var prey_dist_sq := INF
 		if prey != null:
 			follow_field = true
-			var to_prey := hunt_pos[ti] - pos
+			to_prey = hunt_pos[ti] - pos
+			prey_dist_sq = to_prey.length_squared()
 			var reach := radius + hunt_radius[ti] + ATTACK_REACH
-			var prey_dist_sq := to_prey.length_squared()
 			if prey_dist_sq <= reach * reach:
 				engaged = true
 				follow_field = false
@@ -291,6 +303,14 @@ func update(world: World) -> void:
 			elif prey_dist_sq <= PURSUIT_RANGE * PURSUIT_RANGE and here_cost <= PURSUIT_COST:
 				follow_field = false
 				dir = to_prey.normalized()
+
+		# Survivor out of sight: go for the nearest building in sight instead.
+		var sight := sight_of[t]
+		if has_sight and not engaged and sight > 0.0 and prey_dist_sq > sight * sight:
+			var seen := seen_cost[cz * width + cx]
+			if seen > 0 and seen <= sight_cost_of[t]:
+				follow_field = false
+				dir = seen_dir[cz * width + cx]
 
 		# Flow direction: bilinear blend of the 4 nearest cell directions.
 		if follow_field and not dirs.is_empty():
@@ -394,9 +414,13 @@ func _cache_types(world: World) -> void:
 		return
 	_type_step.resize(defs.size())
 	_type_radius.resize(defs.size())
+	_type_sight.resize(defs.size())
+	_type_sight_cost.resize(defs.size())
 	for t in defs.size():
 		_type_step[t] = defs[t].speed / SimConstants.CELL_SIZE / SimConstants.TICK_RATE
 		_type_radius[t] = defs[t].radius / SimConstants.CELL_SIZE
+		_type_sight[t] = defs[t].sight_range / SimConstants.CELL_SIZE
+		_type_sight_cost[t] = floori(_type_sight[t] * FlowField.STRAIGHT)
 
 
 func _fill_buckets(width: int, height: int) -> void:

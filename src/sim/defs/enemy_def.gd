@@ -15,6 +15,9 @@ extends Resource
 @export var attack_cooldown := 1.0
 ## Damage multiplier against buildings (siege units > 1).
 @export var building_damage_multiplier := 1.0
+## Meters. While its Survivor is farther than this, the enemy goes for the nearest building
+## within this walking distance instead. 0 = never diverts.
+@export var sight_range := 0.0
 
 
 func cooldown_ticks() -> int:

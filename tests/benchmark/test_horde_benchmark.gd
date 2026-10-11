@@ -6,6 +6,8 @@ extends GutTest
 const ENEMIES := 2000
 const TICK_BUDGET_MS := 8.0
 const FIELD_BUDGET_MS := 60.0
+## Rebuilt on every building change, on top of the flow fields.
+const SIGHT_BUDGET_MS := 10.0
 
 
 func test_2000_enemies_on_mvp_map() -> void:
@@ -69,7 +71,9 @@ func test_2000_enemies_with_32_towers() -> void:
 	DebugLog.active = true
 	var enemy_ms := enemy_usec / 1000.0 / ticks
 	var combat_ms := combat_usec / 1000.0 / ticks
-	gut.p("combat benchmark: %d towers, %d enemies left, enemies %.2f ms + combat %.2f ms per tick, %d projectiles"
-		% [towers, world.enemies.count(), enemy_ms, combat_ms, world.combat.projectile_count()])
+	var sight_ms := world.pathing.sight.build_usec / 1000.0
+	gut.p("combat benchmark: %d towers, %d enemies left, enemies %.2f ms + combat %.2f ms per tick, %d projectiles, sight field %.1f ms"
+		% [towers, world.enemies.count(), enemy_ms, combat_ms, world.combat.projectile_count(), sight_ms])
 	assert_eq(towers, 32)
+	assert_lt(sight_ms, SIGHT_BUDGET_MS, "building sight field rebuild within budget")
 	assert_lt(enemy_ms + combat_ms, TICK_BUDGET_MS, "enemies + combat within budget")

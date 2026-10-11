@@ -216,7 +216,8 @@ What we know about the original (sources at the bottom; much of it is old/unveri
 - [ ] Enemy render interpolation between ticks (30 Hz sim, 60+ FPS render)
 - [x] Enemies break the building blocking their path (cheapest wall), buildings take damage and get destroyed
 - [x] Enemy groups hunt a random living Survivor, chase it when close, attack it; retarget when it dies
-- [ ] Enemies attack visible buildings/units when their Survivor is not in sight; attack-move along the way
+- [x] Enemies attack the buildings they see (walking distance, outer layer only) while their Survivor is out of sight (`EnemyDef.sight_range`)
+- [ ] Enemies attack player units they see (with barracks units; other Survivors in co-op)
 - [x] Enemies: grunt, brute/siege, runner, mini-boss (Warlord), final boss (Behemoth); continuous timed spawner with ramp + boss timings (`data/defs/waves/default.tres`)
 - [x] Combat: targeting, homing projectiles, splash, slow, death (benchmark: 32 towers + 2000 enemies ≈ 5 ms/tick)
 - [ ] Armor / damage types
