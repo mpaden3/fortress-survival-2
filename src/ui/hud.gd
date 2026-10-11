@@ -1,0 +1,70 @@
+class_name Hud
+extends CanvasLayer
+## Minimal text HUD: resource, time, build hotkeys, selection and the last rejection.
+
+var world: World
+var builder: BuildController
+var player_id := 0
+
+var _top: Label
+var _bottom: Label
+var _message := ""
+var _message_until := 0
+
+
+func setup(target_world: World, build_controller: BuildController, local_player: int) -> void:
+	world = target_world
+	builder = build_controller
+	player_id = local_player
+
+
+func _ready() -> void:
+	_top = _label(Control.PRESET_TOP_LEFT)
+	_bottom = _label(Control.PRESET_BOTTOM_LEFT)
+	_bottom.grow_vertical = Control.GROW_DIRECTION_BEGIN
+
+
+## Called after each simulation step with that step's command results.
+func show_results(results: Array[Dictionary]) -> void:
+	for result in results:
+		if not result["ok"] and result["command"].get("player") == player_id:
+			_message = "Can't %s: %s" % [String(result["command"]["type"]).replace("_", " "), result["reason"]]
+			_message_until = world.tick + 2 * SimConstants.TICK_RATE
+
+
+func _process(_delta: float) -> void:
+	if world == null:
+		return
+	var player := world.players[player_id]
+	var seconds := world.tick / SimConstants.TICK_RATE
+	var lines := PackedStringArray()
+	lines.append("%s: %d    Time %02d:%02d    Map: %s" % [world.defs.rules.primary_resource_name.capitalize(),
+		player.resource, seconds / 60, seconds % 60, world.map.display_name])
+	var keys := PackedStringArray()
+	for key: Key in BuildController.HOTKEYS:
+		var def := world.defs.building(BuildController.HOTKEYS[key])
+		var mark := ">" if def.id == builder.selected_def else " "
+		keys.append("%s[%s] %s (%d)" % [mark, OS.get_keycode_string(key), def.display_name, def.cost])
+	lines.append("  ".join(keys))
+	lines.append("LMB place/select   drag: walls   RMB/Esc cancel   X sell   WASD/edge pan   wheel zoom   Q/E rotate   P plots")
+	_top.text = "\n".join(lines)
+	var bottom := PackedStringArray()
+	var building := world.entities.get(builder.selected_entity) as BuildingState
+	if building:
+		var state := "building %d%%" % (100 * building.build_progress / building.def.build_ticks()) \
+			if building.constructing else "ready"
+		bottom.append("Selected: %s #%d  HP %d/%d  %s" % [building.def.display_name, building.id, building.hp,
+			building.def.max_hp, state])
+	bottom.append("Cell %s" % builder.hover_cell)
+	if world.tick < _message_until:
+		bottom.append(_message)
+	_bottom.text = "\n".join(bottom)
+
+
+func _label(preset: Control.LayoutPreset) -> Label:
+	var label := Label.new()
+	label.set_anchors_and_offsets_preset(preset, Control.PRESET_MODE_MINSIZE, 12)
+	label.add_theme_color_override("font_outline_color", Color.BLACK)
+	label.add_theme_constant_override("outline_size", 6)
+	add_child(label)
+	return label

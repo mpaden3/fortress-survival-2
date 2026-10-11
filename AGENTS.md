@@ -52,6 +52,17 @@ FS_LOG_ECHO=1 tools/run_tests.sh                # also print the debug log to st
 - Run the full suite before you say a task is done, and report real results. Never claim a pass
   without running the suite.
 
+## Running the game
+```sh
+godot --path .                                   # play the test map
+godot --path . -- --map=mvp_map                  # full-size map
+godot --path . -- --demo --screenshot=/tmp/s.png # place sample buildings, save a frame, quit
+```
+- Use `--screenshot` to check visual changes yourself: it opens a window briefly, then read
+  the PNG. Gameplay must still be verified by headless tests, not screenshots.
+- `src/view/game.gd` (`Game`) wires the World to the views, camera, build input and HUD. Input
+  code only submits commands, just like the tests do.
+
 ## Debug logging (tests + debug builds only)
 A central logging autoload, `DebugLog` (`src/debug/debug_log.gd`), is the agent's "eyes" on the
 game.

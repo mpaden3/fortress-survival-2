@@ -196,9 +196,11 @@ What we know about the original (sources at the bottom; much of it is old/unveri
 ### M1 — Playable MVP (single player on host-authoritative architecture)
 - [x] Small handcrafted test map (64×64): 6 plots, centre start, centre + 4 edge spawns (data + tests)
 - [x] Full-size MVP map data (142×145): original layout, 39 fixed plots (data + tests)
-- [ ] Map loading into the running game (terrain mesh/visuals, build grid)
+- [x] Map loading into the running game (placeholder terrain, plots, spawns; build grid)
+- [x] Build input: hotkeys, ghost preview, click/drag placement, select, sell
 - [x] Command layer: all player actions as serializable commands with stable entity IDs
-- [ ] RTS camera (pan, zoom, rotate) + lock-on-Survivor hotkey
+- [x] RTS camera (pan, zoom, rotate)
+- [ ] Lock-on-Survivor camera hotkey
 - [ ] Selection (click, box), move / attack-move / stop / hold
 - [ ] Survivor (builder hero): free movement, build orders, Repair (free), Blink (over walls), Haste; death = defeat (spectate)
 - [x] Grid placement with footprints + validity checks; construction time; sell (partial refund)
