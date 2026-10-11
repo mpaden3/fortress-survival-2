@@ -202,6 +202,10 @@ tools/           dev scripts: run_tests.sh, maps/ (map builders, Python 3, stdli
   `SandboxPanel` on the right; F1 hides them). Buttons call the same `BuildController` / `Game`
   requests as the hotkeys. Sandbox actions that change the game are `debug_*` commands
   (`DebugSystem`). `CommandCard.entries()` / `press(id)` let tests drive it like a player.
+- **Selection visuals:** `SelectionViews` (`src/view/`) draws rings under selected units,
+  buildings and the Survivor, waypoint ribbons along selected movers' routes and queued
+  orders, and pings where orders are clicked (`BuildController.ordered`). `HealthBars`
+  (`src/ui/`) draws HP bars over the selection.
 - **Economy** (`src/sim/systems/economy_system.gd`): passive income per living player plus
   `BuildingDef.income_per_minute`, accumulated exactly per tick.
 - **Definitions** (`src/sim/defs/`, data in `data/defs/`) are `Resource` classes loaded by

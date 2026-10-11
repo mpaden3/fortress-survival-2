@@ -112,3 +112,39 @@ func test_minimap_click_moves_the_camera() -> void:
 	var target := minimap.cell_at(click.position)
 	assert_almost_eq(game.camera.position.x, Coords.cell_centre(target).x, 0.01)
 	assert_almost_eq(game.camera.position.z, Coords.cell_centre(target).z, 0.01)
+
+
+func test_selection_rings_hp_bars_and_waypoints() -> void:
+	var world := game.world
+	var start := Vector2(world.map.start)
+	var a := world.units.spawn(world, Game.LOCAL_PLAYER, &"fighter", start + Vector2(0.5, 3.5))
+	var b := world.units.spawn(world, Game.LOCAL_PLAYER, &"fighter", start + Vector2(1.5, 3.5))
+	game.builder.select_units([a.id, b.id] as Array[int])
+	assert_eq(game.selection_views.selected_rings().size(), 2, "a ring per selected unit")
+	assert_eq(game.hud.health_bars.bars().size(), 2, "an HP bar per selected unit")
+	game.builder.request_unit_order("move", world.map.start + Vector2i(-4, 3))
+	assert_eq(game.selection_views.ping_count(), 1, "the click pings")
+	_step()
+	game.builder.request_unit_order("attack_move", world.map.start + Vector2i(-4, 8), true)
+	_step()
+	var points := SelectionViews.waypoints(world, a)
+	assert_gte(points.size(), 2, "route to the first order, then the queued one")
+	assert_eq(points[points.size() - 1], Vector2(world.map.start + Vector2i(-4, 8)) + Vector2(0.5, 0.5))
+
+
+func test_click_selects_the_survivor() -> void:
+	game.builder.hover_point = game.survivor.position + Vector2(0.2, 0.0)
+	game.builder._drag_start = Vector2(100, 100)
+	game.builder._finish_selection(Vector2(101, 100))
+	assert_true(game.builder.survivor_selected)
+	assert_eq(game.selection_views.selected_movers(), [game.survivor])
+	assert_eq(game.hud.health_bars.bars().size(), 1)
+	assert_eq(game.selection_views.selected_rings().size(), 1)
+
+
+func test_selected_building_gets_a_ring_and_hp_bar() -> void:
+	var tower := SimFixtures.build_now(game.world, &"basic_tower", game.world.map.start + Vector2i(3, -4))
+	game.builder._select_entity(tower.id)
+	assert_eq(game.selection_views.selected_rings().size(), 1)
+	assert_eq(game.hud.health_bars.bars().size(), 1)
+	assert_false(game.builder.survivor_selected, "a building selection replaces the Survivor's")

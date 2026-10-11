@@ -28,6 +28,7 @@ var builder: BuildController
 var hud: Hud
 var survivor_views: SurvivorViews
 var unit_views: UnitViews
+var selection_views: SelectionViews
 var survivor: SurvivorState
 var follow_survivor := false
 var speed := 1.0
@@ -99,7 +100,10 @@ func _ready() -> void:
 	builder.setup(world, camera, LOCAL_PLAYER)
 	add_child(builder)
 	builder.selection_changed.connect(building_views.set_selected)
-	builder.units_selected.connect(unit_views.set_selected)
+	selection_views = SelectionViews.new()
+	selection_views.name = "Selection"
+	add_child(selection_views)
+	selection_views.attach(world, builder)
 	# Spectating after defeat: the camera no longer follows the dead Survivor.
 	world.player_defeated.connect(func(player_id: int) -> void:
 		if player_id == LOCAL_PLAYER:
@@ -122,6 +126,7 @@ func _process(delta: float) -> void:
 	projectile_views.alpha = alpha
 	survivor_views.alpha = alpha
 	unit_views.alpha = alpha
+	selection_views.alpha = alpha
 	if follow_survivor:
 		camera.focus(_survivor_point())
 	_frames += 1
@@ -230,6 +235,17 @@ func _place_demo() -> void:
 	world.submit(Commands.debug_spawn(LOCAL_PLAYER, &"brute", world.map.spawns[1].id, 6, &""))
 	world.submit(Commands.debug_spawn(LOCAL_PLAYER, &"runner", world.map.spawns[2].id, 30, &""))
 	world.run_seconds(float(_args.get("demo_seconds", "4")))
+	# Show the selection visuals: fighters and the Survivor selected, with queued orders.
+	var fighters: Array[int] = []
+	for unit in world.units.living():
+		if unit.def.is_fighter():
+			fighters.append(unit.id)
+	builder.select_units(fighters, true)
+	world.submit(Commands.order_units(LOCAL_PLAYER, fighters, "attack_move", start + Vector2i(6, 6)))
+	world.submit(Commands.order_units(LOCAL_PLAYER, fighters, "attack_move", start + Vector2i(10, 2), true))
+	world.submit(Commands.move_survivor(LOCAL_PLAYER, start + Vector2i(-5, 3)))
+	world.submit(Commands.move_survivor(LOCAL_PLAYER, start + Vector2i(-5, 8), true))
+	world.step()
 
 
 func _survivor_point() -> Vector3:

@@ -16,6 +16,7 @@ var selection: SelectionPanel
 var command_card: CommandCard
 var sandbox_spawn: SandboxSpawnPanel
 var sandbox: SandboxPanel
+var health_bars: HealthBars
 
 const TOP_HEIGHT := 40.0
 const BOTTOM_HEIGHT := 214.0
@@ -42,6 +43,9 @@ func _ready() -> void:
 	_root.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(_root)
+	health_bars = HealthBars.new()
+	health_bars.setup(game)
+	_root.add_child(health_bars)
 	_build_top_bar()
 	_build_bottom_bar()
 	if OS.is_debug_build():

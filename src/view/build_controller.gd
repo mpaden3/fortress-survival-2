@@ -20,6 +20,8 @@ const PICK_RADIUS := 0.8
 
 signal selection_changed(entity_id: int)
 signal units_selected(unit_ids: Array[int])
+## An order was given at `point` (cell units): "move", "attack_move", "repair" or "blink".
+signal ordered(point: Vector2, kind: String)
 
 var world: World
 var camera: RtsCamera
@@ -30,6 +32,9 @@ var hover_cell := Vector2i(-1, -1)
 ## Ground point under the mouse in cell units.
 var hover_point := Vector2(-1, -1)
 var selected_units: Array[int] = []
+## The player's own Survivor is selected (by click or box). With nothing selected at all,
+## commands still go to the Survivor.
+var survivor_selected := false
 ## Waiting for the LMB target of an attack-move.
 var attack_move_armed := false
 ## Waiting for the LMB target of a Blink (from the command card; the F key casts at once).
@@ -94,10 +99,13 @@ func request_place(cell: Vector2i, queue := false) -> void:
 ## Right-click: repair an own damaged building under the cursor, otherwise move there.
 func request_smart_order(cell: Vector2i, queue := false) -> void:
 	var building := world.entities.get(world.grid.occupant(cell)) as BuildingState
+	var point := GridPaths.point_in(cell, hover_point)
 	if building and building.owner == player_id and building.hp < building.def.max_hp and not building.constructing:
 		world.submit(Commands.repair(player_id, building.id, queue))
+		ordered.emit(building.centre(), "repair")
 	else:
-		world.submit(Commands.move_survivor(player_id, cell, queue, hover_point))
+		world.submit(Commands.move_survivor(player_id, cell, queue, point))
+		ordered.emit(point, "move")
 
 
 ## Actions of a building, in key order: its upgrades (building ids), then the units it
@@ -142,6 +150,7 @@ func arm_blink() -> void:
 
 func request_blink(cell: Vector2i) -> void:
 	world.submit(Commands.blink(player_id, cell))
+	ordered.emit(Vector2(cell) + Vector2(0.5, 0.5), "blink")
 
 
 func request_haste() -> void:
@@ -151,6 +160,7 @@ func request_haste() -> void:
 func clear_selection() -> void:
 	select_units([] as Array[int])
 	_select_entity(0)
+	survivor_selected = false
 
 
 ## Orders the selected units (`order`: move, attack_move, stop, hold).
@@ -158,13 +168,25 @@ func request_unit_order(order: String, cell := Vector2i.ZERO, queue := false, po
 	_prune_selection()
 	if not selected_units.is_empty():
 		world.submit(Commands.order_units(player_id, selected_units.duplicate(), order, cell, queue, point))
+		if order == "move" or order == "attack_move":
+			ordered.emit(GridPaths.point_in(cell, point), order)
 
 
-func select_units(unit_ids: Array[int]) -> void:
+## Selects these units (and the Survivor with `survivor`), dropping any building selection.
+func select_units(unit_ids: Array[int], survivor := false) -> void:
 	selected_units = unit_ids
+	survivor_selected = survivor
 	units_selected.emit(selected_units)
-	if not unit_ids.is_empty():
+	if not unit_ids.is_empty() or survivor:
 		_select_entity(0)
+
+
+## The local Survivor if it's alive and within PICK_RADIUS of `point`, else null.
+func survivor_near(point: Vector2) -> SurvivorState:
+	var survivor := world.survivors.survivor_of(player_id)
+	if survivor and survivor.alive and survivor.position.distance_to(point) <= PICK_RADIUS:
+		return survivor
+	return null
 
 
 ## Own unit nearest to `point` (cell units) within PICK_RADIUS, or 0.
@@ -183,11 +205,14 @@ func unit_near(point: Vector2) -> int:
 func units_in_screen_rect(rect: Rect2) -> Array[int]:
 	var out: Array[int] = []
 	for unit in world.units.living():
-		var at := Vector3(unit.position.x * Coords.CELL, 0.5, unit.position.y * Coords.CELL)
-		if unit.owner == player_id and not camera.camera.is_position_behind(at) \
-				and rect.has_point(camera.camera.unproject_position(at)):
+		if unit.owner == player_id and _on_screen_in(rect, unit.position):
 			out.append(unit.id)
 	return out
+
+
+func _on_screen_in(rect: Rect2, position: Vector2) -> bool:
+	var at := Vector3(position.x * Coords.CELL, 0.5, position.y * Coords.CELL)
+	return not camera.camera.is_position_behind(at) and rect.has_point(camera.camera.unproject_position(at))
 
 
 func request_sell_selected() -> void:
@@ -228,6 +253,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			pass
 		elif not selected_units.is_empty():
 			request_unit_order("move", hover_cell, button.shift_pressed, hover_point)
+			if survivor_selected:
+				request_smart_order(hover_cell, button.shift_pressed)
 		else:
 			request_smart_order(hover_cell, button.shift_pressed)
 	elif button.button_index == MOUSE_BUTTON_LEFT:
@@ -285,13 +312,18 @@ func _process(_delta: float) -> void:
 func _finish_selection(release: Vector2) -> void:
 	if _drag_start.distance_to(release) < CLICK_SLOP:
 		var unit_id := unit_near(hover_point)
-		if unit_id:
+		if survivor_near(hover_point):
+			select_units([] as Array[int], true)
+		elif unit_id:
 			select_units([unit_id] as Array[int])
 		else:
 			select_units([] as Array[int])
 			_select_entity(world.grid.occupant(hover_cell))
 		return
-	select_units(units_in_screen_rect(Rect2(_drag_start, release - _drag_start).abs()))
+	var rect := Rect2(_drag_start, release - _drag_start).abs()
+	var survivor := world.survivors.survivor_of(player_id)
+	var with_survivor := survivor != null and survivor.alive and _on_screen_in(rect, survivor.position)
+	select_units(units_in_screen_rect(rect), with_survivor)
 
 
 ## Drops dead units from the selection.
@@ -306,4 +338,6 @@ func _prune_selection() -> void:
 
 func _select_entity(entity_id: int) -> void:
 	selected_entity = entity_id
+	if entity_id:
+		survivor_selected = false
 	selection_changed.emit(entity_id)
