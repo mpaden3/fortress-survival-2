@@ -5,13 +5,18 @@ class_name Commands
 
 const PLACE_BUILDING := &"place_building"
 const SELL_BUILDING := &"sell_building"
+const MOVE_SURVIVOR := &"move_survivor"
+const REPAIR := &"repair"
+const BLINK := &"blink"
+const HASTE := &"haste"
 ## Development only: spawn enemies at a map spawn point. Removed from player input in release.
 const DEBUG_SPAWN := &"debug_spawn"
 
 
-## Start constructing building `def_id` with its footprint's top-left corner on `cell`.
-static func place_building(player: int, def_id: StringName, cell: Vector2i) -> Dictionary:
-	return {"type": PLACE_BUILDING, "player": player, "def": def_id, "cell": cell}
+## Build `def_id` with its footprint's top-left corner on `cell`. With a Survivor this is a
+## build order (it walks there first); `queue` appends instead of replacing current orders.
+static func place_building(player: int, def_id: StringName, cell: Vector2i, queue := false) -> Dictionary:
+	return {"type": PLACE_BUILDING, "player": player, "def": def_id, "cell": cell, "queue": queue}
 
 
 static func sell_building(player: int, building_id: int) -> Dictionary:
@@ -20,3 +25,20 @@ static func sell_building(player: int, building_id: int) -> Dictionary:
 
 static func debug_spawn(player: int, def_id: StringName, spawn_id: String, amount: int, target: StringName) -> Dictionary:
 	return {"type": DEBUG_SPAWN, "player": player, "def": def_id, "spawn": spawn_id, "amount": amount, "target": target}
+
+
+static func move_survivor(player: int, cell: Vector2i, queue := false) -> Dictionary:
+	return {"type": MOVE_SURVIVOR, "player": player, "cell": cell, "queue": queue}
+
+
+static func repair(player: int, building_id: int, queue := false) -> Dictionary:
+	return {"type": REPAIR, "player": player, "building": building_id, "queue": queue}
+
+
+## Teleport the Survivor to `cell` (within range, onto free ground). Clears its orders.
+static func blink(player: int, cell: Vector2i) -> Dictionary:
+	return {"type": BLINK, "player": player, "cell": cell}
+
+
+static func haste(player: int) -> Dictionary:
+	return {"type": HASTE, "player": player}

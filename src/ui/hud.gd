@@ -18,7 +18,17 @@ func setup(target_world: World, build_controller: BuildController, local_player:
 	player_id = local_player
 
 
+var _banner: Label
+
+
 func _ready() -> void:
+	_banner = Label.new()
+	_banner.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
+	_banner.add_theme_font_size_override("font_size", 64)
+	_banner.add_theme_color_override("font_outline_color", Color.BLACK)
+	_banner.add_theme_constant_override("outline_size", 12)
+	_banner.visible = false
+	add_child(_banner)
 	_top = _label(Control.PRESET_TOP_LEFT)
 	_bottom = _label(Control.PRESET_BOTTOM_LEFT)
 	_bottom.grow_vertical = Control.GROW_DIRECTION_BEGIN
@@ -46,7 +56,14 @@ func _process(_delta: float) -> void:
 		var mark := ">" if def.id == builder.selected_def else " "
 		keys.append("%s[%s] %s (%d)" % [mark, OS.get_keycode_string(key), def.display_name, def.cost])
 	lines.append("  ".join(keys))
-	lines.append("LMB place/select   drag: walls   RMB/Esc cancel   X sell   WASD/edge pan   wheel zoom   Q/E rotate   P plots")
+	lines.append("LMB place/select   drag: walls   Esc cancel   X sell   RMB move/repair   F blink   H haste   Shift queue")
+	lines.append("WASD/edge pan   wheel zoom   Q/E rotate   Space centre   L follow   P plots")
+	var survivor := world.survivors.survivor_of(player_id)
+	if survivor:
+		var blink := maxi(0, survivor.blink_ready_tick - world.tick) / SimConstants.TICK_RATE
+		var haste := maxi(0, survivor.haste_ready_tick - world.tick) / SimConstants.TICK_RATE
+		lines.append("Survivor HP %d/%d    Blink %s    Haste %s    Orders %d" % [survivor.hp, survivor.def.max_hp,
+			"ready" if blink == 0 else "%ds" % blink, "ready" if haste == 0 else "%ds" % haste, survivor.orders.size()])
 	lines.append("Enemies: %d (sim %.1f ms)    debug: G grunts  B brutes  R runners" % [world.enemies.count(),
 		world.enemies.update_usec / 1000.0])
 	_top.text = "\n".join(lines)
@@ -61,6 +78,10 @@ func _process(_delta: float) -> void:
 	if world.tick < _message_until:
 		bottom.append(_message)
 	_bottom.text = "\n".join(bottom)
+	if not player.alive:
+		_banner.text = "DEFEAT - your Survivor died"
+		_banner.add_theme_color_override("font_color", Color(0.95, 0.25, 0.2))
+		_banner.visible = true
 
 
 func _label(preset: Control.LayoutPreset) -> Label:

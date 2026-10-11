@@ -7,6 +7,8 @@ extends RefCounted
 
 signal entity_added(entity: SimEntity)
 signal entity_removed(entity: SimEntity)
+## A player's Survivor died: that player is out.
+signal player_defeated(player_id: int)
 
 var tick := 0
 var map: MapLayout
@@ -19,6 +21,7 @@ var entities: Dictionary[int, SimEntity] = {}
 var last_results: Array[Dictionary] = []
 
 var buildings: BuildingSystem
+var survivors: SurvivorSystem
 var pathing: PathingSystem
 var enemies: EnemyManager
 
@@ -34,6 +37,8 @@ func _init(map_layout: MapLayout, definitions: DefRegistry, seed_value: int = 0)
 	grid = BuildGrid.new(map)
 	buildings = BuildingSystem.new()
 	buildings.register(self)
+	survivors = SurvivorSystem.new()
+	survivors.register(self)
 	pathing = PathingSystem.new()
 	pathing.register(self)
 	enemies = EnemyManager.new()
@@ -66,6 +71,7 @@ func step() -> void:
 	for command in commands:
 		_execute(command)
 	buildings.update(self)
+	survivors.update(self)
 	pathing.update(self)
 	enemies.update(self)
 	tick += 1

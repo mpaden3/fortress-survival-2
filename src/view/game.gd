@@ -5,12 +5,12 @@ extends Node3D
 ## User args (after `--`): --map=<id> (default test_map), --screenshot=<png path> saves one
 ## frame and quits, --demo places a few sample buildings and spawns a wave.
 ##
-## Until the Survivor exists, enemies hunt the map's start cell (target `HUNT_TARGET`).
+## The local player's Survivor starts at the map start; enemies hunt random living Survivors.
 ## Debug keys: G 50 grunts, B 5 brutes, R 30 runners, each from a random spawn.
+## Camera: Space centres on the Survivor, L toggles following it.
 
 const LOCAL_PLAYER := 0
 const DEFAULT_MAP := "test_map"
-const HUNT_TARGET := &"survivor"
 const DEBUG_SPAWNS := {KEY_G: [&"grunt", 50], KEY_B: [&"brute", 5], KEY_R: [&"runner", 30]}
 
 var world: World
@@ -21,6 +21,9 @@ var enemy_views: EnemyViews
 var camera: RtsCamera
 var builder: BuildController
 var hud: Hud
+var survivor_views: SurvivorViews
+var survivor: SurvivorState
+var follow_survivor := false
 
 var _args := {}
 var _frames := 0
@@ -32,7 +35,6 @@ func _ready() -> void:
 	var layout := MapLayout.load_file("res://data/maps/%s.json" % map_id)
 	world = World.new(layout, DefRegistry.load_default(), 1)
 	world.add_player(LOCAL_PLAYER)
-	world.pathing.set_target(HUNT_TARGET, [layout.start] as Array[Vector2i])
 	_setup_environment()
 
 	map_view = MapView.new()
@@ -49,6 +51,12 @@ func _ready() -> void:
 	enemy_views.name = "Enemies"
 	add_child(enemy_views)
 	enemy_views.attach(world)
+
+	survivor_views = SurvivorViews.new()
+	survivor_views.name = "Survivors"
+	add_child(survivor_views)
+	survivor_views.attach(world)
+	survivor = world.survivors.spawn(world, LOCAL_PLAYER, layout.start)
 
 	camera = RtsCamera.new()
 	camera.name = "Camera"
@@ -73,6 +81,8 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	for i in clock.consume(delta):
 		step()
+	if follow_survivor:
+		camera.focus(_survivor_point())
 	_frames += 1
 	if _args.has("screenshot") and _frames == 30:
 		camera.edge_pan = false
@@ -94,10 +104,14 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	if key.physical_keycode == KEY_P:
 		map_view.show_plots = not map_view.show_plots
+	elif key.physical_keycode == KEY_SPACE:
+		camera.focus(_survivor_point())
+	elif key.physical_keycode == KEY_L:
+		follow_survivor = not follow_survivor
 	elif OS.is_debug_build() and DEBUG_SPAWNS.has(key.physical_keycode):
 		var entry: Array = DEBUG_SPAWNS[key.physical_keycode]
 		var spawn: MapLayout.Spawn = world.map.spawns.pick_random()
-		world.submit(Commands.debug_spawn(LOCAL_PLAYER, entry[0], spawn.id, entry[1], HUNT_TARGET))
+		world.submit(Commands.debug_spawn(LOCAL_PLAYER, entry[0], spawn.id, entry[1], &""))
 
 
 func _setup_environment() -> void:
@@ -119,15 +133,18 @@ func _setup_environment() -> void:
 func _place_demo() -> void:
 	var start := world.map.start
 	for i in 6:
-		world.submit(Commands.place_building(LOCAL_PLAYER, &"wall", start + Vector2i(-3 + i, -4)))
-	world.submit(Commands.place_building(LOCAL_PLAYER, &"basic_tower", start + Vector2i(-4, 2)))
-	world.submit(Commands.place_building(LOCAL_PLAYER, &"mill", start + Vector2i(3, 2)))
-	world.submit(Commands.place_building(LOCAL_PLAYER, &"barracks", start + Vector2i(-1, 3)))
-	for spawn in world.map.spawns:
-		world.submit(Commands.debug_spawn(LOCAL_PLAYER, &"grunt", spawn.id, 60, HUNT_TARGET))
-	world.submit(Commands.debug_spawn(LOCAL_PLAYER, &"brute", world.map.spawns[1].id, 6, HUNT_TARGET))
-	world.submit(Commands.debug_spawn(LOCAL_PLAYER, &"runner", world.map.spawns[2].id, 30, HUNT_TARGET))
+		world.submit(Commands.place_building(LOCAL_PLAYER, &"wall", start + Vector2i(-3 + i, -4), true))
+	world.submit(Commands.place_building(LOCAL_PLAYER, &"basic_tower", start + Vector2i(-4, 2), true))
+	world.submit(Commands.place_building(LOCAL_PLAYER, &"mill", start + Vector2i(3, 2), true))
+	for spawn in world.map.spawns.slice(1):
+		world.submit(Commands.debug_spawn(LOCAL_PLAYER, &"grunt", spawn.id, 60, &""))
+	world.submit(Commands.debug_spawn(LOCAL_PLAYER, &"brute", world.map.spawns[1].id, 6, &""))
+	world.submit(Commands.debug_spawn(LOCAL_PLAYER, &"runner", world.map.spawns[2].id, 30, &""))
 	world.run_seconds(4.0)
+
+
+func _survivor_point() -> Vector3:
+	return Vector3(survivor.position.x * Coords.CELL, 0.0, survivor.position.y * Coords.CELL)
 
 
 static func _parse_user_args() -> Dictionary:

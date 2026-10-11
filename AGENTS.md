@@ -129,6 +129,12 @@ tools/           dev scripts: run_tests.sh, maps/ (map builders, Python 3, stdli
 - **Commands** (`src/core/commands.gd`) are dictionaries built by static helpers. A system
   registers a handler with `world.register_command()`. The handler returns `""` or a
   rejection reason, which ends up in `world.last_results` and the `build`/`state` log.
+- **Survivors** (`src/sim/systems/survivor_system.gd`): each player's builder hero, an
+  entity (`SurvivorState`) with an order queue (move/build/repair), A* movement
+  (`AStarGrid2D` mirroring `grid.blocked`), Blink and Haste. A place command from a player with
+  a living Survivor becomes a build order (it walks there first). Without one, placement is
+  instant, which tests rely on: `SimFixtures.build_now()` builds instantly. When a Survivor
+  dies, its player is defeated (`world.player_defeated`).
 - **Pathing** (`src/sim/pathing/`): `PathingSystem` keeps one `FlowField` per hunt target
   (`set_target(key, cells)`). It rebuilds the field when buildings appear or disappear, or
   when the target changes cell. Building cells are passable at

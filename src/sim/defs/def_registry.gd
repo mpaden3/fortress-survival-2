@@ -5,8 +5,10 @@ extends RefCounted
 const BUILDINGS_DIR := "res://data/defs/buildings"
 const ENEMIES_DIR := "res://data/defs/enemies"
 const RULES_PATH := "res://data/defs/game_rules.tres"
+const SURVIVOR_PATH := "res://data/defs/survivor.tres"
 
 var rules: GameRules
+var survivor: SurvivorDef
 var buildings: Dictionary[StringName, BuildingDef] = {}
 var enemies: Dictionary[StringName, EnemyDef] = {}
 ## Enemy defs by dense index, for the EnemyManager's per-enemy type array.
@@ -16,6 +18,7 @@ var enemy_list: Array[EnemyDef] = []
 static func load_default() -> DefRegistry:
 	var registry := DefRegistry.new()
 	registry.rules = load(RULES_PATH)
+	registry.survivor = load(SURVIVOR_PATH)
 	for file in ResourceLoader.list_directory(BUILDINGS_DIR):
 		if file.ends_with(".tres"):
 			registry.add_building(load(BUILDINGS_DIR.path_join(file)))

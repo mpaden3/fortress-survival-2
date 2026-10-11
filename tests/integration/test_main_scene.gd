@@ -17,14 +17,21 @@ func test_boots_with_test_map() -> void:
 	assert_eq(game.world.players[Game.LOCAL_PLAYER].resource, game.world.defs.rules.starting_resource)
 
 
+func test_survivor_spawns_at_start() -> void:
+	assert_not_null(game.survivor)
+	assert_eq(game.survivor.cell(), game.world.map.start)
+	assert_not_null(game.survivor_views.get_node_or_null("Survivor0"))
+
+
 func test_build_controller_places_through_world() -> void:
 	var cell := game.world.map.start + Vector2i(0, -4)
 	game.builder.select_def(&"basic_tower")
 	assert_true(game.builder.can_place_at(cell))
 	game.builder.request_place(cell)
-	game.step()
-	assert_eq(game.building_views.view_count(), 1)
-	var tower := game.world.entities.values()[0] as BuildingState
+	for i in 3 * SimConstants.TICK_RATE:
+		game.step()
+	assert_eq(game.building_views.view_count(), 1, "survivor walked over and built it")
+	var tower := game.world.entities.get(game.world.grid.occupant(cell)) as BuildingState
 	assert_eq(tower.rect.position, Coords.footprint_origin(cell, Vector2i(2, 2)), "footprint centred on cursor")
 
 
@@ -32,11 +39,12 @@ func test_sell_selected_removes_view() -> void:
 	var cell := game.world.map.start + Vector2i(0, -4)
 	game.builder.select_def(&"wall")
 	game.builder.request_place(cell)
-	game.step()
+	for i in 3 * SimConstants.TICK_RATE:
+		game.step()
 	game.builder.select_def(&"")
 	game.builder._select_entity(game.world.grid.occupant(cell))
 	game.builder.request_sell_selected()
 	game.step()
 	await wait_process_frames(1)
 	assert_eq(game.building_views.view_count(), 0)
-	assert_eq(game.world.entities.size(), 0)
+	assert_eq(game.world.grid.occupant(cell), BuildGrid.NONE)

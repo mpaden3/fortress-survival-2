@@ -6,7 +6,8 @@ extends RefCounted
 ##
 ## Per tick each enemy: follows its target's FlowField (blended, continuous), keeps apart
 ## from neighbours, can't enter blocked terrain or building cells, and attacks the building
-## blocking its way.
+## blocking its way. Hunting a Survivor, it chases it directly once close and attacks it on
+## contact; a static target (tests) is just walked to.
 
 ## How far ahead (cells, beyond the body) an enemy looks for a building to attack.
 const ATTACK_REACH := 0.35
@@ -15,6 +16,10 @@ const MAX_NEIGHBOURS := 10
 ## Flow cost under which an enemy counts as arrived and stops pressing forward
 ## (just over one diagonal step), so crowds at the target don't compress.
 const ARRIVED_COST := 15
+## Within this many cells (straight line) of its Survivor, and this flow cost (so not behind a
+## wall), an enemy stops following the field and runs straight at it.
+const PURSUIT_RANGE := 3.0
+const PURSUIT_COST := 50
 
 var ids := PackedInt32Array()
 var types := PackedInt32Array()
@@ -55,19 +60,22 @@ func _debug_spawn(world: World, command: Dictionary) -> String:
 
 
 ## Spawns `amount` enemies of `def_id` on random walkable cells of `area`, hunting `target`.
-func spawn(world: World, def_id: StringName, area: Rect2i, amount: int, target: StringName) -> Array[int]:
+## An empty target picks a random living Survivor for the whole group.
+func spawn(world: World, def_id: StringName, area: Rect2i, amount: int, target: StringName = &"") -> Array[int]:
 	var type_index := world.defs.enemy_index(def_id)
 	assert(type_index >= 0, "unknown enemy %s" % def_id)
 	var def := world.defs.enemy_list[type_index]
+	if target == &"":
+		var survivor: SurvivorState = world.rng.pick(world.survivors.living())
+		if survivor == null:
+			return [] as Array[int]
+		target = survivor.target_key()
 	var cells := MapAnalysis.walkable_cells(world.map, area).filter(
 		func(c: Vector2i) -> bool: return world.grid.occupant(c) == BuildGrid.NONE)
 	var spawned: Array[int] = []
 	if cells.is_empty():
 		return spawned
-	var target_index := target_keys.find(target)
-	if target_index < 0:
-		target_keys.append(target)
-		target_index = target_keys.size() - 1
+	var target_index := _target_index(target)
 	for i in amount:
 		var cell: Vector2i = world.rng.pick(cells)
 		var entity_id := world.new_id()
@@ -86,6 +94,32 @@ func spawn(world: World, def_id: StringName, area: Rect2i, amount: int, target: 
 
 func index_of(entity_id: int) -> int:
 	return ids.find(entity_id)
+
+
+func any_in_rect(rect: Rect2i) -> bool:
+	for pos in positions:
+		if rect.has_point(Vector2i(floori(pos.x), floori(pos.y))):
+			return true
+	return false
+
+
+## Enemies hunting `dead_key` each pick a random living Survivor instead.
+func retarget_from(world: World, dead_key: StringName) -> void:
+	var dead_index := target_keys.find(dead_key)
+	var living := world.survivors.living()
+	if dead_index < 0 or living.is_empty():
+		return
+	for i in ids.size():
+		if targets[i] == dead_index:
+			targets[i] = _target_index((world.rng.pick(living) as SurvivorState).target_key())
+
+
+func _target_index(key: StringName) -> int:
+	var index := target_keys.find(key)
+	if index < 0:
+		target_keys.append(key)
+		index = target_keys.size() - 1
+	return index
 
 
 ## Damages enemy slot `index`; returns true if it died (it's removed immediately).
@@ -123,6 +157,15 @@ func update(world: World) -> void:
 		var flow := world.pathing.field(key)
 		dir_fields.append(flow.direction if flow else PackedVector2Array())
 		cost_fields.append(flow.cost if flow else PackedInt64Array())
+	# Per target: the hunted Survivor's position, reach and whether it's alive.
+	var hunted: Array[SurvivorState] = []
+	var hunt_pos := PackedVector2Array()
+	var hunt_radius := PackedFloat32Array()
+	for key in target_keys:
+		var survivor := world.survivors.by_target_key(key)
+		hunted.append(survivor if survivor and survivor.alive else null)
+		hunt_pos.append(survivor.position if survivor else Vector2.ZERO)
+		hunt_radius.append(survivor.def.radius / SimConstants.CELL_SIZE if survivor else 0.0)
 	# Separation runs for half the enemies each tick (alternating), at double strength.
 	var parity := world.tick & 1
 	var log_collision := DebugLog.on(&"collision")
@@ -135,10 +178,36 @@ func update(world: World) -> void:
 		var cx := floori(pos.x)
 		var cz := floori(pos.y)
 
-		# Flow direction: bilinear blend of the 4 nearest cell directions.
+		var ti := targets[i]
 		var dir := Vector2.ZERO
-		var dirs := dir_fields[targets[i]]
-		if not dirs.is_empty() and cost_fields[targets[i]][cz * width + cx] > ARRIVED_COST:
+		var dirs := dir_fields[ti]
+		var here_cost: int = cost_fields[ti][cz * width + cx] if not dirs.is_empty() else FlowField.UNREACHABLE
+		var engaged := false
+		var follow_field := here_cost > ARRIVED_COST
+		var prey := hunted[ti]
+		if prey != null:
+			follow_field = true
+			var to_prey := hunt_pos[ti] - pos
+			var reach := radius + hunt_radius[ti] + ATTACK_REACH
+			var prey_dist_sq := to_prey.length_squared()
+			if prey_dist_sq <= reach * reach:
+				engaged = true
+				follow_field = false
+				attacking[i] = prey.id
+				if cooldowns[i] > 0:
+					cooldowns[i] -= 1
+				elif prey.alive:
+					var def := world.defs.enemy_list[t]
+					cooldowns[i] = def.cooldown_ticks()
+					if log_combat:
+						DebugLog.event(&"combat", {"enemy": ids[i], "hits_survivor": prey.id, "damage": def.damage})
+					world.survivors.damage(world, prey, def.damage)
+			elif prey_dist_sq <= PURSUIT_RANGE * PURSUIT_RANGE and here_cost <= PURSUIT_COST:
+				follow_field = false
+				dir = to_prey.normalized()
+
+		# Flow direction: bilinear blend of the 4 nearest cell directions.
+		if follow_field and not dirs.is_empty():
 			var fx := pos.x - 0.5
 			var fz := pos.y - 0.5
 			var x0 := floori(fx)
@@ -157,7 +226,8 @@ func update(world: World) -> void:
 				dir = dir.normalized()
 
 		var desired := dir * step_of[t]
-		attacking[i] = 0
+		if not engaged:
+			attacking[i] = 0
 		if dir != Vector2.ZERO:
 			var ahead := pos + dir * (radius + ATTACK_REACH)
 			var ax := floori(ahead.x)

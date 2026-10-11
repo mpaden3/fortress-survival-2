@@ -52,6 +52,7 @@ static func enemy(id: StringName, max_hp := 50.0, speed := 4.0, damage := 10.0, 
 static func defs(starting_resource := 100) -> DefRegistry:
 	var registry := DefRegistry.new()
 	registry.rules = rules(starting_resource)
+	registry.survivor = SurvivorDef.new()
 	registry.add_building(building(&"wall", Vector2i.ONE, 5, 1.0, 100))
 	registry.add_building(building(&"tower", Vector2i(2, 2), 20, 2.0, 300, true, [&"tower_2"] as Array[StringName]))
 	registry.add_building(building(&"tower_2", Vector2i(2, 2), 30, 2.0, 500, false))
@@ -71,10 +72,11 @@ static func map_from_rows(rows: Array[String]) -> MapLayout:
 		"start": [0, 0], "rows": rows})
 
 
-## Places a building and finishes its construction instantly.
+## Places a building and finishes its construction instantly (no Survivor walking, free).
 static func build_now(world: World, def_id: StringName, cell: Vector2i, player := 0) -> BuildingState:
 	world.players[player].resource += world.defs.building(def_id).cost
-	world.submit(Commands.place_building(player, def_id, cell))
+	var reason := world.buildings.start_construction(world, player, def_id, cell)
+	assert(reason.is_empty(), "build_now %s at %s: %s" % [def_id, cell, reason])
 	world.step()
 	var building := world.entities.get(world.grid.occupant(cell)) as BuildingState
 	building.constructing = false

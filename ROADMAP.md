@@ -200,11 +200,12 @@ What we know about the original (sources at the bottom; much of it is old/unveri
 - [x] Build input: hotkeys, ghost preview, click/drag placement, select, sell
 - [x] Command layer: all player actions as serializable commands with stable entity IDs
 - [x] RTS camera (pan, zoom, rotate)
-- [ ] Lock-on-Survivor camera hotkey
+- [x] Camera: centre on / follow the Survivor
 - [ ] Selection (click, box), move / attack-move / stop / hold
-- [ ] Survivor (builder hero): free movement, build orders, Repair (free), Blink (over walls), Haste; death = defeat (spectate)
+- [x] Survivor (builder hero): free movement, build orders, Repair (free), Blink (over walls), Haste; death = defeat
+- [ ] Spectate after defeat; co-op Survivors spawn spread around the start
 - [x] Grid placement with footprints + validity checks; construction time; sell (partial refund)
-- [ ] Survivor walks to the site before construction starts (placement is instant for now)
+- [x] Survivor walks to the site before construction starts (queued orders with Shift)
 - [ ] Resource "wood" (placeholder name): passive income + mill line
 - [ ] Upgrade-tree system: root buildings with branching in-place upgrades (data-driven)
 - [ ] Buildings: wall line; Basic Tower → arrow / cannon (splash) / frost (slow) lines; mill line; barracks
@@ -213,7 +214,8 @@ What we know about the original (sources at the bottom; much of it is old/unveri
 - [x] Horde benchmark: 2000 enemies on the MVP map ≈ 7 ms/tick (budget 8), field build ≈ 30 ms
 - [ ] Enemy render interpolation between ticks (30 Hz sim, 60+ FPS render)
 - [x] Enemies break the building blocking their path (cheapest wall), buildings take damage and get destroyed
-- [ ] Enemy AI: group picks random living Survivor; attack visible buildings/units when target not in sight
+- [x] Enemy groups hunt a random living Survivor, chase it when close, attack it; retarget when it dies
+- [ ] Enemies attack visible buildings/units when their Survivor is not in sight; attack-move along the way
 - [ ] Enemies: grunt, brute/siege, runner, mini-boss; continuous timed spawner with ramp + boss timings
 - [ ] Combat: targeting, projectiles, splash, slow, damage/armor, death
 - [ ] Win = survive ~20 min timer; lose = your Survivor dies

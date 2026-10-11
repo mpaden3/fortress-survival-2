@@ -1,10 +1,11 @@
 class_name BuildController
 extends Node3D
-## Local player's build input: pick a root building, preview it under the mouse, place it,
-## select and sell. Everything goes through World commands, exactly like a test would.
+## Local player's input: build (pick a root building, preview, place), select and sell, and
+## command the Survivor. Everything goes through World commands, exactly like a test would.
 ##
-## Keys: 1 Wall, 2 Basic Tower, 3 Mill, 4 Barracks; LMB place (drag to paint walls);
-## RMB / Esc cancel; LMB on a building selects it; X sells the selection.
+## Build: 1 Wall, 2 Basic Tower, 3 Mill, 4 Barracks; LMB place (drag paints walls); Esc or
+## RMB cancels. Shift queues orders. LMB on a building selects it; X sells the selection.
+## Survivor: RMB move (RMB on own damaged building repairs), F Blink at cursor, H Haste.
 
 const HOTKEYS := {KEY_1: &"wall", KEY_2: &"basic_tower", KEY_3: &"mill", KEY_4: &"barracks"}
 
@@ -63,10 +64,19 @@ func can_place_at(cell: Vector2i) -> bool:
 	return world.grid.check(rect).is_empty() and world.players[player_id].resource >= def.cost
 
 
-## Submits a placement of the selected building centred under `cell`.
-func request_place(cell: Vector2i) -> void:
+## Submits a placement of the selected building centred under `cell` (a Survivor build order).
+func request_place(cell: Vector2i, queue := false) -> void:
 	if selected_def:
-		world.submit(Commands.place_building(player_id, selected_def, placement_origin(cell)))
+		world.submit(Commands.place_building(player_id, selected_def, placement_origin(cell), queue))
+
+
+## Right-click: repair an own damaged building under the cursor, otherwise move there.
+func request_smart_order(cell: Vector2i, queue := false) -> void:
+	var building := world.entities.get(world.grid.occupant(cell)) as BuildingState
+	if building and building.owner == player_id and building.hp < building.def.max_hp and not building.constructing:
+		world.submit(Commands.repair(player_id, building.id, queue))
+	else:
+		world.submit(Commands.move_survivor(player_id, cell, queue))
 
 
 func request_sell_selected() -> void:
@@ -84,17 +94,25 @@ func _unhandled_input(event: InputEvent) -> void:
 			select_def(&"")
 		elif key.physical_keycode == KEY_X:
 			request_sell_selected()
+		elif key.physical_keycode == KEY_F:
+			world.submit(Commands.blink(player_id, hover_cell))
+		elif key.physical_keycode == KEY_H:
+			world.submit(Commands.haste(player_id))
 		return
 	var button := event as InputEventMouseButton
 	if button == null:
 		return
 	if button.button_index == MOUSE_BUTTON_RIGHT and button.pressed:
-		select_def(&"")
+		if selected_def:
+			select_def(&"")
+		else:
+			request_smart_order(hover_cell, button.shift_pressed)
 	elif button.button_index == MOUSE_BUTTON_LEFT:
 		_painting = button.pressed and selected_def == &"wall"
 		if button.pressed:
 			if selected_def:
-				request_place(hover_cell)
+				# Painting a wall line always queues, so the Survivor builds the whole line.
+				request_place(hover_cell, button.shift_pressed or selected_def == &"wall")
 				_last_painted = hover_cell
 			else:
 				_select_entity(world.grid.occupant(hover_cell))
@@ -109,7 +127,7 @@ func _process(_delta: float) -> void:
 		return
 	hover_cell = Coords.world_to_cell(point)
 	if _painting and hover_cell != _last_painted:
-		request_place(hover_cell)
+		request_place(hover_cell, true)
 		_last_painted = hover_cell
 	if selected_def:
 		var def := world.defs.building(selected_def)
