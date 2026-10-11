@@ -300,7 +300,7 @@ func update(world: World) -> void:
 					cooldowns[i] -= 1
 				elif prey.alive:
 					var def := world.defs.enemy_list[t]
-					cooldowns[i] = def.cooldown_ticks()
+					cooldowns[i] = def.cooldown_ticks() - 1  # this tick counts: a hit every cooldown_ticks()
 					if log_combat:
 						DebugLog.event(&"combat", {"enemy": ids[i], "hits_survivor": prey.id, "damage": def.damage})
 					world.survivors.damage(world, prey, def.damage)
@@ -354,7 +354,7 @@ func update(world: World) -> void:
 					cooldowns[i] -= 1
 				else:
 					var def := world.defs.enemy_list[t]
-					cooldowns[i] = def.cooldown_ticks()
+					cooldowns[i] = def.cooldown_ticks() - 1  # this tick counts: a hit every cooldown_ticks()
 					var amount := def.damage * def.building_damage_multiplier
 					if log_combat:
 						DebugLog.event(&"combat", {"enemy": ids[i], "hits_building": blocker, "damage": amount})

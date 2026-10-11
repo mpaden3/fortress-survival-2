@@ -132,3 +132,18 @@ func test_same_seed_same_horde() -> void:
 		world.enemies.spawn(world, &"grunt", Rect2i(15, 15, 4, 4), 25, &"t")
 		world.run_seconds(4.0)
 	assert_eq(a.enemies.positions, b.enemies.positions)
+
+
+func test_hits_a_blocking_building_at_its_attack_rate() -> void:
+	# Grunt fixture: 10 damage every 0.5 s against a wall right in its way.
+	var world := _world(SimFixtures.open_map(10, 1), Vector2i(0, 0))
+	var wall := SimFixtures.build_now(world, &"wall", Vector2i(3, 0))
+	world.enemies.spawn(world, &"grunt", Rect2i(4, 0, 1, 1), 1, &"t")
+	var first := -1
+	for i in 60:
+		world.step()
+		if wall.hp < wall.def.max_hp and first < 0:
+			first = world.tick
+	assert_gt(first, 0, "started hitting")
+	world.run(3 * SimConstants.TICK_RATE - (world.tick - first))
+	assert_eq(wall.def.max_hp - wall.hp, 10 * (1 + 6), "a hit every 0.5 s after the first")

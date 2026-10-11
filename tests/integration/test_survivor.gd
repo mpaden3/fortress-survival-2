@@ -56,7 +56,7 @@ func test_build_order_walks_first_then_builds() -> void:
 	assert_eq(world.players[0].resource, 100, "not paid yet")
 	assert_true(_run_until(func() -> bool: return world.grid.occupant(Vector2i(20, 20)) != BuildGrid.NONE, 15.0))
 	assert_eq(world.players[0].resource, 80)
-	assert_lt(SurvivorSystem._distance_to_rect(survivor.position, Rect2i(20, 20, 2, 2)), survivor.def.work_reach + 0.1,
+	assert_lt(GridPaths.distance_to_rect(survivor.position, Rect2i(20, 20, 2, 2)), survivor.def.work_reach + 0.1,
 		"built standing next to it")
 
 
@@ -190,3 +190,20 @@ func test_retarget_distance_stays_within_enemy_pursuit_range() -> void:
 	# Worst case: the Survivor at the far corner of the cell next to the field's target.
 	var worst := Vector2(SurvivorSystem.RETARGET_CELLS - 1 + 0.5, SurvivorSystem.RETARGET_CELLS - 1 + 0.5).length()
 	assert_lt(worst, EnemyManager.PURSUIT_RANGE, "enemies at the old target still chase the Survivor directly")
+
+
+func test_enemy_hits_the_survivor_at_its_attack_rate() -> void:
+	# Grunt fixture: 10 damage every 0.5 s. Spawned next to the Survivor, it hits at once.
+	world.enemies.spawn(world, &"grunt", Rect2i(6, 5, 1, 1), 1)
+	var hits := func() -> int:
+		var count := 0
+		for line in DebugLog.captured_in(&"combat"):
+			if "hits_survivor=" in line:
+				count += 1
+		return count
+	assert_true(_run_until(func() -> bool: return hits.call() > 0, 2.0), "first hit")
+	var first := world.tick
+	world.run_seconds(3.0)
+	assert_eq(hits.call(), 1 + 6, "one hit per 0.5 s after the first")
+	assert_eq(survivor.hp, survivor.def.max_hp - 70.0)
+	assert_gt(world.tick, first)
