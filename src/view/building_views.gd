@@ -11,6 +11,8 @@ var _selected := 0
 func attach(world: World) -> void:
 	_world = world
 	world.entity_added.connect(_on_entity_added)
+	for entity: SimEntity in world.entities.values():  # already there (a loaded save, a client)
+		_on_entity_added(entity)
 	world.entity_removed.connect(_on_entity_removed)
 	world.entity_changed.connect(_on_entity_changed)
 

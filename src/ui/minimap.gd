@@ -57,7 +57,10 @@ func refresh() -> void:
 		if building:
 			_image.fill_rect(building.rect, BUILDING)
 	var size := world.map.size
+	var fog := world.visibility.mask(game.local_player)
 	for p in world.enemies.positions:
+		if not VisibilitySystem.shown(fog, size.x, p):
+			continue
 		var x := floori(p.x)
 		var z := floori(p.y)
 		if x >= 0 and z >= 0 and x < size.x and z < size.y:

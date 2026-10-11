@@ -15,6 +15,8 @@ var _views: Dictionary[int, MeshInstance3D] = {}
 func attach(world: World) -> void:
 	_world = world
 	world.entity_added.connect(_on_entity_added)
+	for entity: SimEntity in world.entities.values():  # already there (a loaded save, a client)
+		_on_entity_added(entity)
 
 
 func _on_entity_added(entity: SimEntity) -> void:

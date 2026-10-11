@@ -17,6 +17,8 @@ var command_card: CommandCard
 var sandbox_spawn: SandboxSpawnPanel
 var sandbox: SandboxPanel
 var health_bars: HealthBars
+var game_menu: GameMenu
+var end_screen: EndScreen
 
 const TOP_HEIGHT := 40.0
 const BOTTOM_HEIGHT := 214.0
@@ -30,7 +32,7 @@ var _banner: Label
 var _message: Label
 var _hint: Label
 var _box: Panel
-var _message_until := 0
+var _message_left := 0.0
 
 
 func setup(target: Game) -> void:
@@ -71,6 +73,23 @@ func _ready() -> void:
 	_box.visible = false
 	_root.add_child(_box)
 
+	end_screen = EndScreen.new()
+	end_screen.setup(game)
+	_root.add_child(end_screen)
+	game_menu = GameMenu.new()
+	game_menu.setup(game)
+	_root.add_child(game_menu)
+
+
+func toggle_menu() -> void:
+	game_menu.toggle()
+
+
+## Shows `text` above the bottom bar for a few seconds.
+func show_message(text: String) -> void:
+	_message.text = text
+	_message_left = 3.0
+
 
 func toggle_sandbox() -> void:
 	if sandbox:
@@ -81,17 +100,17 @@ func toggle_sandbox() -> void:
 ## Called after each simulation step with that step's command results.
 func show_results(results: Array[Dictionary]) -> void:
 	for result in results:
-		if not result["ok"] and result["command"].get("player") == game.builder.player_id:
-			_message.text = "Can't %s: %s" % [String(result["command"]["type"]).replace("_", " "),
-				String(result["reason"]).replace("_", " ")]
-			_message_until = game.world.tick + 2 * SimConstants.TICK_RATE
+		if not result["ok"] and result["command"].get("player") == game.local_player:
+			show_message("Can't %s: %s" % [String(result["command"]["type"]).replace("_", " "),
+				String(result["reason"]).replace("_", " ")])
 
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 	if game == null or game.world == null:
 		return
+	_message_left -= delta
 	var world := game.world
-	var player := world.players[game.builder.player_id]
+	var player := world.players[game.local_player]
 	var rules := world.defs.rules
 	resource_label.text = "%s  %d   (+%d / min)" % [rules.primary_resource_name.capitalize(), player.resource,
 		roundi(world.economy.income_per_minute(world, player.id))]
@@ -107,17 +126,16 @@ func _process(_delta: float) -> void:
 		clock_label.text = "%02d:%02d  (no waves)" % [seconds / 60, seconds % 60]
 	enemies_label.text = "Enemies  %d" % world.enemies.count()
 	speed_label.text = "PAUSED" if game.speed == 0.0 else ("x%d" % game.speed if game.speed != 1.0 else "")
-	_message.visible = world.tick < _message_until
+	_message.visible = _message_left > 0.0
 	_hint.text = _mode_hint()
 	_box.visible = game.builder.drag_rect.has_area()
 	_box.position = game.builder.drag_rect.position
 	_box.size = game.builder.drag_rect.size
-	if match_system.result == MatchSystem.Result.WON and player.alive:
-		_show_banner("VICTORY - you survived!", Color(0.4, 0.95, 0.4))
+	# Victory and defeat are on the end screen; once it's dismissed, a fallen player spectates.
+	if end_screen.visible:
+		_banner.visible = false
 	elif not player.alive and match_system.result == MatchSystem.Result.RUNNING:
 		_show_banner("Your Survivor died - spectating", HudStyle.HP_LOW)
-	elif not player.alive:
-		_show_banner("DEFEAT - your Survivor died", HudStyle.HP_LOW)
 	elif match_system.announcement_tick >= 0 and world.tick - match_system.announcement_tick < 4 * SimConstants.TICK_RATE:
 		_show_banner(match_system.announcement, HudStyle.GOLD)
 	else:
@@ -156,6 +174,10 @@ func _build_top_bar() -> void:
 		top_bar.add_child(control)
 	if OS.is_debug_build():
 		top_bar.add_child(HudStyle.label("F1 sandbox", 12, HudStyle.TEXT_DIM))
+	var menu := HudStyle.button("Menu [F10]")
+	menu.name = "MenuButton"
+	menu.pressed.connect(toggle_menu)
+	top_bar.add_child(menu)
 
 
 func _build_bottom_bar() -> void:

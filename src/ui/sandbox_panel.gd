@@ -65,6 +65,15 @@ func _ready() -> void:
 	restart.name = "Restart"
 	restart.pressed.connect(game.restart)
 	column.add_child(restart)
+	var saves := SandboxSpawnPanel._grid(column, 2)
+	for entry: Array in [["Quick save", "Save the whole match [F5]", func() -> void: game.quicksave()],
+			["Quick load", "Load the quick save [F9]", func() -> void: game.quickload()]]:
+		var button := HudStyle.button(entry[0], entry[1])
+		button.name = String(entry[0]).replace(" ", "")
+		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		button.disabled = game.is_client()
+		button.pressed.connect(entry[2])
+		saves.add_child(button)
 
 	column.add_child(HudStyle.label("Performance", 12, HudStyle.TEXT_DIM))
 	stats = HudStyle.label("", 12)
